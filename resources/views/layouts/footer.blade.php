@@ -51,6 +51,8 @@
 <script src="../../bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <!-- Link to your custom JavaScript file -->
 <script src="{{ asset('dist/js/product.js') }}"></script>
+<script src="{{ asset('dist/js/customer.js') }}"></script>
+
 
 </script>
 </body>

@@ -71,7 +71,7 @@
                                 <form id="deleteForm-{{ $customer->id }}" action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="custom-dropdown-item delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" onclick="confirmDelete({{ $customer->id }})" class="delete-btn btn btn-danger">
+                                    <button type="button" onclick="confirmDeleteCustomer({{ $customer->id }})" class="delete-btn btn btn-danger">
                                         <i class="fa fa-trash"></i> Delete
                                     </button>
                                 </form>

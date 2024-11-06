@@ -1,6 +1,6 @@
 $(function () {
     
-    $('#product-listings').DataTable({
+    $('#customer-listings').DataTable({
         'paging': true,
         'lengthChange': false,
         'searching': false,
@@ -25,8 +25,8 @@ $('#viewProductModal').on('show.bs.modal', function (event) {
     modal.find('#product-image').attr('src', button.data('image'));
 });
 
-function confirmDelete(productId) {
-    if (confirm('Are you sure you want to delete this product?')) {
+function confirmDeleteCustomer(productId) {
+    if (confirm('Are you sure you want to delete this customer?')) {
         var form = document.getElementById(`deleteForm-${productId}`);
         var formData = new FormData(form);
         fetch(form.action, {
@@ -40,10 +40,10 @@ function confirmDelete(productId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Product deleted successfully!');
+                alert('Customer deleted successfully!');
                 document.getElementById(`customerRow-${productId}`).remove();
             } else {
-                alert('Failed to delete product.');
+                alert('Failed to delete customer.');
             }
         })
         .catch(error => {
