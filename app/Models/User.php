@@ -28,11 +28,17 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'created_by');
+    }
     /**
      * Get the attributes that should be cast.
      *

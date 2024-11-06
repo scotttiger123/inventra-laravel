@@ -1,0 +1,254 @@
+.sidebar-toggle:hover {
+  color: white !important;
+}
+.logo {
+  background-color: white !important;
+  color: blue !important;
+}
+.navbar {
+  background-color: white !important;
+}
+.sidebar-toggle {
+  color: blue !important;
+  border: 1px solid blue;
+  border-radius: 6px;
+  margin-left: 25px;
+  height: 42px;
+  width: 42px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+.hidden-xs {
+  color: blue !important;
+}
+.gay {
+  color: blue !important;
+}
+.main-sidebar {
+  background-color: white !important;
+}
+.dash {
+  background-color: white !important;
+  color: black !important;
+}
+.skin-blue .sidebar a {
+  color: black !important;
+}
+.skin-blue .sidebar a:hover {
+  background-color: rgb(237, 230, 230) !important;
+}
+.skin-blue .sidebar-menu > li > .treeview-menu {
+  margin: 0 1px;
+  background: white !important;
+}
+.skin-blue .sidebar-menu .treeview-menu > li > a:hover {
+  background-color: rgb(237, 230, 230) !important;
+}
+.skin-blue .sidebar-menu > li:hover > a,
+.skin-blue .sidebar-menu > li.active > a,
+.skin-blue .sidebar-menu > li.menu-open > a {
+  background-color: white !important;
+  color: black !important;
+}
+.box-header{
+  
+   margin-bottom:10px;
+}
+.skin-blue .content-header {
+  display: none;
+  background: transparent;
+}
+.content-wrapper {
+  background-color: white !important;
+}
+.main-footer {
+  background: #fff;
+  padding: 15px;
+  color: #444;
+  border-top: 1px solid white !important;
+}
+.form-border {
+  padding: 2rem !important;
+  border: 0.2px solid #d5d6e2;
+  width: 99% !important;
+  border-radius: 6px;
+}
+.box.box-primary {
+  border-top-color: white !important;
+}
+.form-control:not(select) {
+  -webkit-appearance: none;
+  border-radius: 6px !important;
+  -moz-appearance: none;
+  appearance: none;
+}
+.myInput {
+  background-color: rgb(243, 243, 247) !important;
+  border-color: rgb(215, 215, 226) !important;
+}
+
+/* Focused input style */
+.myInput:focus {
+  background-color: white !important;
+  border-color: black !important;
+}
+.input-group-append {
+  display: flex;
+}
+.btn-default {
+  margin-left: -4px;
+  background-color: #f4f4f4;
+  height: 33px;
+  border-color: #ddd;
+  border-radius: 6px;
+}
+.input-group {
+  width: 280px;
+}
+.form-control {
+  border-radius: 6px !important;
+  margin-left: -3px !important;
+}
+.search-box {
+  display: flex;
+} 
+
+
+/* table listings dropdown stylings*/
+
+.custom-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-dropdown-toggle {
+  background-color:#fff;
+  color: #00a65a;
+  border:1px solid #00a65a;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.custom-dropdown-toggle:hover {
+  background-color: #00a65a;
+  color:#fff;
+}
+
+/* Dropdown menu styling */
+.custom-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  overflow: hidden;
+  min-width: 150px;
+  z-index: 1000;
+  padding: 0;
+}
+
+.custom-dropdown:hover .custom-dropdown-menu {
+  display: block;
+}
+
+.custom-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  background-color: #fff;
+  border: none;
+  width: 100%;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.custom-dropdown-item i {
+  margin-right: 8px;
+}
+
+.custom-dropdown-item:hover {
+  background-color: #00a65a;
+  color: #fff;
+}
+
+/* Delete button specific styling */
+.delete-btn {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  color: #fff;
+}
+
+/* Apply to the modal dialog */
+.modal-dialog {
+  
+  border-radius: 10px;  /* Adjust the value to control the roundness */
+}
+
+/* Apply to the modal content */
+.modal-content {
+  border-radius: 10px;  /* Ensure content inside the modal is also rounded */
+}
+
+/* Style for Modal Title */
+
+.modal .modal-header .modal-title {
+  color: #00a65a !important;  /* Use !important to ensure it overrides other styles */
+}
+
+/* Optional: Change the background color of the modal header to match */
+.modal-header {
+  border-radius: 10px;  /* Ensure content inside the modal is also rounded */
+  background-color: #f8f9fa;  /* Light background color for the modal header */
+  border-bottom: 1px solid #e3e3e3;  /* Optional border for the modal header */
+}
+
+.text-left { 
+  margin-bottom:10px;
+  
+}
+
+.modal-dialog {
+  max-width: 80%; /* Adjust the width as needed */
+}
+
+.modal-body img {
+  max-width: 100%; /* Ensures the image doesn't overflow the container */
+  height: auto; /* Maintains the aspect ratio */
+  display: block; /* Centers the image */
+  margin: 0 auto; /* Centers the image horizontally */
+}
+
+.modal-header .modal-title {
+  font-size: 1.5rem; /* Increase font size */
+  font-weight: bold;
+  color: #333; /* Change the color */
+}
+
+.product-image-modal {
+  max-width: 100%;    /* Adjusts to modal width */
+  max-height: 300px;  /* Limits height to avoid overly large images */
+  object-fit: contain; /* Maintains aspect ratio */
+  border-radius: 8px;  /* Optional: adds rounded corners */
+}
+.custom-title {
+  font-family: 'Arial', sans-serif; /* You can change the font */
+  font-size: 24px;
+  font-weight: bold;
+  color:  #00a65a;
+  text-align: center; /* Center-align the title */
+}
