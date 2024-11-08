@@ -69,11 +69,26 @@
             </span>
           </a>
           <ul class="treeview-menu">
+            <li><a href="/users/create"><i class="fa fa-circle-o"></i> Create User </a></li>
+            <li><a href="/users"><i class="fa fa-circle-o"></i> User List </a></li>
             <li><a href="/customers/create"><i class="fa fa-circle-o"></i> Create Customer </a></li>
             <li><a href="/customers"><i class="fa fa-circle-o"></i> Customer List </a></li>
             <li><a href="/suppliers/create"><i class="fa fa-circle-o"></i> Create Supplier </a></li>
             <li><a href="/suppliers"><i class="fa fa-circle-o"></i> Supplier List </a></li>
             
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-pie-chart"></i>
+            <span>Payments</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="/payments/create"><i class="fa fa-circle-o"></i> Add Payment </a></li>
+            <li><a href="/payments"><i class="fa fa-circle-o"></i> Payment List </a></li>
           </ul>
         </li>
         

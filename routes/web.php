@@ -5,6 +5,12 @@ use App\Http\Controllers\InvoiceController\InvoiceController;
 use App\Http\Controllers\ProductController\ProductController;
 use App\Http\Controllers\AuthController\LoginController;
 use App\Http\Controllers\CustomerController\CustomerController;
+use App\Http\Controllers\SupplierController\SupplierController;
+use App\Http\Controllers\UserController\UserController;
+use App\Http\Controllers\PaymentController\PaymentController;
+
+
+
 
 Route::get('welcome', function () {
     return view('welcome');
@@ -51,6 +57,38 @@ Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->nam
     Route::get('/customers/{customer}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
     Route::put('/customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
     Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+
+    // Supplier routes
+    Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
+    Route::get('/suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create');
+    Route::post('/suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
+    Route::get('/suppliers/{supplier}', [SupplierController::class, 'show'])->name('suppliers.show');
+    Route::get('/suppliers/{supplier}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+    Route::put('/suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
+    Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+
+    // User routes
+    Route::get('/users', [UserController::class, 'index'])->name('users.index'); 
+    Route::get('/users/create', [UserController::class, 'create'])->name('users.create'); 
+    Route::post('/users/store', [UserController::class, 'store'])->name('users.store'); 
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show'); 
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit'); 
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update'); 
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy'); 
+
+    
+
+    // Payment routes
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create');
+    Route::post('/payments/store', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+    Route::get('/payments/{payment}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
+    Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
+    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
+    Route::get('/payments/get-payable-options/{head}', [PaymentController::class, 'getPayableOptions'])->name('payments.getPayableOptions');
+
+
 
 
 //});

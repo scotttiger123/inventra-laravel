@@ -252,3 +252,63 @@
   color:  #00a65a;
   text-align: center; /* Center-align the title */
 }
+
+
+.badge-badge-success {
+  background-color: #d4edda; /* Light green */
+  color: #155724; /* Dark green text */
+  padding: 5px 10px; /* Adjust padding for better spacing */
+  border-radius: 10px;
+  font-weight: bold;
+  display: inline-block; /* Prevents full-width stretching */
+  text-align: center;
+  font-size: 12px; /* Adjust font size if needed */
+}
+
+.badge-badge-danger {
+  background-color: #f8d7da; /* Light red */
+  color: #721c24; /* Dark red text */
+  padding: 5px 10px; /* Adjust padding for better spacing */
+  border-radius: 10px;
+  font-weight: bold;
+  display: inline-block; /* Prevents full-width stretching */
+  text-align: center;
+  font-size: 12px; /* Adjust font size if needed */
+}
+
+@media (max-width: 768px) { /* Applies on mobile view */
+  .form-border {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      white-space: nowrap;
+  }
+
+  /* Scrollbar Styling */
+  .form-border::-webkit-scrollbar {
+      height: 8px; /* Height of the scrollbar */
+  }
+
+  .form-border::-webkit-scrollbar-track {
+      background: #e0e0e0; /* Track color (light gray) */
+      border-radius: 10px;
+  }
+
+  .form-border::-webkit-scrollbar-thumb {
+      background-color: #888; /* Thumb color */
+      border-radius: 10px;
+      border: 2px solid #e0e0e0; /* Creates space around the thumb */
+  }
+
+  .form-border::-webkit-scrollbar-thumb:hover {
+      background-color: #555; /* Darker thumb color on hover */
+  }
+
+  /* Firefox */
+  .form-border {
+      scrollbar-width: thin; /* Makes scrollbar thinner */
+      scrollbar-color: #888 #e0e0e0; /* Thumb color and track color */
+  }
+}
+
+
+

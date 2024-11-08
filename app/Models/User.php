@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', 'parent_id','status'
     ];
 
     /**
@@ -28,6 +29,17 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    public function parent()
+    {
+        return $this->belongsTo(User::class, 'parent_id');
+    }
+
+    // A user can have many child users
+    public function children()
+    {
+        return $this->hasMany(User::class, 'parent_id');
+    }
+
     
     protected $hidden = [
         'password',

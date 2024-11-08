@@ -298,7 +298,7 @@
                     class="user-image"
                     alt="User Image"
                   />
-                  <span class="hidden-xs">Alexander Pierce</span>
+                  <span class="hidden-xs">Welcome, {{ ucfirst(Auth::user()->name) }}</span> 
                 </a>
                 <ul class="dropdown-menu">
                   <!-- User image -->

@@ -10,20 +10,22 @@ $(function () {
     });
 });
 
-$('#viewProductModal').on('show.bs.modal', function (event) {
+$('#viewCustomerModal').on('show.bs.modal', function (event) { 
     var button = $(event.relatedTarget); // Button that triggered the modal
     var modal = $(this);
-    modal.find('#product-code').text(button.data('code') || 'N/A');
-    modal.find('#product-name').text(button.data('name') || 'N/A');
-    modal.find('#product-cost').text(button.data('cost') || 'N/A');
-    modal.find('#product-price').text(button.data('price') || 'N/A');
-    modal.find('#product-uom').text(button.data('uom') || 'N/A');
-    modal.find('#product-details').text(button.data('details') || 'N/A');
-    modal.find('#product-initial-stock').text(button.data('initial-stock') || 'N/A');
-    modal.find('#product-alert-quantity').text(button.data('alert-quantity') || 'N/A');
-    modal.find('#product-tax-id').text(button.data('tax-id') || 'N/A');
-    modal.find('#product-image').attr('src', button.data('image'));
+    
+    modal.find('#customer-name').text(button.data('name') || 'N/A');
+    modal.find('#customer-email').text(button.data('email') || 'N/A');
+    modal.find('#customer-phone').text(button.data('phone') || 'N/A');
+    modal.find('#customer-address').text(button.data('address') || 'N/A');
+    modal.find('#customer-city').text(button.data('city') || 'N/A');
+    modal.find('#customer-po-box').text(button.data('po-box') || 'N/A');
+    modal.find('#customer-initial-balance').text(button.data('initial-balance') || 'N/A');
+    modal.find('#customer-tax-number').text(button.data('tax-number') || 'N/A');
+    modal.find('#customer-discount-type').text(button.data('discount-type') || 'N/A');
+    modal.find('#customer-discount-value').text(button.data('discount-value') || 'N/A');
 });
+
 
 function confirmDeleteCustomer(productId) {
     if (confirm('Are you sure you want to delete this customer?')) {

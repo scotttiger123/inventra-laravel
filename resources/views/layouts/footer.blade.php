@@ -52,6 +52,9 @@
 <!-- Link to your custom JavaScript file -->
 <script src="{{ asset('dist/js/product.js') }}"></script>
 <script src="{{ asset('dist/js/customer.js') }}"></script>
+<script src="{{ asset('dist/js/supplier.js') }}"></script>
+<script src="{{ asset('dist/js/user.js') }}"></script>
+<script src="{{ asset('dist/js/payment.js') }}"></script>
 
 
 </script>

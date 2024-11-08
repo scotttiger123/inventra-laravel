@@ -7,6 +7,7 @@ use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class CustomerController extends Controller
 {
@@ -20,8 +21,28 @@ class CustomerController extends Controller
         // Validate the incoming request data
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:customers,email',
-            'phone' => 'nullable|string|max:15',
+            
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('customers', 'email')
+                    ->where(function ($query) use ($request) {
+                        $query->where('created_by', auth()->id())
+                              ->orWhere('parent_user_id', auth()->user()->parent_id);
+                    })
+                ],
+                'phone' => [
+                    'nullable',
+                    'string',
+                    'max:15',
+                    Rule::unique('customers', 'phone')
+                        ->where(function ($query) use ($request) {
+                            $query->where('created_by', auth()->id())
+                                ->orWhere('parent_user_id', auth()->user()->parent_id);
+                        })
+                ],
+            
+
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'po_box' => 'nullable|string|max:10',
