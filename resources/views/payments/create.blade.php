@@ -81,8 +81,8 @@
                 <!-- Amount Date Field (Defaults to current date) -->
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Amount Date *</label>
-                        <input type="date" name="amount_date" class="form-control myInput" value="{{ old('amount_date', date('Y-m-d')) }}" required>
+                        <label>Date *</label>
+                        <input type="date" name="payment_date" class="form-control myInput" value="{{ old('amount_date', date('Y-m-d')) }}" required>
                         @error('amount_date')
                             <span class="validation-msg text-danger">{{ $message }}</span>
                         @enderror
@@ -120,8 +120,9 @@
                     <div class="form-group">
                         <label>Payment Type *</label>
                         <select name="payment_type" class="form-control myInput" required>
-                            <option value="credit" class="badge-badge-success" {{ old('payment_type') == 'credit' ? 'selected' : '' }}>Credit (Payment In)</option>
-                            <option value="debit" class="badge-badge-danger" {{ old('payment_type') == 'debit' ? 'selected' : '' }}>Debit (Payment Out)</option>
+                            <option value="credit" class="badge-badge-success" {{ old('payment_type') == 'credit' ? 'selected' : '' }}><span class="text-success">+ </span> Credit (Payment In)</option>
+                            <option value="debit" class="badge-badge-danger" {{ old('payment_type') == 'debit' ? 'selected' : '' }}><span class="text-danger">- </span> Debit (Payment Out)</option>
+                            
                         </select>
                         @error('payment_type')
                             <span class="validation-msg text-danger">{{ $message }}</span>

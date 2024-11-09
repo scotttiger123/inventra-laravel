@@ -14,24 +14,35 @@ use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
+    
     public function index()
     {
-        $payments = Payment::all(); // Fetch all payments
+        $payments = Payment::all()->map(function ($payment) {
+            if ($payment->payable_type === 'customer') {
+                $payment->payable_name = Customer::where('id', $payment->payable_id)->value('name');
+            } elseif ($payment->payable_type === 'supplier') {
+                $payment->payable_name = Supplier::where('id', $payment->payable_id)->value('name');
+            }
+            return $payment;
+        });
+
         return view('payments.index', compact('payments'));
     }
 
     
-    public function create()
+    public function edit(Payment $payment)
     {
-        $paymentHeads = PaymentHead::all(); 
-        $user = auth()->user(); 
-        $parentUserId = $user->parent_user_id; 
+        $paymentHeads = PaymentHead::all();
+        $user = auth()->user();
+        $parentUserId = $user->parent_user_id;
 
-    
-        $customers = Customer::where('parent_user_id', $parentUserId)->get();
-        $suppliers = Supplier::where('parent_user_id', $parentUserId)->get();
+        if ($payment->payment_head == 'customer') {
+            $payables = Customer::where('parent_user_id', $parentUserId)->get();
+        } else {
+            $payables = Supplier::where('parent_user_id', $parentUserId)->get();
+        }
 
-        return view('payments.create', compact('paymentHeads', 'customers', 'suppliers'));
+        return view('payments.edit', compact('payment', 'paymentHeads', 'payables'));
     }
 
     
@@ -81,6 +92,7 @@ class PaymentController extends Controller
             'payable_id' => $request->payable_id,
             'payable_type' => $request->payable_type,
             'payment_method' => $request->payment_method,
+            'payment_date' => $request->payment_date,
             'note' => $request->note,
             'created_by' => auth()->id(), 
             
@@ -94,29 +106,26 @@ class PaymentController extends Controller
         return view('payments.show', compact('payment'));
     }
 
-    public function edit(Payment $payment)
-    {
-        $paymentHeads = PaymentHead::all();
-        return view('payments.edit', compact('payment', 'paymentHeads'));
-    }
+    public function update(Request $request, $id)
+        {
+            $request->validate([
+                'payment_head' => 'required|string',
+                'payable_id' => 'required|integer',
+                'amount' => 'required|numeric',
+                'payment_date' => 'required|date',
+                'invoice_id' => 'nullable|integer',
+                'status' => 'required|string',
+                'payment_type' => 'required|string',
+                'payment_method' => 'required|string',
+                'note' => 'nullable|string',
+            ]);
 
-    public function update(Request $request, Payment $payment)
-    {
-        $request->validate([
-            'amount' => 'required|numeric',
-            'status' => 'required|in:pending,completed,cancelled',
-            'payment_type' => 'required|in:credit,debit',
-        ]);
+            $payment = Payment::findOrFail($id);
+            $payment->update($request->all());
 
-        $payment->update([
-            'amount' => $request->amount,
-            'status' => $request->status,
-            'payment_type' => $request->payment_type,
-            'updated_by' => auth()->id(),
-        ]);
+            return redirect()->route('payments.edit', $payment->id)->with('success', 'Payment updated successfully');
+        }
 
-        return redirect()->route('payments.index')->with('success', 'Payment updated successfully!');
-    }
 
     public function destroy(Payment $payment)
     {

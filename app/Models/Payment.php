@@ -19,6 +19,8 @@ class Payment extends Model
         'invoice_id', // ID of related invoice (if applicable)
         'payment_head', // Payment head (customer or supplier)
         'payment_method',
+        'payment_date',
+        'note',
         'updated_by', // User who last updated the payment
         'deleted_by', // User who soft deleted the payment
         'created_by', // The user who entered the payment
@@ -46,6 +48,16 @@ class Payment extends Model
     public function editor()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'payable_id');
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'payable_id');
     }
 
     /**

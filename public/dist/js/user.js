@@ -2,11 +2,11 @@ $(function () {
     
     $('#user-listings').DataTable({
         'paging': true,
-        'lengthChange': false,
-        'searching': false,
+        'lengthChange': true,
+        'searching': true,
         'ordering': true,
         'info': true,
-        'autoWidth': false
+        'autoWidth': true
     });
 });
 
