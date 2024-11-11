@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('payments', function (Blueprint $table) {
-            $table->date('payment_date')->nullable()->after('created_at'); // Add 'payment_date' column
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('name'); // e.g., admin, cashier, manager
+            $table->timestamps();
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('payments', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('roles');
     }
 };

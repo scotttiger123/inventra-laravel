@@ -83,6 +83,8 @@
                             <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                             <option value="manager" {{ old('role') == 'manager' ? 'selected' : '' }}>Manager</option>
                             <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User</option>
+                            <option value="sales_manager" {{ old('role') == 'sales_manager' ? 'selected' : '' }}>Sales Manager</option>
+
                         </select>
                         @error('role')
                             <span class="validation-msg text-danger">{{ $message }}</span>

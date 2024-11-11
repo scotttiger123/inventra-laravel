@@ -1,13 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\InvoiceController\InvoiceController;
+use App\Http\Controllers\OrderController\OrderController;
 use App\Http\Controllers\ProductController\ProductController;
 use App\Http\Controllers\AuthController\LoginController;
 use App\Http\Controllers\CustomerController\CustomerController;
 use App\Http\Controllers\SupplierController\SupplierController;
 use App\Http\Controllers\UserController\UserController;
 use App\Http\Controllers\PaymentController\PaymentController;
+use App\Http\Controllers\RoleController\RoleController;
 
 
 
@@ -28,13 +29,13 @@ Route::post('login', [LoginController::class,'login'])->name('login');
 
 // Route for listing all invoices
 
-Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
-Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
-Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
-Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
-Route::get('/invoices/{invoice}/edit', [InvoiceController::class, 'edit'])->name('invoices.edit');
-Route::put('/invoices/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
-Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
+Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
+Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
 
 //Route::middleware(['auth'])->group(function () {
@@ -87,6 +88,18 @@ Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->nam
     Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
     Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
     Route::get('/payments/get-payable-options/{head}', [PaymentController::class, 'getPayableOptions'])->name('payments.getPayableOptions');
+
+
+    // Role routes
+    Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');  // Display a listing of roles
+    Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');  // Show form to create a new role
+    Route::post('/roles/store', [RoleController::class, 'store'])->name('roles.store');  // Store a newly created role
+    Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show');  // Display a specific role
+    Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');  // Show form to edit a role
+    Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');  // Update a specific role
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');  // Delete a specific role
+    Route::get('roles/{role}/permissions', [RoleController::class, 'showPermissions'])->name('roles.permissions');
+    Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])->name('roles.updatePermissions');
 
 
 
