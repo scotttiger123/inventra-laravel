@@ -28,6 +28,7 @@
         <ul class="treeview-menu">
           <li><a href="{{ route('orders.index') }}"><i class="fa fa-file-invoice"></i> Sale View</a></li>
           <li><a href="{{ route('orders.create') }}"><i class="fa fa-plus-circle"></i> Add Sale Order</a></li>
+          <li><a href="{{ route('orders.create-pos') }}"><i class="fa fa-plus-circle"></i> POS </a></li>
         </ul>
       </li>
 
@@ -117,7 +118,8 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="/warehouse/transfer"><i class="fa fa-arrow-right"></i> Transfer Stock</a></li>
+          <li><a href="/transfers"><i class="fa fa-arrow-right"></i> Transfer Lists </a></li>
+          <li><a href="/transfers/create"><i class="fa fa-arrow-right"></i> AddTransfer</a></li>
         </ul>
       </li>
 
@@ -133,7 +135,9 @@
           <li><a href="/roles/create"><i class="fa fa-wrench"></i> Assign Role/Permission </a></li>
           <li><a href="/settings"><i class="fa fa-wrench"></i> General Settings</a></li>
           <li><a href="/settings/user"><i class="fa fa-user-cog"></i> User Settings</a></li>
+          <li><a href="/warehouses"><i class="fa fa-arrow-right"></i> Warehouse</a></li>
         </ul>
+        
       </li>
 
       <li class="treeview">

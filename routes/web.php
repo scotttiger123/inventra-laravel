@@ -9,6 +9,9 @@ use App\Http\Controllers\SupplierController\SupplierController;
 use App\Http\Controllers\UserController\UserController;
 use App\Http\Controllers\PaymentController\PaymentController;
 use App\Http\Controllers\RoleController\RoleController;
+use App\Http\Controllers\WarehouseController\WarehouseController;
+use App\Http\Controllers\TransferController\TransferController;
+
 
 
 
@@ -31,6 +34,7 @@ Route::post('login', [LoginController::class,'login'])->name('login');
 
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
+Route::get('/orders/create-pos', [OrderController::class, 'createPOS'])->name('orders.create-pos');
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
@@ -101,7 +105,25 @@ Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('ord
     Route::get('roles/{role}/permissions', [RoleController::class, 'showPermissions'])->name('roles.permissions');
     Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])->name('roles.updatePermissions');
 
+    
+    // Warehouse routes
+    Route::get('/warehouses', [WarehouseController::class, 'index'])->name('warehouses.index'); // List all warehouses
+    Route::get('/warehouses/create', [WarehouseController::class, 'create'])->name('warehouses.create'); // Show form to create a warehouse
+    Route::post('/warehouses/store', [WarehouseController::class, 'store'])->name('warehouses.store'); // Store a new warehouse
+    Route::get('/warehouses/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show'); // Show a specific warehouse
+    Route::get('/warehouses/{warehouse}/edit', [WarehouseController::class, 'edit'])->name('warehouses.edit'); // Show form to edit a warehouse
+    Route::put('/warehouses/{warehouse}', [WarehouseController::class, 'update'])->name('warehouses.update'); // Update a specific warehouse
+    Route::delete('/warehouses/{warehouse}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy'); // Soft delete a warehouse
 
+
+    // Transfer routes
+    Route::get('/transfers', [TransferController::class, 'index'])->name('transfers.index'); // List all transfers
+    Route::get('/transfers/create', [TransferController::class, 'create'])->name('transfers.create'); // Show form to create a transfer
+    Route::post('/transfers/store', [TransferController::class, 'store'])->name('transfers.store'); // Store a new transfer
+    Route::get('/transfers/{transfer}', [TransferController::class, 'show'])->name('transfers.show'); // Show a specific transfer
+    Route::get('/transfers/{transfer}/edit', [TransferController::class, 'edit'])->name('transfers.edit'); // Show form to edit a transfer
+    Route::put('/transfers/{transfer}', [TransferController::class, 'update'])->name('transfers.update'); // Update a specific transfer
+    Route::delete('/transfers/{transfer}', [TransferController::class, 'destroy'])->name('transfers.destroy'); // Delete a transfer
 
 
 //});

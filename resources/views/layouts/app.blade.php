@@ -21,7 +21,8 @@
   <link rel="stylesheet" href="{{ asset('plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
   
   
-  
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="../../bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
   
   <!-- HTML5 Shim and Respond.js for IE8 support -->
   <!--[if lt IE 9]>

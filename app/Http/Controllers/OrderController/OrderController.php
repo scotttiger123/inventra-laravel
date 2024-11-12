@@ -29,6 +29,21 @@ class OrderController extends Controller
         return view('orders.create', compact('customers', 'saleManagers'));
     }
 
+    public function createPOS()
+    {
+        $user = auth()->user();
+
+        // Get customers created by the current user or their parent
+        $customers = Customer::where('created_by', $user->id)
+        ->orWhere('created_by', $user->parent_id)
+        ->get();
+
+        // Fetch sale managers for additional dropdown if needed
+        $saleManagers = User::where('role', 'sale_manager')->get();
+
+        return view('orders.create-pos', compact('customers', 'saleManagers'));
+    }
+
 
   
        
