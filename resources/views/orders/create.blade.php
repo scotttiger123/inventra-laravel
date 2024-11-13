@@ -100,6 +100,15 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-2">
+                                <input type="text" list="orderStatusList" name="" id="Salesman" class="form-control myInput" placeholder="Order Status" style="margin-top:0px;" tabindex="1">
+                                <datalist id="orderStatusList">
+                                    <option value=""></option>
+                                    <option value="Return">Return</option>
+                                    <option value="Hold">Hold</option>
+                                    <option value="Pending">Pending</option>
+                                </datalist>
+                            </div>
                             
                             
                         </div>
