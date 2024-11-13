@@ -50,7 +50,7 @@
                 </div>
             </div>
 
-        <form id="orderForm">
+        <form id="orderForm" action="{{ route('orders.store') }}" method="POST">
             @csrf
             <div class="box-body">
                                      
@@ -63,24 +63,37 @@
                                     <i class="fa fa-calendar"></i>
 
                                     </div>
-                                    <input type="datetime-local" id="datetimepicker_dark1" class="form-control myInput" style="width: 100%;" tabindex="1">
+                                    <input type="datetime-local" name ='order_date' id="datetimepicker_dark1" class="form-control myInput" style="width: 100%;" tabindex="1">
                                 </div>
                             </div>
 
                             <div class="col-md-2">
-                                <div class="input-group" style="width: 100%;"> 
-                                    <div class="input-group-addon" data-toggle="modal" data-target="#CreateNewProd">
-                                        <i class="fa fa-plus"></i>
+                                        <div class="input-group" style="width: 100%;"> 
+                                            <div class="input-group-addon" data-toggle="modal" data-target="#CreateNewProd">
+                                                <i class="fa fa-plus"></i>
+                                            </div>
+                                            <!-- Input for selecting customer name -->
+                                            <input type="text" 
+                                                list="customer-names" 
+                                                style="width: 100%;" 
+                                                name="customer-name" 
+                                                class="form-control myInput" 
+                                                placeholder="Select Customer Name" 
+                                                tabindex="1" 
+                                                id="customer-name-input">
+
+                                            <datalist id="customer-names">
+                                                <option value="Walk In Customer">Walk In Customer</option>
+                                                @foreach($customers as $customer)
+                                                    <option value="{{ $customer->name }}" data-id="{{ $customer->id }}">{{ $customer->name }}</option>
+                                                @endforeach
+                                            </datalist>
+
+                                            <!-- Hidden field for storing customer ID -->
+                                            <input type="Text" name="customer-id" id="customer-id">
+                                        </div>
                                     </div>
-                                    <input  type="text" list="client_name" style="width: 100%;" name="" class="form-control myInput" placeholder="CLIENT NAME" tabindex="1" id="Client">
-                                    <datalist id="client_name">
-                                        <option value="Walk In Customer">Walk In Customer</option>
-                                            @foreach($customers as $customer)
-                                                <option value="{{ $customer->name }}">{{ $customer->name }}</option>
-                                            @endforeach
-                                    </datalist>
-                                </div>
-                            </div>
+
                             <div class="col-md-2">
                                 <input type="text" list="salestitlelist" name="" id="Salesman" class="form-control myInput" placeholder="Sales Person" style="margin-top:0px;" tabindex="1">
                                 <datalist id="salestitlelist">
@@ -129,7 +142,7 @@
                             </div>
 
                             <div class="col-sm-1" >
-                                <input type="text"  class="form-control myInput" name="Qty" value="" placeholder="Qty" id="qty_id" tabindex="2"  onKeydown="Javascript: if (event.keyCode==13) IOData();">
+                                <input type="text"  class="form-control myInput" name="qty" value="" placeholder="Qty" id="qty_id" tabindex="2"  onKeydown="Javascript: if (event.keyCode==13) IOData();">
                             </div>
                             <div class="col-xs-1">
                                 <input type="text" id="Rate_id" class="form-control myInput" name="" onKeydown="Javascript: if (event.keyCode==13) IOData();" placeholder="Rate" >
@@ -187,6 +200,11 @@
                             </div>
                             <!-- Add Product Button -->
                             <button type="button" class="btn btn-success" onclick="addItemToOrder()">Add Product</button>
+                            <button id="submitOrder" type="button">Submit Order</button>
+                            <!-- Success and Error Message Containers -->
+                            <div id="success-message" style="display:none;"></div>
+                            <div id="error-message" style="display:none;"></div>
+                            <meta name="csrf-token" content="{{ csrf_token() }}">
     
                     </div>
                     
