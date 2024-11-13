@@ -71,7 +71,7 @@ class OrderController extends Controller
         try {
             // Start a database transaction
             DB::beginTransaction();
-    
+            $orderNumber = $this->generateOrderNumber();
             // Create the order record
             $order = new Order();
             $order->customer_id = $request->customer_id;
@@ -82,6 +82,9 @@ class OrderController extends Controller
             $order->discount_amount = $request->discount_amount ?? 0;
             $order->payment_method = $request->payment_method;
             $order->order_date = $request->order_date;
+            $order->custom_order_id = $orderNumber;
+             
+            
             $order->created_by = auth()->id(); // Assuming the user is authenticated
             $order->updated_by = auth()->id();
             $order->save();
@@ -120,6 +123,30 @@ class OrderController extends Controller
             return response()->json(['success' => false, 'message' => 'There was an error creating the order. Please try again later.'], 500);
         }
     }
+
+    private function generateOrderNumber()
+    {
+        $year = date('Y');
+        $prefix = 'ORD';
+    
+        // Check if there's any order created in the current year
+        $lastOrder = Order::whereYear('created_at', $year)
+                          ->orderBy('created_at', 'desc')
+                          ->first();
+    
+        // If no orders exist for this year, start from 001, else increment the last order number
+        if ($lastOrder) {
+            // Extract the last order number (the numeric part)
+            $lastNumber = (int) substr($lastOrder->custom_order_id, -3);
+            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);  // Generate next number
+        } else {
+            // If no order found, start from 001
+            $newNumber = '001';
+        }
+    
+        return $prefix . '-' . $year . '-' . $newNumber;
+    }
+    
     
     public function customerStore(Request $request)
 {
