@@ -5,6 +5,8 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Customer;
+use App\Models\Product;
+
 use App\Models\User; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -14,20 +16,28 @@ use Exception;
 
 class OrderController extends Controller
 {
+    
+
     public function create()
     {
         $user = auth()->user();
-
+    
         // Get customers created by the current user or their parent
         $customers = Customer::where('created_by', $user->id)
-        ->orWhere('created_by', $user->parent_id)
-        ->get();
-
+            ->orWhere('created_by', $user->parent_id)
+            ->get();
+    
         // Fetch sale managers for additional dropdown if needed
         $saleManagers = User::where('role', 'sale_manager')->get();
-
-        return view('orders.create', compact('customers', 'saleManagers'));
+    
+        // Fetch products that belong to the current user or their parent
+        $products = Product::where('created_by', $user->id) // Products created by the current user
+            ->orWhere('created_by', $user->parent_id) // Products created by the parent of the current user
+            ->get();
+    
+        return view('orders.create', compact('customers', 'saleManagers', 'products'));
     }
+    
 
     public function createPOS()
     {
