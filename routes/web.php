@@ -40,7 +40,7 @@ Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.sh
 Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
 Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
 Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
-
+Route::post('/customer/store', [OrderController::class, 'customerStore'])->name('customer.store');
 
 //Route::middleware(['auth'])->group(function () {
 

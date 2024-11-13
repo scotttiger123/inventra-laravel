@@ -6,11 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Customer;
 use App\Models\Product;
+use App\Models\Role;
+
 
 use App\Models\User; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Exception;
 
 
@@ -24,18 +27,22 @@ class OrderController extends Controller
     
         // Get customers created by the current user or their parent
         $customers = Customer::where('created_by', $user->id)
-            ->orWhere('created_by', $user->parent_id)
+            ->orWhere('parent_user_id', $user->id)
+            ->orWhere('parent_user_id', $user->parent_id)
             ->get();
     
-        // Fetch sale managers for additional dropdown if needed
-        $saleManagers = User::where('role', 'sale_manager')->get();
+            $salePersonRoleId = Role::where('name', 'Sale Person')->value('id');
+
+            $salespersons = User::where('Role', $salePersonRoleId)->get();
+
     
         // Fetch products that belong to the current user or their parent
         $products = Product::where('created_by', $user->id) // Products created by the current user
-            ->orWhere('created_by', $user->parent_id) // Products created by the parent of the current user
+            ->orWhere('parent_user_id', $user->id)
+            ->orWhere('parent_user_id', $user->parent_id) // Products created by the parent of the current user
             ->get();
     
-        return view('orders.create', compact('customers', 'saleManagers', 'products'));
+        return view('orders.create', compact('customers', 'salespersons', 'products'));
     }
     
 
@@ -68,7 +75,7 @@ class OrderController extends Controller
             // Create the order record
             $order = new Order();
             $order->customer_id = $request->customer_id;
-            $order->sale_manager_id = $request->sale_manager_id;
+            $order->sale_manager_id = $request->salesperson_id;
             $order->total_amount = $request->total_amount;
             $order->status = $request->status;
             $order->other_charges = $request->other_charges ?? 0;
@@ -114,7 +121,45 @@ class OrderController extends Controller
         }
     }
     
-    
+    public function customerStore(Request $request)
+{
+    // Validate the incoming request data
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => [
+            'required',
+            'email',
+            Rule::unique('customers', 'email')
+                ->where(function ($query) {
+                    $query->where('created_by', auth()->id())
+                          ->orWhere('parent_user_id', auth()->user()->parent_id);
+                })
+        ],
+        'phone' => [
+            'nullable',
+            'string',
+            'max:15',
+            Rule::unique('customers', 'phone')
+                ->where(function ($query) {
+                    $query->where('created_by', auth()->id())
+                          ->orWhere('parent_user_id', auth()->user()->parent_id);
+                })
+        ],
+        'address' => 'required|string|max:255',
+        'city' => 'required|string|max:255',
+    ]);
+
+    // Create the new customer in the database
+    $customer = Customer::create($validated);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Customer created successfully.',
+        'customer_name' => $customer->name,  // Ensure this is being returned
+        'customer_id' => $customer->id,      // Ensure this is being returned
+    ]);
+}
+ 
 
 
 

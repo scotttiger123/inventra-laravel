@@ -1,4 +1,63 @@
 
+// Handle the form submission with AJAX
+document.getElementById('create-customer-form').addEventListener('submit', function (e) {
+    e.preventDefault(); // Prevent the default form submission behavior
+
+    const form = this;  // Get the form element
+    const formData = new FormData(form);  // Create FormData object from the form
+     // Hide messages before submitting the form
+     document.getElementById('success-message-customer-save').style.display = 'none';
+     document.getElementById('error-message-customer-save').style.display = 'none';
+    // Send the form data using AJAX (fetch)
+    fetch(form.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',  // Set CSRF token (for Laravel)
+            'X-Requested-With': 'XMLHttpRequest'  // Indicate that it's an AJAX request
+        },
+        body: formData  // Attach the form data to the request
+    })
+    .then(response => response.json())  // Parse the JSON response
+    .then(data => {
+        console.log(data);
+        // Check if the request was successful
+        if (data.success) {
+            document.getElementById('success-message-customer-save').style.display = 'block';
+            document.getElementById('success-message-customer-save').innerText = data.message;
+            form.reset();  // Reset the form after successful submission (optional)
+            // Append the new customer to the dropdown
+             // Check if customer data exists before appending
+        if (data.customer_name && data.customer_id) {
+            // Append the new customer to the customer dropdown
+            const customerNamesList = document.getElementById('customer-names');
+            const newOption = document.createElement('option');
+            newOption.value = data.customer_name; // assuming the server response contains the customer name
+            newOption.setAttribute('data-id', data.customer_id); // assuming the server response contains the customer ID
+            customerNamesList.appendChild(newOption);
+
+            // Set the input field value to the new customer's name
+            document.getElementById('customer-name-input').value = data.customer_name;
+            document.getElementById('customer-id').value = data.customer_id;
+        } else {
+            console.error('Missing customer data in response');
+        }
+
+        } else {
+            document.getElementById('error-message-customer-save').style.display = 'block';
+            document.getElementById('error-message-customer-save').innerHTML = data.message;
+        }
+    })
+    .catch(error => {
+        // Handle any errors that occurred during the fetch
+        console.error("Error:", error);
+        document.getElementById('error-message-customer-save').style.display = 'block';
+        document.getElementById('error-message-customer-save').innerText = "An unexpected error occurred. Please try again later.";
+    });
+});
+
+
+
+
 // Custoemr name validation & get id 
 const customerNameInput = document.getElementById('customer-name-input');
 const customerIdField = document.getElementById('customer-id');
@@ -11,6 +70,21 @@ customerNameInput.addEventListener('input', function() {
         customerIdField.value = customerId;
     } else {
         customerIdField.value = ''; // Clear customer ID if no valid selection
+    }
+});
+
+
+// Salesperson name validation & get id
+const salespersonNameInput = document.getElementById('salesperson-name-input');
+const salespersonIdField = document.getElementById('salesperson-id');
+
+salespersonNameInput.addEventListener('input', function() {
+    const selectedOption = document.querySelector(`#salesperson-names option[value="${salespersonNameInput.value}"]`);
+    if (selectedOption) {
+        const salespersonId = selectedOption.getAttribute('data-id');
+        salespersonIdField.value = salespersonId;
+    } else {
+        salespersonIdField.value = ''; // Clear salesperson ID if no valid selection
     }
 });
 

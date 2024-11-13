@@ -69,7 +69,7 @@
 
                             <div class="col-md-2">
                                         <div class="input-group" style="width: 100%;"> 
-                                            <div class="input-group-addon" data-toggle="modal" data-target="#CreateNewProd">
+                                            <div class="input-group-addon" data-toggle="modal" data-target="#CreateNewCustomerModal">
                                                 <i class="fa fa-plus"></i>
                                             </div>
                                             <!-- Input for selecting customer name -->
@@ -83,24 +83,43 @@
                                                 id="customer-name-input">
 
                                             <datalist id="customer-names">
-                                                <option value="Walk In Customer">Walk In Customer</option>
+                                                
                                                 @foreach($customers as $customer)
                                                     <option value="{{ $customer->name }}" data-id="{{ $customer->id }}">{{ $customer->name }}</option>
                                                 @endforeach
                                             </datalist>
 
                                             <!-- Hidden field for storing customer ID -->
-                                            <input type="Text" name="customer-id" id="customer-id">
+                                            <input type="hidden" name="customer_id" id="customer-id">
                                         </div>
-                                    </div>
-
-                            <div class="col-md-2">
-                                <input type="text" list="salestitlelist" name="" id="Salesman" class="form-control myInput" placeholder="Sales Person" style="margin-top:0px;" tabindex="1">
-                                <datalist id="salestitlelist">
-                                    <option value=""></option>
-                                    <option value="UBAID">UBAID</option>
-                                </datalist>
                             </div>
+
+                            <!-- Salesperson Selection -->
+                            <div class="col-md-2">
+                                <div class="input-group" style="width: 100%;"> 
+                                    <!-- Input for selecting salesperson name -->
+                                    <input type="text" 
+                                        list="salesperson-names" 
+                                        style="width: 100%;" 
+                                        name="salesperson-name" 
+                                        class="form-control myInput" 
+                                        placeholder="Select Salesperson Name" 
+                                        tabindex="1" 
+                                        id="salesperson-name-input">
+
+                                    <datalist id="salesperson-names">
+                                        @foreach($salespersons as $salesperson)
+                                            <option value="{{ $salesperson->name }}" data-id="{{ $salesperson->id }}">{{ $salesperson->name }}</option>
+                                        @endforeach
+                                    </datalist>
+
+                                    <!-- Hidden field for storing salesperson ID -->
+                                    <input type="hidden" name="salesperson_id" id="salesperson-id">
+                                </div>
+                            </div>
+
+                    
+
                             <div class="col-md-2">
                                 <div class="input-group" style="width: 100%;">
                                     <div class="input-group-addon" onclick="GetItems(this.value)" data-toggle="modal" data-target="#">
@@ -297,6 +316,50 @@
         </form>
     </div>
 </div>
+
+<!-- Models  -->
+<!-- Create customer modal  -->
+<div class="modal fade" id="CreateNewCustomerModal" tabindex="-1" role="dialog" aria-labelledby="CreateNewCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CreateNewCustomerModalLabel">Create New Customer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="create-customer-form" method="POST" action="{{ route('customer.store') }}">
+                    @csrf
+                    <div class="form-group">
+                        <label for="new-customer-name">Customer Name</label>
+                        <input type="text" class="form-control" id="new-customer-name" name="name" placeholder="Enter customer name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-customer-email">Customer Email</label>
+                        <input type="email" class="form-control" id="new-customer-email" name="email" placeholder="Enter customer email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-customer-phone">Phone Number</label>
+                        <input type="text" class="form-control" id="new-customer-phone" name="phone" placeholder="Enter phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-customer-address">Address</label>
+                        <input type="text" class="form-control" id="new-customer-address" name="address" placeholder="Enter address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-customer-city">City</label>
+                        <input type="text" class="form-control" id="new-customer-city" name="city" placeholder="Enter city" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="submitCustomer">Create Customer</button>
+                </form>
+                <div id="success-message-customer-save" style="display:none;"></div>
+                <div id="error-message-customer-save" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
    .small-box {
     background-color: #000;

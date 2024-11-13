@@ -36,7 +36,7 @@ class UserController extends Controller
                 })
             ],
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,manager,user',
+            'role' => 'required',
             'parent_id' => 'nullable|exists:users,id', 
             'status' => 'required|in:active,inactive',  
         ]);

@@ -34,6 +34,11 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'parent_id');
     }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'Role'); // 'Role' is the column name in the users table
+    }
+
     // A user can have many child users
     public function children()
     {
