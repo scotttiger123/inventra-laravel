@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Role;
+use App\Models\Uom;
 
 
 use App\Models\User; 
@@ -41,8 +42,13 @@ class OrderController extends Controller
             ->orWhere('parent_user_id', $user->id)
             ->orWhere('parent_user_id', $user->parent_id) // Products created by the parent of the current user
             ->get();
+
+            $uoms = Uom::all();  // Assuming the model for Uom is correctly defined
+
     
-        return view('orders.create', compact('customers', 'salespersons', 'products'));
+        return view('orders.create', compact('customers', 'salespersons', 'products', 'uoms'));
+
+        
     }
     
 
@@ -71,38 +77,62 @@ class OrderController extends Controller
         try {
             // Start a database transaction
             DB::beginTransaction();
-            $orderNumber = $this->generateOrderNumber();
+            $branchId = auth()->user()->branch_id ?? 1;
+            
+            if ($request->has('custom_order_id') && $request->custom_order_id) {
+                $orderNumber = $request->custom_order_id;
+                $existingOrder = Order::where('custom_order_id', $orderNumber)->first();
+                if ($existingOrder) {
+                    return response()->json(['success' => false, 'message' => 'Custom Order ID already exists.']);
+                }
+            } else {
+                $orderNumber = $this->generateOrderNumber($branchId);
+            }
+
+             
             // Create the order record
             $order = new Order();
             $order->customer_id = $request->customer_id;
             $order->sale_manager_id = $request->salesperson_id;
             $order->total_amount = $request->total_amount;
-            $order->status = $request->status;
+            $order->status = $request->order_status;
             $order->other_charges = $request->other_charges ?? 0;
             $order->discount_amount = $request->discount_amount ?? 0;
             $order->payment_method = $request->payment_method;
             $order->order_date = $request->order_date;
             $order->custom_order_id = $orderNumber;
+            $order->sale_note = $request->sale_note;
+            $order->staff_note = $request->staff_note;
+            $order->branch_id = auth()->user()->branch_id;
              
             
             $order->created_by = auth()->id(); // Assuming the user is authenticated
             $order->updated_by = auth()->id();
             $order->save();
-    
-            // Process and store order items (assuming the request contains 'order_items')
-            if ($request->has('order_items') && is_array($request->order_items)) {
-                foreach ($request->order_items as $item) {
-                    $order->items()->create([
-                        'product' => $item['product'],
-                        'qty' => $item['qty'],
-                        'rate' => $item['rate'],
-                        'discount' => $item['discount'] ?? 0,
-                        'net_rate' => $item['netRate'] ?? 0,
-                        'amount' => $item['amount'],
-                    ]);
+            if ($request->has('orderData')) {
+                $orderData = json_decode($request->orderData, true); // Decode JSON string to array
+                if (is_array($orderData)) {
+                    \Log::info('Order Data:', $orderData);
+                    foreach ($orderData as $item) {
+                        DB::table('order_items')->insert([
+                            'order_id' => $order->id,
+                            'product_id' => '12',
+                            'quantity' => $item['qty'],
+                            'unit_price' => $item['rate'],
+                            'discount_type' => $item['discountType'],
+                            'discount_amount' => $item['discountValue'],
+                            'exit_warehouse' => $item['exit_warehouse'],
+                            
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                } else {
+                    \Log::error('Invalid orderData format');
                 }
-            }
-    
+            } else {
+                \Log::error('Missing orderData');
+            }                                            
             // Commit transaction
             DB::commit();
     
@@ -120,34 +150,38 @@ class OrderController extends Controller
             ]);
     
             // Return a response indicating failure
-            return response()->json(['success' => false, 'message' => 'There was an error creating the order. Please try again later.'], 500);
+            return response()->json(['success' => false, 'message' => 'There was an error creating the order. Please try again later.']);
         }
     }
 
-    private function generateOrderNumber()
-    {
-        $year = date('Y');
-        $prefix = 'ORD';
-    
-        // Check if there's any order created in the current year
-        $lastOrder = Order::whereYear('created_at', $year)
-                          ->orderBy('created_at', 'desc')
-                          ->first();
-    
-        // If no orders exist for this year, start from 001, else increment the last order number
-        if ($lastOrder) {
-            // Extract the last order number (the numeric part)
-            $lastNumber = (int) substr($lastOrder->custom_order_id, -3);
-            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);  // Generate next number
-        } else {
-            // If no order found, start from 001
-            $newNumber = '001';
-        }
-    
-        return $prefix . '-' . $year . '-' . $newNumber;
+    private function generateOrderNumber($branchId)
+{
+    $year = date('Y');
+    $prefix = 'ORD-' . $branchId;
+
+    // Get the last order for the current year and branch, ordered by custom_order_id (to get the latest order)
+    $lastOrder = Order::whereYear('created_at', $year)
+                      ->where('branch_id', $branchId)
+                      ->orderBy('custom_order_id', 'desc')
+                      ->first();
+
+    // If no orders exist for the current year and branch, start with '001'
+    if ($lastOrder) {
+        // Extract the numeric part from the last order's custom_order_id
+        $lastNumber = (int) substr($lastOrder->custom_order_id, -3);
+        // Increment the last number
+        $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+    } else {
+        // If no order exists, start from '001'
+        $newNumber = '001';
     }
+
+    // Return the generated order number
+    return $prefix . '-' . $year . '-' . $newNumber;
+}
+
     
-    
+
     public function customerStore(Request $request)
 {
     // Validate the incoming request data

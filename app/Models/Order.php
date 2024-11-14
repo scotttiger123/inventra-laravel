@@ -12,10 +12,13 @@ class Order extends Model
 
     protected $fillable = [
         'custom_order_id',
+        'branch_id',
         'customer_id', // ID of the customer who placed the order
         'sale_manager_id', // ID of the sale manager handling the order
         'amount', // Total order amount
-        'status', // Order status (e.g., pending, completed, cancelled)
+        'status', 
+        'staff_note',
+        'sale_note',
         'other_charges', // Additional charges
         'total_discount', // Total discount on the order
         'payment_method', // Payment method used for the order

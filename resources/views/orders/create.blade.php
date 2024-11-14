@@ -5,9 +5,11 @@
     <div class="form-border">
         <!-- <div class="box-header with-border">
             <h3 class="box-title custom-title">Create Order</h3>
+            
+        </div> -->
             <div id="success-message" class="alert alert-success" style="display: none;"></div>
             <div id="error-message" class="alert alert-danger" style="display: none;"></div>
-        </div> -->
+        
             <div class="row" >
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box compact-info-box">
@@ -125,15 +127,15 @@
                                     <div class="input-group-addon" onclick="GetItems(this.value)" data-toggle="modal" data-target="#">
                                         <i class="fa fa-search"></i>
                                     </div>
-                                    <input type="text" list="orderList" name="" class="form-control myInput" placeholder="Invoice No." tabindex="1" id="order_id" onKeydown="Javascript: if (event.keyCode==13) GetItems(this.value);">
-                                        <datalist id="orderList"></datalist>
+                                    <input type="text" list="orderList" name="custom_order_id" class="form-control myInput" placeholder="Sale Id." >
+                                        
                                     <div onclick="edit_invoice()" class="input-group-addon" data-toggle="modal" data-target="#">
                                         <i class="fa fa-edit"></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <input type="text" list="orderStatusList" name="" id="Salesman" class="form-control myInput" placeholder="Order Status" style="margin-top:0px;" tabindex="1">
+                                <input type="text" list="orderStatusList" name="order_status" id="order_status" class="form-control myInput" placeholder="Order Status" >
                                 <datalist id="orderStatusList">
                                     <option value=""></option>
                                     <option value="Return">Return</option>
@@ -146,9 +148,9 @@
                         </div>
                         <div class="row">
                                                     
-                            <div class="col-md-2">
+                            <!-- <div class="col-md-2">
                                 <div class="input-group" style="width: 100%;"> 
-                                    <div class="input-group-addon" data-toggle="modal" data-target="#CreateNewProd">
+                                    <div class="input-group-addon" data-toggle="modal" >
                                         <i class="fa fa-plus"></i>
                                     </div>
                                     <input type="text" list="product_name" style="width: 100%;" name="product" class="form-control myInput" placeholder="Product Code/Name" tabindex="1" id="Product">
@@ -158,71 +160,89 @@
                                         @endforeach
                                     </datalist>
                                 </div>
+                            </div> -->
+                            <div class="col-md-2">
+                                <div class="input-group" style="width: 100%;"> 
+                                    <div class="input-group-addon" data-toggle="modal" data-target="#CreateNewProd">
+                                        <i class="fa fa-plus"></i>
+                                    </div>
+                                    <input type="text" list="product_name" style="width: 100%;" name="product" class="form-control myInput" placeholder="Product Code" tabindex="1" id="product-input">
+                                    <datalist id="product_name">
+                                        @foreach($products as $product)
+                                        <option value="{{ $product->product_code }}" data-id="{{ $product->id }}">{{ $product->product_name }}</option>
+
+                                        @endforeach
+                                    </datalist>
+                                </div>
                             </div>
 
+                            <!-- Hidden input for product ID -->
+                            <input type="hidden" id="product-id" name="product_id">
+
                             <div class="col-sm-1" >
-                                <input type="text"  class="form-control myInput" name="qty" value="" placeholder="Qty" id="qty_id" tabindex="2"  onKeydown="Javascript: if (event.keyCode==13) IOData();">
+                                <input type="text"  class="form-control myInput" name="qty" value="" placeholder="Quantity" id="qty_id" tabindex="2"  onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
                             </div>
                             <div class="col-xs-1">
-                                <input type="text" id="Rate_id" class="form-control myInput" name="" onKeydown="Javascript: if (event.keyCode==13) IOData();" placeholder="Rate" >
+                                <input type="text" id="price_id" class="form-control myInput" name="" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();" placeholder="Price" >
                             </div>
                             <div class="col-xs-1">
-                                <select id="discount_type" class="form-control myInput" tabindex="2">
+                                <select id="discount_type" class="form-control myInput" tabindex="2" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
                                     <option value="percentage">%</option>
                                     <option value="flat">Flat</option>
                                 </select>
                             </div>
                             <div class="col-xs-1">
-                                <input type="text" class="form-control myInput" id="discount_value" placeholder="Discount" tabindex="2">
+                                <input type="text" class="form-control myInput" id="discount_value" placeholder="Discount" tabindex="2" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
                             </div>
-                            <div class="col-xs-1">
-                                <input type="text" list="UOMList" class="form-control myInput" id="uom_id" name="unit" tabindex="3" value="" onKeydown="Javascript: if (event.keyCode==13) IOData();" placeholder="UOM" >
+                            <div class="col-xs-2">
+                                <input type="text" list="UOMList" class="form-control myInput" id="uom_id" name="unit" tabindex="3" value="" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();" placeholder="UOM">
                                 <datalist id="UOMList">
-                                    <option value="Set">Set</option>
-                                    <option value="Pack">Pack</option>
-                                    <option value="Piece">Piece</option>
-                                    <option value="Pair">Pair</option>
-                                    <option value="Roll">Roll</option>
-                                    <option value="RFT">RFT</option>
+                                    @foreach($uoms as $uom)
+                                        <option value="{{ $uom->abbreviation }}" data-id="{{ $uom->id }}">{{ $uom->name }} ({{ $uom->abbreviation }})</option>
+                                    @endforeach
                                 </datalist>
                             </div>
+
                         </div>
                             <div class="row">
                             
                                 <div class="col-xs-4">
                                     <div class="input-group" style="width: 100%;"> 
-                                             <div class="input-group-addon" data-toggle="modal" data-target="#AddProductDefi">
+                                             <div class="input-group-addon" data-toggle="modal" >
                                                 <i class="fa fa-tags"></i> 
                                             </div>  
                                     
-                                        <input type="text" id="sale_note" name="unit" tabindex="4" onKeydown="Javascript: if (event.keyCode==13) IOData();" placeholder="Sale Note / Remarks"  class="form-control myInput">
+                                        <input type="text" id="sale_note" name="sale_note" tabindex="4"  placeholder="Sale Note / Remarks"  class="form-control myInput">
                                     </div>
                                 </div>
                                 <div class="col-xs-4">
                                     <div class="input-group" style="width: 100%;"> 
-                                             <div class="input-group-addon" data-toggle="modal" data-target="#AddProductDefi">
+                                             <div class="input-group-addon" data-toggle="modal" >
                                                 <i class="fa fa-tags"></i> 
                                             </div>  
                                     
-                                        <input type="text" id="staff_note" name="unit" tabindex="4" onKeydown="Javascript: if (event.keyCode==13) IOData();" placeholder="Staff Note / Remarks"  class="form-control myInput">
+                                        <input type="text" id="staff_note" name="sale_note" tabindex="4"  placeholder="Staff Note / Remarks"  class="form-control myInput">
                                     </div>
                                 </div>
                                 <div class="col-xs-2">
-                                    <div class="form-group">
-                                            <label style = "margin-top:5px">
-                                                <input type="checkbox" class="flat-red" checked>
-                                                Exit Warehouse
-                                            </label>
+                                        <div class="form-group">
+                                            <input type="checkbox" id="exit_warehouse" name="exit_warehouse" value="1" class="flat-red" checked>
+                                            <label for="exit_warehouse">Exit Warehouse</label>
                                             
+                                            <span>Check this if the product is exiting from the warehouse.</span>
                                         </div>
-                                </div>
+                                </div>        
+                                
+                                    <!-- Add Product Button -->
+                                <button type="button" class="btn btn-info" onclick="addItemToOrder()">Add Product</button>
+                                <!-- <button id="submitOrder" class="btn btn-success" type="button">Submit Order</button> -->
+                                <button id="submitOrder" class="btn btn-success" type="button">
+                                    Submit Order
+                                    <i id="loader" style = 'display:none' class="fa fa-refresh fa-spin"></i>
+                                </button>
+                                <!-- Success and Error Message Containers -->
                             </div>
-                            <!-- Add Product Button -->
-                            <button type="button" class="btn btn-success" onclick="addItemToOrder()">Add Product</button>
-                            <button id="submitOrder" type="button">Submit Order</button>
-                            <!-- Success and Error Message Containers -->
-                            <div id="success-message" style="display:none;"></div>
-                            <div id="error-message" style="display:none;"></div>
+                            
                             <meta name="csrf-token" content="{{ csrf_token() }}">
     
                     </div>
@@ -235,11 +255,13 @@
                                     <thead>
                                         <tr>
                                             <th>Product Code/Name</th>
-                                            <th>Quantity</th>
+                                            <th style = "width:150px">Quantity</th>
+                                            <th>Uom</th>
                                             <th>Rate</th>
                                             <th>Discount (%)</th>
                                             <th>Net Rate</th>
                                             <th>Amount</th>
+                                            <th>Exit Warehouse</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -257,17 +279,21 @@
                                 <div class="col-xs-2">
                                     <div class="small-box" >
                                         <div class="inner">
-                                            <h3><input id="GTotal" type="text" value="0" class="form-control" placeholder="0"></h3>
+                                            <h3><input id="gross_amount_id" type="text" value="0" class="form-control" placeholder="0"></h3>
                                             <p>GROSS AMOUNT</p>
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="col-xs-2">
                                     <div class="small-box">
-                                        <div class="inner">
-                                            <h3><input name="" type="text" id="direct_discount_id" value="" class="form-control"></h3>
-                                            <p>DISCOUNT</p>
+                                        <div class="inner" >
+                                            <h3><input type="text" id="order_discount_id" value="" class="form-control" placeholder="Order Discount "></h3>
+                                            <label >
+                                                <input type="radio" name="order_discount_type" class="flat-red" checked> Flat 
+                                            </label> &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <label>
+                                                <input type="radio" name="order_discount_type" id="percentage_discount" class="flat-red" value="percentage"> Percentage 
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
@@ -275,7 +301,7 @@
                                 <div class="col-xs-2">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input name="" value="" class="form-control"></h3>
+                                            <h3><input type = 'number'name="" value="" id = 'other_charges_id' class="form-control"></h3>
                                             <p>OTHER CHARGES</p>
                                         </div>
                                     </div>
@@ -284,7 +310,7 @@
                                 <div class="col-xs-2">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input id="NeAmount_id" type="text" value="" class="form-control" placeholder="0"></h3>
+                                            <h3><input id="net_amount_id" type="number" value="" class="form-control" placeholder="0"></h3>
                                             <p>NET AMOUNT</p>
                                         </div>
                                     </div>
@@ -293,7 +319,7 @@
                                 <div class="col-xs-2">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input name="amount" id="Paid_Amount_Id" type="text" class="form-control"></h3>
+                                            <h3><input name="paid_amount" id="paid_amount_id" type="number" class="form-control"></h3>
                                             <p>PAID AMT</p>
                                         </div>
                                     </div>
@@ -302,7 +328,7 @@
                                 <div class="col-xs-2">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input name="" id="Balance_id" type="text" class="form-control"></h3>
+                                            <h3><input name="" id="balance_id" type="number" class="form-control"></h3>
                                             <p>BALANCE</p>
                                         </div>
                                     </div>
