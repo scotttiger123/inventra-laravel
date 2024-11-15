@@ -11,24 +11,29 @@ class Order extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+
         'custom_order_id',
         'branch_id',
         'customer_id', // ID of the customer who placed the order
         'sale_manager_id', // ID of the sale manager handling the order
-        'amount', // Total order amount
         'status', 
         'staff_note',
         'sale_note',
-        'other_charges', // Additional charges
-        'total_discount', // Total discount on the order
-        'payment_method', // Payment method used for the order
-        'order_date', // Date of the order
-        'note', // Additional notes
-        'updated_by', // User who last updated the order
-        'deleted_by', // User who soft deleted the order
-        'created_by', // The user who created the order
+        'other_charges', 
+        'discount_type', 
+        'discount_amount', 
+        'paid',
+        'order_date', 
+        'updated_by', 
+        'deleted_by', 
+        'created_by', 
     ];
 
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'custom_order_id');  
+    }
     /**
      * Define relationship with the User model (creator).
      */

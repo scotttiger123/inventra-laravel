@@ -58,6 +58,7 @@
 <script src="{{ asset('dist/js/warehouse.js') }}"></script>
 <script src="{{ asset('dist/js/transfer.js') }}"></script>
 <script src="{{ asset('dist/js/order.js') }}"></script>
+<script src="{{ asset('dist/js/invoice.js') }}"></script>
 
 <!-- icheck Plugins -->
 <script src="../../plugins/iCheck/icheck.min.js"></script>

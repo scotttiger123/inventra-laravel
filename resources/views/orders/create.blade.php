@@ -119,23 +119,23 @@
                                     <input type="hidden" name="salesperson_id" id="salesperson-id">
                                 </div>
                             </div>
+                               <!-- Search Button to Get Invoice -->
+                                <div class="col-md-2">
+                                    <div class="input-group" style="width: 100%;">
+                                        <!-- Search Button for Get Invoice -->
+                                        <div class="input-group-addon" onclick="getInvoiceDetails()" data-toggle="modal" data-target="#invoiceModal">
+                                            <i class="fa fa-search"></i>
+                                        </div>
+                                        <input type="text" list="orderList" name="custom_order_id" class="form-control myInput" placeholder="Sale Id.">
 
-                    
-
-                            <div class="col-md-2">
-                                <div class="input-group" style="width: 100%;">
-                                    <div class="input-group-addon" onclick="GetItems(this.value)" data-toggle="modal" data-target="#">
-                                        <i class="fa fa-search"></i>
-                                    </div>
-                                    <input type="text" list="orderList" name="custom_order_id" class="form-control myInput" placeholder="Sale Id." >
-                                        
-                                    <div onclick="edit_invoice()" class="input-group-addon" data-toggle="modal" data-target="#">
-                                        <i class="fa fa-edit"></i>
+                                        <!-- Edit Button (Optional for Future Use) -->
+                                        <div onclick="edit_invoice()" class="input-group-addon" data-toggle="modal" data-target="#">
+                                            <i class="fa fa-edit"></i>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-2">
-                                <input type="text" list="orderStatusList" name="order_status" id="order_status" class="form-control myInput" placeholder="Order Status" >
+                                                            <div class="col-md-2">
+                                <input type="text" list="orderStatusList" name="order_status" id="order_status" class="form-control myInput" tabindex = '1' placeholder="Order Status" >
                                 <datalist id="orderStatusList">
                                     <option value=""></option>
                                     <option value="Return">Return</option>
@@ -166,7 +166,7 @@
                                     <div class="input-group-addon" data-toggle="modal" data-target="#CreateNewProd">
                                         <i class="fa fa-plus"></i>
                                     </div>
-                                    <input type="text" list="product_name" style="width: 100%;" name="product" class="form-control myInput" placeholder="Product Code" tabindex="1" id="product-input">
+                                    <input type="text" list="product_name" style="width: 100%;" name="product" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();" class="form-control myInput" placeholder="Product Code" tabindex="1" id="product-input">
                                     <datalist id="product_name">
                                         @foreach($products as $product)
                                         <option value="{{ $product->product_code }}" data-id="{{ $product->id }}">{{ $product->product_name }}</option>
@@ -180,22 +180,22 @@
                             <input type="hidden" id="product-id" name="product_id">
 
                             <div class="col-sm-1" >
-                                <input type="text"  class="form-control myInput" name="qty" value="" placeholder="Quantity" id="qty_id" tabindex="2"  onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
+                                <input type="number"  class="form-control myInput" name="qty" value="" placeholder="Quantity" id="qty_id" tabindex="2"  onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
                             </div>
                             <div class="col-xs-1">
-                                <input type="text" id="price_id" class="form-control myInput" name="" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();" placeholder="Price" >
+                                <input type="number" id="price_id" class="form-control myInput" tabindex="3" name="" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();" placeholder="Price" >
                             </div>
                             <div class="col-xs-1">
-                                <select id="discount_type" class="form-control myInput" tabindex="2" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
+                                <select id="discount_type" class="form-control myInput" tabindex="4" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
                                     <option value="percentage">%</option>
                                     <option value="flat">Flat</option>
                                 </select>
                             </div>
                             <div class="col-xs-1">
-                                <input type="text" class="form-control myInput" id="discount_value" placeholder="Discount" tabindex="2" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
+                                <input type="number" class="form-control myInput" id="discount_value" placeholder="Discount" tabindex="5" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
                             </div>
                             <div class="col-xs-2">
-                                <input type="text" list="UOMList" class="form-control myInput" id="uom_id" name="unit" tabindex="3" value="" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();" placeholder="UOM">
+                                <input type="text" list="UOMList" class="form-control myInput" id="uom_id" name="unit" tabindex="6" value="" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();" placeholder="UOM">
                                 <datalist id="UOMList">
                                     @foreach($uoms as $uom)
                                         <option value="{{ $uom->abbreviation }}" data-id="{{ $uom->id }}">{{ $uom->name }} ({{ $uom->abbreviation }})</option>
@@ -212,7 +212,7 @@
                                                 <i class="fa fa-tags"></i> 
                                             </div>  
                                     
-                                        <input type="text" id="sale_note" name="sale_note" tabindex="4"  placeholder="Sale Note / Remarks"  class="form-control myInput">
+                                        <input type="text" id="sale_note" name="sale_note" tabindex="7"  placeholder="Sale Note / Remarks"  class="form-control myInput">
                                     </div>
                                 </div>
                                 <div class="col-xs-4">
@@ -221,7 +221,7 @@
                                                 <i class="fa fa-tags"></i> 
                                             </div>  
                                     
-                                        <input type="text" id="staff_note" name="sale_note" tabindex="4"  placeholder="Staff Note / Remarks"  class="form-control myInput">
+                                        <input type="text" id="staff_note" name="sale_note" tabindex="8"  placeholder="Staff Note / Remarks"  class="form-control myInput">
                                     </div>
                                 </div>
                                 <div class="col-xs-2">
@@ -279,7 +279,7 @@
                                 <div class="col-xs-2">
                                     <div class="small-box" >
                                         <div class="inner">
-                                            <h3><input id="gross_amount_id" type="text" value="0" class="form-control" placeholder="0"></h3>
+                                            <h3><input name = 'gross_amount' id="gross_amount_id" type="number" value="0" class="form-control"  placeholder="0" disabled></h3>
                                             <p>GROSS AMOUNT</p>
                                         </div>
                                     </div>
@@ -287,9 +287,9 @@
                                 <div class="col-xs-2">
                                     <div class="small-box">
                                         <div class="inner" >
-                                            <h3><input type="text" id="order_discount_id" value="" class="form-control" placeholder="Order Discount "></h3>
+                                            <h3><input type="number"  name = 'order_discount' id="order_discount_id" value="" class="form-control" tabindex="9" placeholder="Order Discount "></h3>
                                             <label >
-                                                <input type="radio" name="order_discount_type" class="flat-red" checked> Flat 
+                                                <input type="radio" name="order_discount_type" class="flat-red" value='flat' checked> Flat 
                                             </label> &nbsp;&nbsp;&nbsp;&nbsp;
                                             <label>
                                                 <input type="radio" name="order_discount_type" id="percentage_discount" class="flat-red" value="percentage"> Percentage 
@@ -301,7 +301,7 @@
                                 <div class="col-xs-2">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input type = 'number'name="" value="" id = 'other_charges_id' class="form-control"></h3>
+                                            <h3><input type = 'number' name="other_charges" value="" id = 'other_charges_id' class="form-control" tabindex="9" ></h3>
                                             <p>OTHER CHARGES</p>
                                         </div>
                                     </div>
@@ -310,7 +310,7 @@
                                 <div class="col-xs-2">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input id="net_amount_id" type="number" value="" class="form-control" placeholder="0"></h3>
+                                            <h3><input name = 'net_amount' id="net_amount_id" type="number" value="" class="form-control" placeholder="0" disabled></h3>
                                             <p>NET AMOUNT</p>
                                         </div>
                                     </div>
@@ -319,7 +319,7 @@
                                 <div class="col-xs-2">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input name="paid_amount" id="paid_amount_id" type="number" class="form-control"></h3>
+                                            <h3><input name="paid_amount" id="paid_amount_id" type="number" class="form-control" tabindex="10" ></h3>
                                             <p>PAID AMT</p>
                                         </div>
                                     </div>
@@ -328,7 +328,7 @@
                                 <div class="col-xs-2">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input name="" id="balance_id" type="number" class="form-control"></h3>
+                                            <h3><input name="balance" id="balance_id" type="number" class="form-control" disabled></h3>
                                             <p>BALANCE</p>
                                         </div>
                                     </div>
@@ -344,6 +344,147 @@
 </div>
 
 <!-- Models  -->
+ 
+
+
+
+
+<!-- Modal for Invoice View -->
+<div id="invoiceModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoiceModalLabel">Invoice Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="invoiceContent">
+               
+                <!-- Main content -->
+                <section class="invoice">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h2 class="page-header">
+                                <div class="logo-img-invoice">
+                                  <img src="{{ asset('dist/img/logo.png') }}" alt="Inventra Logo">
+                                  <small class="date-inv">Date: <span id="invoiceDate">N/A</span></small>
+                                  </div>
+                              
+                                
+                               
+                            </h2>
+                        </div>
+                    </div>
+
+                    <!-- info row -->
+                    <div class="row invoice-info">
+                        <div class="col-sm-4 invoice-col">
+                            From
+                            <address>
+                                <strong>Admin, Inc.</strong><br>
+                                795 Folsom Ave, Suite 600<br>
+                                San Francisco, CA 94107<br>
+                                Phone: (804) 123-5432<br>
+                                Email: info@almasaeedstudio.com
+                            </address>
+                        </div>
+
+                        <div class="col-sm-4 invoice-col">
+                            To
+                            <address>
+                                <strong id="invoiceToName">N/A</strong><br>
+                                <span id="invoiceToAddress">N/A</span><br>
+                                Phone: <span id="invoiceToPhone">N/A</span><br>
+                                Email: <span id="invoiceToEmail">N/A</span>
+                            </address>
+                        </div>
+
+                        <div class="col-sm-4 invoice-col">
+                            <!-- <b>Invoice #<span id="invoiceNumber">N/A</span></b><br> -->
+                            <br>
+                            <b>Order ID:</b> <span id="orderId">N/A</span><br>
+                            <b>Payment Due:</b> <span id="paymentDueDate">N/A</span><br>
+                            <b>Account:</b> <span id="accountNumber">N/A</span>
+                        </div>
+                    </div>
+
+                    <!-- Table row -->
+                    <div class="row">
+                        <div class="col-xs-12 table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Qty</th>
+                                        <th>Uom</th>
+                                        <th>Rate</th>
+                                        <th>Discount</th>
+                                        <th>Net Rate</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoiceItems">
+                                    <!-- Items will be dynamically injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- accepted payments column -->
+                        <div class="col-xs-6">
+                            <p class="lead">Note:</p>
+                                 <p class="text-muted well well-sm no-shadow" id = "saleNote" style="margin-top: 10px;">
+                                    
+                                </p>
+                        </div>
+
+                        <div class="col-xs-6">
+                            <p class="lead">Amount Due : <span id="remainingAmount">N/A</span></p>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tr>
+                                        <th style="width:50%">Subtotal:</th>
+                                        <td id="subtotalAmount">$0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Discount</th>
+                                        <td id="discountAmount">0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Other Charges:</th>
+                                        <td id="otherCharges">0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Paid:</th>
+                                        <td id="paidAmount">0.00</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </section>
+                
+            </div>
+             <!-- this row will not appear when printing -->
+      
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="printInvoice()"><i class="fa fa print"></i> Print</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
 <!-- Create customer modal  -->
 <div class="modal fade" id="CreateNewCustomerModal" tabindex="-1" role="dialog" aria-labelledby="CreateNewCustomerModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -386,12 +527,5 @@
     </div>
 </div>
 
-<style>
-   .small-box {
-    background-color: #000;
-    color: #fff;
-    border-radius: 5px; /* Adjust value as needed for desired roundness */
-    
-}
-</style>
+
 @endsection

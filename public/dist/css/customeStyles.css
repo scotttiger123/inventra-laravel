@@ -363,6 +363,30 @@
       scrollbar-color: #888 #e0e0e0; /* Thumb color and track color */
   }
 }
+.logo-img-invoice{
+  display: flex;
+  justify-content: space-between;
+}
+.logo-img-invoice img{
+  width: auto;
+  position: absolute;
+  left: 0;
+  height: 100px;
+  margin-top: -6rem;
+}
+.date-inv{
+  margin-top: -1.5rem;
+  right: 0;
+  position: absolute;
+}
+
+
+.small-box {
+  background-color: #000;
+  color: #fff;
+  border-radius: 5px; /* Adjust value as needed for desired roundness */
+  
+}
 
 
 

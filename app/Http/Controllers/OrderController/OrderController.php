@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\OrderController;
 use App\Http\Controllers\Controller; 
 use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Customer;
@@ -67,8 +68,84 @@ class OrderController extends Controller
         return view('orders.create-pos', compact('customers', 'saleManagers'));
     }
 
+    
+    public function getInvoice($customOrderId)
+    {
+        $order = Order::where('custom_order_id', $customOrderId)->first();
+    
+        if (!$order) {
+            return response()->json(['error' => 'Order not found.'], 404);
+        }
+    
+        $customer = $order->customer; // Assuming you have a relationship method 'customer' in the Order model
+    
+        // If customer is not found
+        if (!$customer) {
+            return response()->json(['error' => 'Customer not found.'], 404);
+        }
+    
+        // Fetch all order items with product names and UOM details
+        $orderItems = OrderItem::where('custom_order_id', $customOrderId)
+            ->join('products', 'products.id', '=', 'order_items.product_id')
+            ->leftJoin('uoms', 'uoms.id', '=', 'order_items.uom_id')  // Join the uom table
+            ->select('order_items.*', 'products.product_name', 'uoms.abbreviation as uom_name') // Include UOM name
+            ->get();
+    
+        $orderItemsData = $orderItems->map(function ($item) {
+            // Calculate total before discount for each item
+            $item->total_before_discount = (float)$item->unit_price * (int)$item->quantity;
+            
+            // Calculate discount
+            if (strpos($item->discount_type, '%') !== false) {
+                $discountPercentage = rtrim($item->discount_amount, '%');
+                $item->discount_amount_calculated = ($item->total_before_discount * $discountPercentage) / 100;
+            } else {
+                $item->discount_amount_calculated = (float)$item->discount_amount;
+            }
+    
+            // Calculate net rate after discount
+            $item->net_rate = $item->unit_price - $item->discount_amount_calculated / $item->quantity;
+            
+            // Calculate the total amount after discount
+            $item->total_after_discount = $item->total_before_discount - $item->discount_amount_calculated;
 
-  
+            $uomName = !empty($item->uom_name) ? $item->uom_name : '-';
+
+            return [
+                'product_name' => $item->product_name,
+                'quantity' => $item->quantity,
+                'uom_name' => $uomName, 
+                'unit_price' => $item->unit_price,
+                'discount_amount' => $item->discount_amount.$item->discount_type,
+                'net_rate' => $item->net_rate,
+                'amount' => $item->total_after_discount
+            ];
+        });
+    
+        // Calculate totals
+        $grossAmount = $orderItemsData->sum('amount');
+    
+        // Add other charges and calculate net total
+        $otherCharges = (float)$order->other_charges;
+        $netTotal = $grossAmount + $otherCharges;
+    
+        // Calculate the remaining amount
+        $paidAmount = (float)$order->paid;
+        $remainingAmount = $netTotal - $paidAmount;
+    
+        return response()->json([
+            'order' => $order,
+            'orderItems' => $orderItemsData,
+            'grossAmount' => $grossAmount,
+            'otherCharges' => $otherCharges,
+            'netTotal' => $netTotal,
+            'paidAmount' => $paidAmount,
+            'remainingAmount' => $remainingAmount,
+        ]);
+    }
+    
+    
+    
        
     public function store(Request $request)
     {
@@ -103,6 +180,13 @@ class OrderController extends Controller
             $order->custom_order_id = $orderNumber;
             $order->sale_note = $request->sale_note;
             $order->staff_note = $request->staff_note;
+            
+            
+            $order->discount_type = $request->order_discount_type;
+            $order->discount_amount = $request->order_discount;
+            $order->other_charges = $request->other_charges;
+            $order->paid = $request->paid_amount;
+            
             $order->branch_id = auth()->user()->branch_id;
              
             
@@ -116,13 +200,15 @@ class OrderController extends Controller
                     foreach ($orderData as $item) {
                         DB::table('order_items')->insert([
                             'order_id' => $order->id,
-                            'product_id' => '12',
+                            'product_id' => $item['product_id'],
+                            'uom_id' => $item['uomId'] !== null ? (int) $item['uomId'] : 0,
+
                             'quantity' => $item['qty'],
                             'unit_price' => $item['rate'],
-                            'discount_type' => $item['discountType'],
+                            'discount_type' => (strpos($item['discountType'], '%') !== false) ? '%' : null,
                             'discount_amount' => $item['discountValue'],
                             'exit_warehouse' => $item['exit_warehouse'],
-                            
+                            'custom_order_id' => $orderNumber,
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
@@ -157,7 +243,7 @@ class OrderController extends Controller
     private function generateOrderNumber($branchId)
 {
     $year = date('Y');
-    $prefix = 'ORD-' . $branchId;
+    $prefix = $branchId;
 
     // Get the last order for the current year and branch, ordered by custom_order_id (to get the latest order)
     $lastOrder = Order::whereYear('created_at', $year)
@@ -177,7 +263,7 @@ class OrderController extends Controller
     }
 
     // Return the generated order number
-    return $prefix . '-' . $year . '-' . $newNumber;
+    return $prefix.$year.$newNumber;
 }
 
     

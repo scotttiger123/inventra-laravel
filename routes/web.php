@@ -41,6 +41,7 @@ Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orde
 Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
 Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 Route::post('/customer/store', [OrderController::class, 'customerStore'])->name('customer.store');
+Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
 
 //Route::middleware(['auth'])->group(function () {
 
