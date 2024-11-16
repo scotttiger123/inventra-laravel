@@ -5,8 +5,15 @@ function setTextContentById(id, value) {
     }
 }
 
-function getInvoiceDetails() {
-    const saleId = document.querySelector('input[name="custom_order_id"]').value;
+function getInvoiceDetails(customOrderId = null) {
+    let saleId = customOrderId;
+
+    // If customOrderId is not passed as an argument, get the value from the input field
+    if (!saleId) {
+        saleId = document.querySelector('input[name="custom_order_id"]').value;
+    }
+
+
 
     if (saleId) {
         fetch(`/get-invoice/${saleId}`)
@@ -20,7 +27,9 @@ function getInvoiceDetails() {
                     const otherCharges = (data.otherCharges && !isNaN(data.otherCharges)) ? data.otherCharges.toFixed(2) : '0.00';
                     const netTotal = (data.netTotal && !isNaN(data.netTotal)) ? data.netTotal.toFixed(2) : '0.00';
                     const paidAmount = (data.paidAmount && !isNaN(data.paidAmount)) ? data.paidAmount.toFixed(2) : '0.00';
-                    const remainingAmount = (data.remainingAmount && !isNaN(data.remainingAmount)) ? data.remainingAmount.toFixed(2) : '0.00';
+                    const AmountDue = (data.remainingAmount && !isNaN(data.remainingAmount)) ? data.remainingAmount.toFixed(2) : '0.00';
+
+                    
                     const status = data.order.status || 'N/A';
                     const saleNote = data.order.sale_note || 'N/A';
                     const orderDate = data.order.order_date || 'N/A';
@@ -42,6 +51,9 @@ function getInvoiceDetails() {
                     setTextContentById('invoiceNumber', orderId);
                     setTextContentById('orderId', orderId);
 					setTextContentById('discountAmount', discount_amount);
+                    setTextContentById('AmountDue', AmountDue);
+                    setTextContentById('AmountDueTop', AmountDue);
+                    
 					
 					
                     
@@ -67,7 +79,7 @@ function getInvoiceDetails() {
                     setTextContentById('otherCharges', `$${otherCharges}`);
                     setTextContentById('totalAmount', `$${netTotal}`);
                     setTextContentById('paidAmount', `$${paidAmount}`);
-                    setTextContentById('remainingAmount	', `$${remainingAmount}`);
+                    
 
                     // Show the modal
                     $('#invoiceModal').modal('show');

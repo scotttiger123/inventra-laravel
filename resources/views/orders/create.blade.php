@@ -134,7 +134,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                                            <div class="col-md-2">
+                                <div class="col-md-2">
                                 <input type="text" list="orderStatusList" name="order_status" id="order_status" class="form-control myInput" tabindex = '1' placeholder="Order Status" >
                                 <datalist id="orderStatusList">
                                     <option value=""></option>
@@ -148,23 +148,10 @@
                         </div>
                         <div class="row">
                                                     
-                            <!-- <div class="col-md-2">
-                                <div class="input-group" style="width: 100%;"> 
-                                    <div class="input-group-addon" data-toggle="modal" >
-                                        <i class="fa fa-plus"></i>
-                                    </div>
-                                    <input type="text" list="product_name" style="width: 100%;" name="product" class="form-control myInput" placeholder="Product Code/Name" tabindex="1" id="Product">
-                                    <datalist id="product_name">
-                                        @foreach($products as $product)
-                                            <option value="{{ $product->product_name }}">{{ $product->product_name }}</option>
-                                        @endforeach
-                                    </datalist>
-                                </div>
-                            </div> -->
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <div class="input-group" style="width: 100%;"> 
                                     <div class="input-group-addon" data-toggle="modal" data-target="#CreateNewProd">
-                                        <i class="fa fa-plus"></i>
+                                        <i class="fa fa-barcode"></i>
                                     </div>
                                     <input type="text" list="product_name" style="width: 100%;" name="product" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();" class="form-control myInput" placeholder="Product Code" tabindex="1" id="product-input">
                                     <datalist id="product_name">
@@ -275,8 +262,8 @@
 
                         <!-- Financials Section (Gross Amount, Discount, etc.) -->
                         <div class="table-container" >
-                            <div class="row" >
-                                <div class="col-xs-2">
+                            <div class="row">
+                                <div class="col-md-2 col-sm-6 col-12">
                                     <div class="small-box" >
                                         <div class="inner">
                                             <h3><input name = 'gross_amount' id="gross_amount_id" type="number" value="0" class="form-control"  placeholder="0" disabled></h3>
@@ -284,7 +271,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xs-2">
+                                <div class="col-md-2 col-sm-6 col-12" >
                                     <div class="small-box">
                                         <div class="inner" >
                                             <h3><input type="number"  name = 'order_discount' id="order_discount_id" value="" class="form-control" tabindex="9" placeholder="Order Discount "></h3>
@@ -298,7 +285,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xs-2">
+                                <div class="col-md-2 col-sm-6 col-12">
                                     <div class="small-box">
                                         <div class="inner">
                                             <h3><input type = 'number' name="other_charges" value="" id = 'other_charges_id' class="form-control" tabindex="9" ></h3>
@@ -307,7 +294,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xs-2">
+                                <div class="col-md-2 col-sm-6 col-12">
                                     <div class="small-box">
                                         <div class="inner">
                                             <h3><input name = 'net_amount' id="net_amount_id" type="number" value="" class="form-control" placeholder="0" disabled></h3>
@@ -316,7 +303,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xs-2">
+                                <div class="col-md-2 col-sm-6 col-12">
                                     <div class="small-box">
                                         <div class="inner">
                                             <h3><input name="paid_amount" id="paid_amount_id" type="number" class="form-control" tabindex="10" ></h3>
@@ -325,7 +312,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xs-2">
+                                <div class="col-md-2 col-sm-6 col-12">
                                     <div class="small-box">
                                         <div class="inner">
                                             <h3><input name="balance" id="balance_id" type="number" class="form-control" disabled></h3>
@@ -380,17 +367,6 @@
                     <!-- info row -->
                     <div class="row invoice-info">
                         <div class="col-sm-4 invoice-col">
-                            From
-                            <address>
-                                <strong>Admin, Inc.</strong><br>
-                                795 Folsom Ave, Suite 600<br>
-                                San Francisco, CA 94107<br>
-                                Phone: (804) 123-5432<br>
-                                Email: info@almasaeedstudio.com
-                            </address>
-                        </div>
-
-                        <div class="col-sm-4 invoice-col">
                             To
                             <address>
                                 <strong id="invoiceToName">N/A</strong><br>
@@ -404,7 +380,7 @@
                             <!-- <b>Invoice #<span id="invoiceNumber">N/A</span></b><br> -->
                             <br>
                             <b>Order ID:</b> <span id="orderId">N/A</span><br>
-                            <b>Payment Due:</b> <span id="paymentDueDate">N/A</span><br>
+                            <b>Payment Due:</b> <span id="AmountDueTop">N/A</span><br>
                             <b>Account:</b> <span id="accountNumber">N/A</span>
                         </div>
                     </div>
@@ -441,7 +417,7 @@
                         </div>
 
                         <div class="col-xs-6">
-                            <p class="lead">Amount Due : <span id="remainingAmount">N/A</span></p>
+                            <p class="lead">Amount Due : <span id="AmountDue">N/A</span></p>
                             <div class="table-responsive">
                                 <table class="table">
                                     <tr>

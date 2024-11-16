@@ -83,6 +83,13 @@
       checkboxClass: 'icheckbox_flat-green',
       radioClass   : 'iradio_flat-green'
     })
+    $(document).ready(function() {
+    $('#loader').show(); // Show the loader
+    
+    $(window).on('load', function() {
+        $('#loader').fadeOut(); // Hide the loader after the page is fully loaded
+    });
+});
 </script>
 </body>
 </html>

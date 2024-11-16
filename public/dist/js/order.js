@@ -1,5 +1,18 @@
 
 
+$(function () {
+    $('#order-listings').DataTable({
+        'paging': true,
+        'lengthChange': true,
+        'searching': true,
+        'ordering': true,
+        'info': true,
+        'autoWidth': true,
+        'order': [[0, 'desc']] // Sorts by first column (Payment Date) in descending order
+    });
+});
+
+
 // Handle the form submission with AJAX
 document.getElementById('create-customer-form').addEventListener('submit', function (e) {
     e.preventDefault(); // Prevent the default form submission behavior
@@ -450,3 +463,4 @@ function showMessage(type, message) {
         messageDiv.fadeOut();
     }, 10000); // 10000 milliseconds = 10 seconds
 }
+

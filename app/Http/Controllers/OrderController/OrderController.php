@@ -68,7 +68,14 @@ class OrderController extends Controller
         return view('orders.create-pos', compact('customers', 'saleManagers'));
     }
 
+
+
     
+
+
+
+
+
     public function getInvoice($customOrderId)
     {
         $order = Order::where('custom_order_id', $customOrderId)->first();
@@ -77,9 +84,8 @@ class OrderController extends Controller
             return response()->json(['error' => 'Order not found.'], 404);
         }
     
-        $customer = $order->customer; // Assuming you have a relationship method 'customer' in the Order model
+        $customer = $order->customer;
     
-        // If customer is not found
         if (!$customer) {
             return response()->json(['error' => 'Customer not found.'], 404);
         }
@@ -87,15 +93,14 @@ class OrderController extends Controller
         // Fetch all order items with product names and UOM details
         $orderItems = OrderItem::where('custom_order_id', $customOrderId)
             ->join('products', 'products.id', '=', 'order_items.product_id')
-            ->leftJoin('uoms', 'uoms.id', '=', 'order_items.uom_id')  // Join the uom table
-            ->select('order_items.*', 'products.product_name', 'uoms.abbreviation as uom_name') // Include UOM name
+            ->leftJoin('uoms', 'uoms.id', '=', 'order_items.uom_id')
+            ->select('order_items.*', 'products.product_name', 'uoms.abbreviation as uom_name')
             ->get();
     
         $orderItemsData = $orderItems->map(function ($item) {
-            // Calculate total before discount for each item
             $item->total_before_discount = (float)$item->unit_price * (int)$item->quantity;
-            
-            // Calculate discount
+    
+            // Calculate product-level discount
             if (strpos($item->discount_type, '%') !== false) {
                 $discountPercentage = rtrim($item->discount_amount, '%');
                 $item->discount_amount_calculated = ($item->total_before_discount * $discountPercentage) / 100;
@@ -103,33 +108,42 @@ class OrderController extends Controller
                 $item->discount_amount_calculated = (float)$item->discount_amount;
             }
     
-            // Calculate net rate after discount
             $item->net_rate = $item->unit_price - $item->discount_amount_calculated / $item->quantity;
-            
-            // Calculate the total amount after discount
             $item->total_after_discount = $item->total_before_discount - $item->discount_amount_calculated;
-
+    
             $uomName = !empty($item->uom_name) ? $item->uom_name : '-';
-
+    
             return [
                 'product_name' => $item->product_name,
                 'quantity' => $item->quantity,
-                'uom_name' => $uomName, 
+                'uom_name' => $uomName,
                 'unit_price' => $item->unit_price,
-                'discount_amount' => $item->discount_amount.$item->discount_type,
+                'discount_amount' => $item->discount_amount . $item->discount_type,
                 'net_rate' => $item->net_rate,
-                'amount' => $item->total_after_discount
+                'amount' => $item->total_after_discount,
             ];
         });
     
-        // Calculate totals
+        // Calculate gross amount
         $grossAmount = $orderItemsData->sum('amount');
+    
+        // Apply order-level discount
+        $orderDiscountType = $order->discount_type; // e.g., "flat" or "percentage"
+        $orderDiscountAmount = (float)$order->discount_amount;
+    
+        if ($orderDiscountType === 'percentage') {
+            $orderDiscount = ($grossAmount * $orderDiscountAmount) / 100;
+        } else {
+            $orderDiscount = $orderDiscountAmount;
+        }
+    
+        $grossAmountAfterOrderDiscount = $grossAmount - $orderDiscount;
     
         // Add other charges and calculate net total
         $otherCharges = (float)$order->other_charges;
-        $netTotal = $grossAmount + $otherCharges;
+        $netTotal = $grossAmountAfterOrderDiscount + $otherCharges;
     
-        // Calculate the remaining amount
+        // Calculate remaining amount
         $paidAmount = (float)$order->paid;
         $remainingAmount = $netTotal - $paidAmount;
     
@@ -137,6 +151,8 @@ class OrderController extends Controller
             'order' => $order,
             'orderItems' => $orderItemsData,
             'grossAmount' => $grossAmount,
+            'orderDiscount' => $orderDiscount,
+            'grossAmountAfterOrderDiscount' => $grossAmountAfterOrderDiscount,
             'otherCharges' => $otherCharges,
             'netTotal' => $netTotal,
             'paidAmount' => $paidAmount,
@@ -182,7 +198,12 @@ class OrderController extends Controller
             $order->staff_note = $request->staff_note;
             
             
-            $order->discount_type = $request->order_discount_type;
+            if ($request->order_discount_type == 'percentage') {
+                $order->discount_type = $request->order_discount_type . '%';  // Append % for percentage
+            } else {
+                $order->discount_type = '-';  // Use - for flat discount
+            }
+
             $order->discount_amount = $request->order_discount;
             $order->other_charges = $request->other_charges;
             $order->paid = $request->paid_amount;
@@ -205,7 +226,7 @@ class OrderController extends Controller
 
                             'quantity' => $item['qty'],
                             'unit_price' => $item['rate'],
-                            'discount_type' => (strpos($item['discountType'], '%') !== false) ? '%' : null,
+                            'discount_type' => (strpos($item['discountType'], '%') !== false) ? '%' : '-',
                             'discount_amount' => $item['discountValue'],
                             'exit_warehouse' => $item['exit_warehouse'],
                             'custom_order_id' => $orderNumber,
@@ -306,7 +327,130 @@ class OrderController extends Controller
         'customer_id' => $customer->id,      // Ensure this is being returned
     ]);
 }
- 
+
+public function index(Request $request)
+{
+    try {
+        $user = auth()->user();
+        $userId = $user->id;
+        $parentUserId = $user->parent_id;
+
+        $orders = Order::whereIn('created_by', [$userId, $parentUserId])
+                       ->with('customer')
+                       ->orderBy('created_at', 'desc')
+                       ->get();
+        foreach ($orders as $order) {
+            $grossAmount = 0;
+            $orderItems = OrderItem::where('custom_order_id', $order->custom_order_id)->get(); // Get matching order items
+
+            foreach ($orderItems as $item) {
+                $totalBeforeDiscount = $item->unit_price * $item->quantity;
+                $discountAmount = $item->discount_amount;
+
+                // Calculate the discount for each item
+                if ($item->discount_type == '%') {
+                    $discountAmountCalculated = ($totalBeforeDiscount * $discountAmount) / 100;
+                } else {
+                    $discountAmountCalculated = $discountAmount;
+                }
+
+                $grossAmount += $totalBeforeDiscount - $discountAmountCalculated;
+            }
+
+            // Apply order-level discount (percentage or flat)
+            $orderDiscount = 0;
+            if ($order->discount_type == '%') {
+                $orderDiscount = ($grossAmount * $order->discount_amount) / 100; // Calculate discount as a percentage
+            } else {
+                $orderDiscount = $order->discount_amount; // Flat discount amount
+            }
+
+            // Calculate gross amount after order-level discount
+            $grossAmountAfterOrderDiscount = $grossAmount - $orderDiscount;
+
+            // Add other charges to calculate the net total
+            $netTotal = $grossAmountAfterOrderDiscount + $order->other_charges;
+
+            // Calculate remaining amount
+            $remainingAmount = $netTotal - $order->paid;
+
+            // Attach the calculated values to the order object
+            $order->grossAmount = $grossAmount;
+            $order->orderDiscount = $orderDiscount;
+            $order->grossAmountAfterOrderDiscount = $grossAmountAfterOrderDiscount;
+            $order->netTotal = $netTotal;
+            $order->remainingAmount = $remainingAmount;
+        }
+
+        return view('orders.index', compact('orders'));
+    } catch (Exception $e) {
+        \Log::error('Failed to fetch orders: ' . $e->getMessage());
+        return redirect()->back()->withErrors('Failed to fetch orders. Please try again later.');
+    }
+}
+
+
+
+public function edit($customOrderId)
+{
+    // Fetch the order by custom_order_id
+    $order = Order::where('custom_order_id', $customOrderId)->first();
+
+    if (!$order) {
+        return redirect()->route('orders.index')->with('error', 'Order not found.');
+    }
+
+    // Fetch all customers for the dropdown
+    $customers = Customer::all();
+
+    // Pass the order and customers to the view
+    return view('orders.edit', compact('order', 'customers'));
+}
+
+
+public function update(Request $request, $customOrderId)
+{
+    // Validate the incoming request
+    $validated = $request->validate([
+        'order_date' => 'required|date',
+        'customer_id' => 'required|exists:customers,id',
+        'gross_amount' => 'required|numeric',
+        'order_discount' => 'required|numeric',
+        'discount_type' => 'required|in:%,-',
+        'other_charges' => 'required|numeric',
+        'net_total' => 'required|numeric',
+        'paid' => 'required|numeric',
+    ]);
+
+    // Find the order by custom_order_id
+    $order = Order::where('custom_order_id', $customOrderId)->first();
+
+    if (!$order) {
+        return redirect()->route('orders.index')->with('error', 'Order not found.');
+    }
+
+    // Update the order with the validated data
+    $order->update([
+        'order_date' => $validated['order_date'],
+        'customer_id' => $validated['customer_id'],
+        'grossAmount' => $validated['gross_amount'],
+        'orderDiscount' => $validated['order_discount'],
+        'discount_type' => $validated['discount_type'],
+        'other_charges' => $validated['other_charges'],
+        'netTotal' => $validated['net_total'],
+        'paid' => $validated['paid'],
+        'sale_note' => $request->sale_note,
+        'staff_note' => $request->staff_note,
+    ]);
+
+    return redirect()->route('orders.index')->with('success', 'Order updated successfully.');
+}
+
+
+
+
+
+
 
 
 

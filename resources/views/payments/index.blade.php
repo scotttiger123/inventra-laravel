@@ -64,9 +64,9 @@
                     <td>
                         <span class="badge {{ $payment->payment_type === 'credit' ? 'badge-badge-success' : 'badge-badge-danger' }}">
                             @if($payment->payment_type === 'credit')
-                                Payment In (Credit)
+                                Payment In (Credit + )
                             @elseif($payment->payment_type === 'debit')
-                                Payment Out (Debit)
+                                Payment Out (Debit - )
                             @else
                                 {{ ucfirst($payment->payment_type) }}
                             @endif
@@ -74,9 +74,9 @@
                     </td>
 
                     <td>
-                        <span class="{{ $payment->status === 'completed' ? 'badge-badge-success' : 'badge-badge-danger' }}">
+                        
                             {{ ucfirst($payment->status) }}
-                        </span>
+                        
                     </td>
                   
                     <td>
@@ -407,10 +407,10 @@
                             height:400px !important;
                             padding: 20px !important;
                             .receipt-card {
-    border: 1px solid white;
-    border-radius: 15px;
-    padding: 1rem;
-    box-shadow: 0 4px 22px rgba(0, 0, 0, 0.2); 
+                            border: 1px solid white;
+                            border-radius: 15px;
+                            padding: 1rem;
+                            box-shadow: 0 4px 22px rgba(0, 0, 0, 0.2); 
                             box-shadow: none !important;
                             height:auto
                         }
@@ -496,12 +496,12 @@
 
 
     // Function to send the receipt as an image via WhatsApp
-    function sendReceiptOnWhatsApp() {
+function sendReceiptOnWhatsApp() {
     // Capture the receipt as an image using html2canvas
     html2canvas(document.getElementById('receipt-card'), {
         onrendered: function (canvas) {
             const imageUrl = canvas.toDataURL('image/png');
-            const clientWhatsAppNumber = '1234567890'; // Replace with actual client number
+            const clientWhatsAppNumber = '+923214630027'; // Replace with actual client number
 
             // Send the image to WhatsApp via a URL
             const whatsappUrl = `https://wa.me/${clientWhatsAppNumber}?text=Check%20out%20this%20receipt%20image.%0A${encodeURIComponent(imageUrl)}`;

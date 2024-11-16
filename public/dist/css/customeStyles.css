@@ -3,14 +3,14 @@
 }
 .logo {
   background-color: white !important;
-  color: blue !important;
+  color: green !important;
 }
 .navbar {
   background-color: white !important;
 }
 .sidebar-toggle {
-  color: blue !important;
-  border: 1px solid blue;
+  color: green !important;
+  border: 1px solid #00a65a;
   border-radius: 6px;
   margin-left: 25px;
   height: 42px;
@@ -19,11 +19,15 @@
   display: flex;
   align-items: center;
 }
+.sidebar-toggle:hover {
+  background-color: #00a65a !important;
+  color: white !important
+}
 .hidden-xs {
-  color: blue !important;
+  color: #00a65a !important;
 }
 .gay {
-  color: blue !important;
+  color: #00a65a !important;
 }
 .main-sidebar {
   background-color: white !important;
