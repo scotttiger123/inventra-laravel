@@ -129,7 +129,7 @@
                                         <input type="text" list="orderList" name="custom_order_id" class="form-control myInput" placeholder="Sale Id.">
 
                                         <!-- Edit Button (Optional for Future Use) -->
-                                        <div onclick="edit_invoice()" class="input-group-addon" data-toggle="modal" data-target="#">
+                                        <div onclick="getOrderForEdit()" class="input-group-addon" data-toggle="modal" >
                                             <i class="fa fa-edit"></i>
                                         </div>
                                     </div>
@@ -266,7 +266,7 @@
                                 <div class="col-md-2 col-sm-6 col-12">
                                     <div class="small-box" >
                                         <div class="inner">
-                                            <h3><input name = 'gross_amount' id="gross_amount_id" type="number" value="0" class="form-control"  placeholder="0" disabled></h3>
+                                            <h3><input name = 'gross_amount' id="gross_amount_id" type="number" value="0" class="form-control"  placeholder="0" readonly></h3>
                                             <p>GROSS AMOUNT</p>
                                         </div>
                                     </div>
@@ -276,10 +276,10 @@
                                         <div class="inner" >
                                             <h3><input type="number"  name = 'order_discount' id="order_discount_id" value="" class="form-control" tabindex="9" placeholder="Order Discount "></h3>
                                             <label >
-                                                <input type="radio" name="order_discount_type" class="flat-red" value='flat' checked> Flat 
+                                                <input type="radio" name="order_discount_type" id = "flat_discount_radio" class="flat-red" value='flat' checked> Flat 
                                             </label> &nbsp;&nbsp;&nbsp;&nbsp;
                                             <label>
-                                                <input type="radio" name="order_discount_type" id="percentage_discount" class="flat-red" value="percentage"> Percentage 
+                                                <input type="radio" name="order_discount_type" id="percentage_discount_radio" class="flat-red" value="percentage"> Percentage 
                                             </label>
                                         </div>
                                     </div>
@@ -297,7 +297,7 @@
                                 <div class="col-md-2 col-sm-6 col-12">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input name = 'net_amount' id="net_amount_id" type="number" value="" class="form-control" placeholder="0" disabled></h3>
+                                            <h3><input name="net_amount" id="net_amount_id" type="number"  class="form-control"  readonly></h3>
                                             <p>NET AMOUNT</p>
                                         </div>
                                     </div>
@@ -315,7 +315,7 @@
                                 <div class="col-md-2 col-sm-6 col-12">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input name="balance" id="balance_id" type="number" class="form-control" disabled></h3>
+                                            <h3><input name="balance" id="balance_id" type="number" class="form-control" readonly></h3>
                                             <p>BALANCE</p>
                                         </div>
                                     </div>

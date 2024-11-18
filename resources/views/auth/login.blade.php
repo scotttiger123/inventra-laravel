@@ -94,15 +94,15 @@
         max-width: 380px;
         width: 100%;
         background-color: #fff;
-        border: 1px solid #56196d; /* Updated border to be magenta with a clear thickness */
-        border-radius: 20px; /* Single declaration for border-radius */
+        border: 1px solid #000; /* Updated border to be magenta with a clear thickness */
+        border-radius: 20px; 
         margin: 10px 0;
         height: 55px;
         display: grid;
         grid-template-columns: 15% 85%;
         padding: 0 0.4rem;
         position: relative;
-        border-radius: 20px; /* Single declaration for border-radius */
+        
     }
 
     .input-field i {
@@ -162,7 +162,7 @@
 
     .btn {
       width: 150px;
-      background-color: #5b1b71;
+      background-color: #000;
       
       outline: none;
       height: 49px;
@@ -177,7 +177,7 @@
     }
 
     .btn:hover {
-      background-color: #6d248a;
+      background-color: #00a65a;
     }
 
 .business-banner {
@@ -240,25 +240,9 @@
     background-color:#56196D;
   }
 
-  .business-banner {
-    padding: 15px;
-    max-width: 90%;
-  }
-
-  .business-banner .btn {
-    padding: 10px 20px;
-    min-width: 200px;
-  }
 }
 
 
-
-    
-    .business-banner .heading {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
 
     .panels-container {
       position: absolute;
@@ -279,8 +263,7 @@
       right: 48%;
       transform: translateY(-50%);
       background-color: #56196D; /* Base color */
-      background-image: linear-gradient(-45deg, #471558 0%, #C6426E 50%, #F86F03 100%);
-
+      background-image: linear-gradient(-45deg, #000000 0%, #003d2b 30%, #00a65a 60%, #99f3b8 100%);
       transition: 1.8s ease-in-out;
       border-radius: 50%;
       z-index: 6;
@@ -600,10 +583,10 @@
         </form>
         <div class="forgot form-row new-form sort" style="display: flex; gap: 15px; margin-top: 11px; margin-bottom: 11px;">
           <a style="color: rgb(125, 125, 125);">Don't have an account?</a>
-          <a for="" style="text-decoration: none;color:#56196d; font-weight: bold;" href="/register" >Register</a>
+          <a for="" style="text-decoration: none;color:#00a65a; font-weight: bold;" href="/register" >Register</a>
         </div>
         <div class="forgot form-row another-form sort">
-          <a for="" style="text-decoration: none;color:#56196d; font-weight: bold;" href="">Forgot password?</a>
+          <a for="" style="text-decoration: none;color:#00a65a; font-weight: bold;" href="">Forgot password?</a>
         </div>
         <!-- <div class="social-text">Or Sign in with</div>
         <div class="social-media"> -->

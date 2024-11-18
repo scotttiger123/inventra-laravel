@@ -1,231 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>POS</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-       
-    <!-- Bootstrap CSS-->
-    <link rel="stylesheet" href="https://salepropos.com/demo/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
-    <link rel="preload" href="https://salepropos.com/demo/vendor/bootstrap/css/bootstrap-datepicker.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://salepropos.com/demo/vendor/bootstrap/css/bootstrap-datepicker.min.css" rel="stylesheet"></noscript>
-    <link rel="preload" href="https://salepropos.com/demo/vendor/bootstrap/css/awesome-bootstrap-checkbox.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://salepropos.com/demo/vendor/bootstrap/css/awesome-bootstrap-checkbox.css" rel="stylesheet"></noscript>
-    <link rel="preload" href="https://salepropos.com/demo/vendor/bootstrap/css/bootstrap-select.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://salepropos.com/demo/vendor/bootstrap/css/bootstrap-select.min.css" rel="stylesheet"></noscript>
-    <!-- Font Awesome CSS-->
-    <link rel="preload" href="https://salepropos.com/demo/vendor/font-awesome/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://salepropos.com/demo/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet"></noscript>
-    <!-- Drip icon font-->
-    <link rel="preload" href="https://salepropos.com/demo/vendor/dripicons/webfont.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://salepropos.com/demo/vendor/dripicons/webfont.css" rel="stylesheet"></noscript>
-    <!-- Custom Scrollbar-->
-    <link rel="preload" href="https://salepropos.com/demo/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://salepropos.com/demo/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css" rel="stylesheet"></noscript>
-    <!-- virtual keybord stylesheet-->
-    <link rel="preload" href="https://salepropos.com/demo/vendor/keyboard/css/keyboard.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://salepropos.com/demo/vendor/keyboard/css/keyboard.css" rel="stylesheet"></noscript>
-    <link rel="stylesheet" href="https://salepropos.com/demo/css/style.default.css" id="theme-stylesheet" type="text/css">
-    <!-- Custom stylesheet - for your changes-->
-    <link rel="stylesheet" href="https://salepropos.com/demo/css/custom-default.css" type="text/css" id="custom-style">
-        <!-- Google fonts - Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="POS.css">
-    <link rel="stylesheet" href="path/to/dripicons.css">
-
-  </head>
-  <body class="pos-page">
-      <div id="content">
-          <section id="pos-layout" class="forms pos-section hidden-print">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-7 pos-form">
-                <form method="POST" action="https://salepropos.com/demo/sales" accept-charset="UTF-8" class="payment-form" enctype="multipart/form-data"><input name="_token" type="hidden" value="kU7cULuFTifbUJPGoOFCdhT49ubxRJnAE1EZAGS7">
-                                <div class="row">
-                    <div class="col-md-11 col-12">
-                        <div class="row">
-                           <div class="col-md-3 col-6">
-    <div class="form-group top-fields">
-        <label>Date</label>
-        <div class="input-group">
-            <input type="text" name="created_at" class="form-control date" value="06-11-2024" onkeyup='saveValue(this);' />
-        </div>
-    </div>
-</div>
-                            <div class="col-md-3 col-6">
-                                <div class="form-group top-fields">
-                                                                        <input type="hidden" name="warehouse_id_hidden" value="1">
-                                                                        <label>Warehouse</label>
-                                    <select required id="warehouse_id" name="warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select warehouse...">
-                                                                                <option value="1">Shop 1</option>
-                                                                                <option value="2">Shop 2</option>
-                                                                            </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-6">
-                                <div class="form-group top-fields">
-                                                                        <input type="hidden" name="biller_id_hidden" value="1">
-                                                                        <label>Biller</label>
-                                    <select required id="biller_id" name="biller_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select Biller...">
-                                                                                <option value="1">John Watson (The solution)</option>
-                                                                            </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-6">
-                                <div class="form-group top-fields">
-                                                                        <input type="hidden" name="customer_id_hidden" value="2">
-                                                                        <label>Customer</label>
-                                    <div class="input-group pos">
-                                        <select required name="customer_id" id="customer_id" class="selectpicker form-control" data-live-search="true" title="Select customer..." style="width: 100px">
-                                                                                                                                                                                        <option value="1">James Bond (313131)</option>
-                                                                                                                                            <option value="2">Walk in Customer (231313)</option>
-                                                                                                                                            <option value="4">bkk (87897)</option>
-                                                                                    </select>
-                                                                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#addCustomer"><i class="dripicons-plus"></i></button>
-                                       
-                                                                            </div>
-                                </div>
-                            </div>
-                            <div class="col-12 pl-0 pr-0">
-                        <div class="search-box form-group mb-2">
-                            <input style="border: 1px solid #7c5cc4;" type="text" name="product_code_name" id="lims_productcodeSearch" placeholder="Scan/Search product by name/code" class="form-control" />
-                        </div>
-                    </div>
-                        </div>
-                    </div>
-                    
-                </div>
-                <div>
-                    
-                             
-                    <div class="table-responsive transaction-list">
-                        <table id="myTable" class="table table-hover table-striped order-list table-fixed">
-                            <thead class="d-none d-md-block">
-                                <tr>
-                                    <th class="col-sm-5 col-6">Product</th>
-                                    <th class="col-sm-2">Price</th>
-                                    <th class="col-sm-3">Quantity</th>
-                                    <th class="col-sm-2">SubTotal</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbody-id">
-                                                                                                                                                            </tbody>
-                        </table>
-                    </div>
-                   
-                    <div class="col-12 totals" style="background-color:#f5f6f7;border-top: 2px solid #ebe9f1;padding-bottom: 7px;padding-top: 7px;">
-                        <div class="row">
-                            <div class="col-sm-4 col-6">
-                                <strong class="totals-title">Items</strong><strong id="item">0 (0)</strong>
-                            </div>
-                            <div class="col-sm-4 col-6">
-                                <strong class="totals-title">Total</strong><strong id="subtotal"> 0.00 </strong>
-                            </div>
-                            <div class="col-sm-4 col-6">
-                                <strong class="totals-title">Discount <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#order-discount-modal"> <i class="dripicons-document-edit"></i></button></strong><strong id="discount"> 0.00 </strong>
-                            </div>
-                            <div class="col-sm-4 col-6">
-                                <strong class="totals-title">Coupon <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#coupon-modal"><i class="dripicons-document-edit"></i></button></strong><strong id="coupon-text"> 0.00 </strong>
-                            </div>
-                            <div class="col-sm-4 col-6">
-                                <strong class="totals-title">Tax <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#order-tax"><i class="dripicons-document-edit"></i></button></strong><strong id="tax"> 0.00 </strong>
-                            </div>
-                            <div class="col-sm-4 col-6">
-                                <strong class="totals-title">Shipping <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#shipping-cost-modal"><i class="dripicons-document-edit"></i></button></strong><strong id="shipping-cost"> 0.00 </strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="payment-amount d-none d-md-block">
-                    <h2>Grand Total <span id="grand-total"> 0.00 </span></h2>
-                </div>
-                      <div class="payment-options">
-                    <div class="column-5 more-payment-options">
-                        <div class="btn-group dropup">
-                            <button type="button" class="btn btn-primary btn-custom  dropdown-toggle d-md-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-cube"></i> Pay <span id="grand-total-m"></span>
-                            </button>
-                            <div class="">
-                                                                <div class="column-5">
-                                    <button style="background: #0984e3" type="button" class="btn btn-sm btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="credit-card-btn"><i class="fa fa-credit-card"></i> Card</button>
-                                </div>
-                                                                                                <div class="column-5">
-                                    <button style="background: #00cec9" type="button" class="btn btn-sm btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="cash-btn"><i class="fa fa-money"></i> Cash</button>
-                                </div>
-                                                                <div class="column-5">
-                                    <button style="background: #010429" type="button" class="btn btn-sm btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="multiple-payment-btn"><i class="fa fa-money"></i> Multiple Payment</button>
-                                </div>
-                                
-                                                                <div class="column-5">
-                                    <button style="background-color: #fd7272" type="button" class="btn btn-sm btn-block btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="cheque-btn"><i class="fa fa-money"></i> Cheque</button>
-                                </div>
-                                                                                                <div class="column-5">
-                                    <button style="background-color: #5f27cd" type="button" class="btn btn-sm btn-block btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="gift-card-btn"><i class="fa fa-credit-card-alt"></i> Gift Card</button>
-                                </div>
-                                                                                                <div class="column-5">
-                                    <button style="background-color: #b33771" type="button" class="btn btn-sm btn-block btn-custom payment-btn" id="deposit-btn"><i class="fa fa-university"></i> Deposit</button>
-                                </div>
-                                                                                                <div class="column-5">
-                                    <button style="background-color: #319398" type="button" class="btn btn-sm btn-block btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" id="point-btn"><i class="dripicons-rocket"></i> Points</button>
-                                </div>
-                                                            </div>
-                        </div>
-                    </div>
-                    <div class="column-5">
-                        <button style="background-color: #e28d02" type="button" class="btn btn-sm btn-custom" id="draft-btn"><i class="dripicons-flag"></i> Draft</button>
-                    </div>
-                    <div class="column-5">
-                        <button style="background-color: #d63031;" type="button" class="btn btn-sm btn-custom" id="cancel-btn" onclick="return confirmCancel()"><i class="fa fa-close"></i> Cancel</button>
-                    </div>
-                    <div class="column-5">
-                        <button style="background-color: #ffc107;" type="button" class="btn btn-sm btn-custom" data-toggle="modal" data-target="#recentTransaction"><i class="dripicons-clock"></i> Recent Transaction</button>
-                    </div>
-                </div> 
-                </form>    
-            </div>
-        </div>
-    </div>
-</section>
-      </div>   
-        <script type="text/javascript" src="https://salepropos.com/demo/vendor/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/jquery/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/jquery/bootstrap-datepicker.min.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/jquery/jquery.timepicker.min.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/popper.js/umd/popper.min.js">
-    </script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/bootstrap/js/bootstrap-select.min.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/keyboard/js/jquery.keyboard.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/keyboard/js/jquery.keyboard.extension-autocomplete.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/jquery.cookie/jquery.cookie.js">
-    </script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/jquery-validation/jquery.validate.min.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
-          <script type="text/javascript" src="https://salepropos.com/demo/js/front.js"></script>
-        <script type="text/javascript" src="https://salepropos.com/demo/vendor/daterange/js/moment.min.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/daterange/js/knockout-3.4.2.js"></script>
-    <script type="text/javascript" src="https://salepropos.com/demo/vendor/daterange/js/daterangepicker.min.js"></script>
- <script>
-    $(document).ready(function(){
-        $('.date').datepicker({
-            format: 'dd-mm-yyyy',
-            autoclose: true,
-            todayHighlight: true
-        });
-    });
-</script>
-  </body>
-</html>
-  </body>
-</html>
-<style>
-    body {
+    <style>
+      body {
   font-family: "Inter", sans-serif;
 }
 .bootstrap-select-sm .btn {
@@ -245,6 +23,68 @@
 }
 .sub-total {
   font-weight: 500;
+}
+.flex {
+  display: flex;
+}
+.tab {
+  height: 750px;
+  width: 490px;
+}
+.scroll {
+  overflow-y: auto;
+  max-height: 470px;
+  float: right;
+  margin-top: -38rem;
+}
+.col-sm-4 {
+  background-color: rgb(189, 228, 189);
+  padding: 1rem;
+  text-align: center;
+  color: black;
+  font-size: 3rem;
+}
+img {
+  width: 65px;
+  height: 65px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+}
+td img {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 5px 10px;
+  margin-top: -2rem;
+}
+.home {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  gap: 1rem;
+  color: green;
+  padding-inline: 3.6rem;
+  margin-top: -10.2rem;
+}
+
+.home i {
+  font-size: 20px;
+}
+.home button {
+  padding: 4px 10px;
+  border: 1px solid green;
+  background-color: white;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.home button:hover {
+  background-color: green;
+  color: white;
 }
 .pos-page .container-fluid {
   padding: 0 15px;
@@ -339,6 +179,7 @@ td {
 .top-fields .btn {
   font-size: 13px;
   height: 37px;
+  border-radius: 6px !important;
 }
 .product-grid {
   display: flex;
@@ -408,6 +249,131 @@ td {
 .ui-helper-hidden-accessible {
   display: none !important;
 }
+.btns {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  margin-top: -5.5rem;
+  gap: 10px;
+}
+.btns button:nth-child(1) {
+  background-color: #5a2d82;
+  color: #ffffff;
+}
+
+.btns button:nth-child(2) {
+  background-color: #ff7f50;
+  color: #ffffff;
+}
+
+.btns button:nth-child(3) {
+  background-color: #ff4757;
+  color: #ffffff;
+}
+.btns button {
+  padding: 8px 52px;
+  border-radius: 6px;
+  color: white;
+  border: none;
+  font-weight: 500;
+  font-size: 16px;
+  transition: filter 0.3s ease;
+}
+
+.btns button:hover {
+  filter: brightness(90%);
+}
+
+.fix {
+  position: absolute;
+  width: 60%;
+  bottom: 5;
+}
+.delete-btn {
+  background-color: crimson;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.delete-btn:hover {
+  background-color: rgb(186, 5, 41);
+}
+.table-responsive {
+  overflow-y: auto;
+  width: 60%;
+  height: 390px;
+}
+.paybtns {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: -1.5rem;
+  padding-block: 1rem;
+  width: 100%;
+  z-index: 10;
+  margin-top: 7rem;
+}
+.paybtns button {
+  padding: 6px 13px;
+  border-radius: 6px;
+  border: none;
+  display: flex;
+  gap: 5px;
+  font-weight: 400;
+  font-size: 1.7rem;
+  color: white;
+}
+.paybtns button:nth-child(1) {
+  background-color: #99998a;
+}
+.paybtns button:nth-child(2) {
+  background-color: #2a88b3;
+}
+.paybtns button:nth-child(3) {
+  background-color: #b38a00;
+}
+.paybtns button:nth-child(4) {
+  background-color: #2a8052;
+}
+.paybtns button:nth-child(5) {
+  background-color: #b3589e;
+}
+.paybtns button:nth-child(6) {
+  background-color: #7f7f52;
+}
+.paybtns button:nth-child(7) {
+  background-color: #7f29b3;
+}
+.paybtns button:nth-child(8) {
+  background-color: #b35200;
+}
+.paybtns button:nth-child(9) {
+  background-color: #b32a2a;
+}
+.paybtns button:nth-child(10) {
+  background-color: #5277b3;
+}
+.summary {
+  width: 60%;
+  background-color: rgb(233, 232, 240);
+  padding: 2px 10px;
+}
+.scontent {
+  display: flex;
+  justify-content: space-between;
+}
+.scontent p {
+  font-size: 1.8rem;
+}
+.scontent span {
+  margin-left: 2rem;
+}
+.left p {
+  padding-right: 12rem;
+}
+
 @media (max-width: 500px) {
   .product-grid > div {
     width: calc(100% / 3);
@@ -531,7 +497,609 @@ td {
   }
   #print-layout td,
   #print-layout th {
-    padding: 5px 0;
-  }
+    padding: 5px 0;
+  }
 }
-</style>
+@media (min-width: 992px) {
+  .col-md-7 {
+    width: 100%;
+  }
+  #tbody-id tr td {
+    font-size: 16px;
+    padding: 0;
+  }
+}
+@media (max-width: 1200px) {
+  .responsive {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .scroll {
+    overflow-y: auto;
+    max-height: 500px;
+    float: right;
+    margin-top: 6rem;
+  }
+  .table-responsive {
+    overflow-y: auto;
+    width: 100%;
+    margin-top: 4rem;
+    height: 400px;
+  }
+  .paybtns {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 540px) {
+  .tab {
+    width: 350px;
+    height: 850px;
+  }
+  .table-responsive {
+    overflow-y: auto;
+    width: 100%;
+    margin-top: 4rem;
+    height: 400px;
+  }
+  .totals {
+    width: 95vw;
+  }
+  .btns {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    gap: 10px;
+  }
+  .btns button {
+    padding: 10px 34px;
+    border-radius: 6px;
+    color: white;
+    border: none;
+    font-weight: 300;
+    font-size: 14px;
+  }
+  #tbody-id tr td {
+    font-size: 10px;
+    padding: 0;
+  }
+  .col-sm-4 {
+    font-size: 2rem;
+  }
+}
+@media (max-width: 1000px) {
+  .home {
+    margin-top: -28.2rem;
+  }
+}
+
+    </style>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>POS</title>
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+      name="viewport"
+    />
+    <link rel="stylesheet" href="in.css" />
+    <link
+      rel="stylesheet"
+      href="../../bower_components/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+   <link rel="stylesheet" href="in.css">
+    <link
+      rel="stylesheet"
+      href="../../bower_components/font-awesome/css/font-awesome.min.css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="../../bower_components/Ionicons/css/ionicons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../bower_components/bootstrap-daterangepicker/daterangepicker.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css"
+    />
+    <link rel="stylesheet" href="../../plugins/iCheck/all.css" />
+    <link
+      rel="stylesheet"
+      href="../../bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../plugins/timepicker/bootstrap-timepicker.min.css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="../../bower_components/select2/dist/css/select2.min.css"
+    />
+    <link rel="stylesheet" href="../../dist/css/AdminLTE.min.css" />
+    <link rel="stylesheet" href="../../dist/css/skins/_all-skins.min.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"
+    />
+  </head>
+  <body>
+    <div id="content">
+      <section id="pos-layout" class="forms pos-section hidden-print">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-7 pos-form">
+              <form
+                method="POST"
+                action="https://salepropos.com/demo/sales"
+                accept-charset="UTF-8"
+                class="payment-form"
+                enctype="multipart/form-data"
+              >
+                <input
+                  name="_token"
+                  type="hidden"
+                  value="kU7cULuFTifbUJPGoOFCdhT49ubxRJnAE1EZAGS7"
+                />
+                <div class="row">
+                  <div class="col-md-11 col-12">
+                    <div class="row" style="width: 60%;">
+                      <div class="col-md-3 col-6">
+                        <div class="form-group top-fields">
+                          <label>Date</label>
+                          <div class="input-group">
+                            <input
+                              type="date"
+                              name="created_at"
+                              class="form-control date"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-6">
+                        <div class="form-group top-fields">
+                          <input
+                            type="hidden"
+                            name="warehouse_id_hidden"
+                            value="1"
+                          />
+                          <label>Warehouse</label>
+                          <select
+                            required
+                            id="warehouse_id"
+                            name="warehouse_id"
+                            class="selectpicker form-control"
+                            data-live-search="true"
+                            data-live-search-style="begins"
+                            title="Select warehouse..."
+                            style="border-radius: 6px;"
+                          >
+                            <option value="1">Shop 1</option>
+                            <option value="2">Shop 2</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-6">
+                        <div class="form-group top-fields">
+                          <input
+                            type="hidden"
+                            name="biller_id_hidden"
+                            value="1"
+                          />
+                          <label>Biller</label>
+                          <select
+                            style="width: 125px; border-radius: 6px;"
+                            required
+                            id="biller_id"
+                            name="biller_id"
+                            class="selectpicker form-control"
+                            data-live-search="true"
+                            data-live-search-style="begins"
+                            title="Select Biller..."
+                          >
+                            <option value="1">
+                              John Watson (The solution)
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-6">
+                        <div class="flex">
+                        <div class="form-group top-fields">
+                          <input
+                            type="hidden"
+                            name="customer_id_hidden"
+                            value="2"
+                          />
+                          <label>Customer</label>
+                          <div class="input-group pos">
+                            <select
+                              required
+                              name="customer_id"
+                              id="customer_id"
+                              class="selectpicker form-control"
+                              data-live-search="true"
+                              title="Select customer..."
+                              style="width: 120px; border-radius: 6px;"
+                            >
+                              <option value="1">James Bond (313131)</option>
+                              <option value="2">
+                                Walk in Customer (231313)
+                              </option>
+                              <option value="4">bkk (87897)</option>
+                            </select>
+                          </div>
+                        </div>
+            
+                        </div>
+                      </div>
+                      <div class="col-12 pl-0 pr-0">
+                        <div class="form-group" style="margin-left: 1.5rem">
+                          <label></label>
+                          <select
+                            class="form-control select2"
+                            style="width: 100%; border-radius: 6px;"
+                          >
+                            <option selected="selected">Alabama</option>
+                            <option>Alaska</option>
+                            <option disabled="disabled">
+                              California (disabled)
+                            </option>
+                            <option>Delaware</option>
+                            <option>Tennessee</option>
+                            <option>Texas</option>
+                            <option>Washington</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
+                <div>
+ <div class="home">
+                          <button><i class="bi bi-house"></i></button>
+                          <button style="display: flex; align-items: center; gap: 4px;"><i class="bi bi-person-circle"></i>Admin</button>
+                        </div>
+                        
+                  <div class="responsive">
+         <div class="table-responsive transaction-list">
+    <table id="myTable" class="table table-hover table-striped order-list table-fixed"
+        style="color: rgb(33, 65, 65); background-color: rgb(235, 235, 243); width: 98%; border-collapse: collapse;">
+        <thead class="d-none d-md-block">
+            <tr>
+                <th class="col-sm-5 col-6">Product</th>
+                <th class="col-sm-2" style="text-align: center;">Price</th>
+                <th class="col-sm-3" style="text-align: center;">Quantity</th>
+                <th class="col-sm-2" style="text-align: center;">SubTotal</th>
+            </tr>
+        </thead>
+        <tbody style="background-color: rgb(242, 245, 248);" id="tbody-id"></tbody>
+    </table>
+</div>
+
+<div class="scroll">
+  
+  <div class="btns">
+        <button>Category</button>
+        <button>Brand</button>
+        <button>Featured</button>
+    </div>
+    <table border="1" style=" cursor: pointer; border-color: rgb(223, 211, 211); border-collapse: collapse" class="tab">
+        <tr style="font-size: 14px; text-align: center; ">
+            <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.20</p></td>
+            
+                 <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.300</p></td>
+                 <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.2000</p></td>
+                 <td class="product-cell" data-product="Laptop 2024" d><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.5</p></td>
+        </tr>
+        
+         <tr style="font-size: 14px; text-align: center; ">
+            <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.20</p></td>
+            
+                 <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.300</p></td>
+                 <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.2000</p></td>
+                 <td class="product-cell" data-product="Laptop 2024" d><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.5000</p></td>
+        </tr>
+         <tr style="font-size: 14px; text-align: center; ">
+            <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.20</p></td>
+            
+                 <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.300</p></td>
+                 <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.2000</p></td>
+                 <td class="product-cell" data-product="Laptop 2024" d><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.5000</p></td>
+        </tr>
+         <tr style="font-size: 14px; text-align: center; ">
+            <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.20</p></td>
+            
+                 <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.300</p></td>
+                 <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.200</p></td>
+                 <td class="product-cell" data-product="Laptop 2024" d><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.4000</p></td>
+        </tr>
+         <tr style="font-size: 14px; text-align: center; ">
+            <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.120</p></td>
+            
+                 <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.340</p></td>
+                 <td class="product-cell" data-product="Laptop 2024"><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.2100</p></td>
+                 <td class="product-cell" data-product="Laptop 2024" d><img src="lapt.jpg" alt="" />Laptop
+                2024<p>Rs.500</p></td>
+        </tr>
+    </table>
+</div>
+</div>
+<div class="summary">
+  <div class="scontent">
+    <p>Items <span>0</span></p>
+    <p style="margin-left: 2.5rem;">Total <span>0.00</span></p>
+    <div class="left">
+     <p>Discount <span>0</span></p>
+     </div>
+  </div>
+   <div class="scontent">
+    <p>Coupon <span>0</span></p>
+    <p style="margin-left: -2rem;" >Tax <span>0</span></p>
+     <div class="left">
+     <p>Shipping <span>0</span></p>
+     </div>
+  </div>
+</div>
+
+ <div style="width: 60%;" class="col-sm-4 col-6"><strong class="totals-title">Grand Total </strong><strong id="grand-total">0.00</strong>
+            </div>
+<div class="fix" style="padding-inline: 1.3rem">
+       <div class="paybtns">
+      <button><i class="bi bi-credit-card"></i>Card</button>
+      <button><i class="bi bi-cash"></i>Cash</button>
+      <button><i class="bi bi-wallet"></i>Multiple&nbsp;Payment</button>
+      <button><i class="bi bi-cash"></i>Cheque</button>
+      <button><i class="bi bi-credit-card-fill"></i>Gift&nbsp;Card</button>
+      <button><i class="bi bi-bank2"></i>Deposit</button>
+      <button><i class="bi bi-rocket-takeoff"></i>Points</button>
+      <button><i class="bi bi-flag"></i>Draft</button>
+      <button><i class="bi bi-x-circle"></i>Cancel</button>
+      <button><i class="bi bi-clock-history"></i>Recent&nbsp;Transaction</button>
+    </div>
+    
+</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+<script>
+    document.querySelectorAll('.product-cell').forEach(cell => {
+        const priceText = cell.querySelector('p').innerText;
+        const priceValue = priceText.replace('Rs.', '').trim(); // Remove 'Rs.' and any spaces
+        cell.setAttribute('data-price', priceValue); // Set data-price to the cleaned-up price value
+    });
+  document.querySelectorAll('.product-cell').forEach(cell => {
+    cell.addEventListener('click', function() {
+        // Get the product details from the clicked cell
+        const productName = this.getAttribute('data-product');
+        const productPrice = parseFloat(this.getAttribute('data-price'));
+        const quantity = 1;
+        const subtotal = productPrice * quantity;
+        
+        // Create a new row to add to the table
+        const newRow = document.createElement('tr');
+        
+       newRow.innerHTML = `
+    <td style="text-align: left; vertical-align: middle; padding: 8px;">${productName}</td>
+
+    <td style="text-align: center; vertical-align: middle; padding: 8px;">${productPrice.toFixed(2)}</td>
+    <td style="text-align: center; vertical-align: middle; padding: 8px;">
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <button type="button" class="quantity-btn" data-action="decrease" style="padding: 0px 10px; font-size: 24px; border:none; background-color: rgb(212, 230, 227); border-radius:6px">-</button>
+         <input type="text" class="quantity-input" value="${quantity}" min="1" style="width: 50px; text-align: center; padding: 5px; margin: 0 5px; font-size: 16px; border: 1px solid lightblue;">
+
+            <button type="button" class="quantity-btn" data-action="increase" style="padding: 0px 10px; font-size: 24px; border:none; background-color: rgb(212, 230, 227);border-radius:6px" >+</button>
+        </div>
+    </td>
+    <td class="subtotal" style="text-align: center; vertical-align: middle; padding: 8px;">${subtotal.toFixed(2)}</td>
+    <td style="text-align: center; vertical-align: middle; padding: 8px;">
+        <button class="delete-btn" style="padding: 4px 6px; font-size: 16px;border-radius:6px"><i class="bi bi-trash3"></i></button>
+    </td>
+`;
+   
+        // Append the new row to the table body
+        const tbody = document.getElementById('tbody-id');
+        tbody.appendChild(newRow);
+        
+        // Add event listener to the delete button
+        const deleteButton = newRow.querySelector('.delete-btn');
+        deleteButton.addEventListener('click', function() {
+            // Remove the row when the delete button is clicked
+            tbody.removeChild(newRow);
+            // Update the grand total after deleting the row
+            updateGrandTotal();
+            updateTotals();
+        });
+        
+        // Add event listeners to the quantity buttons
+        const quantityInput = newRow.querySelector('.quantity-input');
+        const increaseBtn = newRow.querySelector('[data-action="increase"]');
+        const decreaseBtn = newRow.querySelector('[data-action="decrease"]');
+        
+        increaseBtn.addEventListener('click', function(event) {
+            event.preventDefault();  // Prevent the default action of the button
+            let currentQuantity = parseInt(quantityInput.value);
+            quantityInput.value = currentQuantity + 1;
+            updateSubtotalAndTotals();
+        });
+
+        decreaseBtn.addEventListener('click', function(event) {
+            event.preventDefault();  // Prevent the default action of the button
+            let currentQuantity = parseInt(quantityInput.value);
+            if (currentQuantity > 1) {
+                quantityInput.value = currentQuantity - 1;
+                updateSubtotalAndTotals();
+            }
+        });
+
+        // Add event listener to quantity input to update subtotal
+        quantityInput.addEventListener('input', function() {
+            updateSubtotalAndTotals();
+        });
+
+        // Update the grand total and totals after adding a new product
+        updateGrandTotal();
+        updateTotals();
+    });
+});
+
+function updateSubtotalAndTotals() {
+    const rows = document.querySelectorAll('#tbody-id tr');
+    rows.forEach(row => {
+        const price = parseFloat(row.cells[1].textContent);
+        const quantity = parseInt(row.querySelector('.quantity-input').value);
+        const subtotal = price * quantity;
+        row.querySelector('.subtotal').textContent = subtotal.toFixed(2);
+    });
+
+    updateGrandTotal();
+    updateTotals();
+}
+
+function updateGrandTotal() {
+    const rows = document.querySelectorAll('#tbody-id tr');
+    let grandTotal = 0;
+
+    rows.forEach(row => {
+        const subtotal = parseFloat(row.querySelector('.subtotal').textContent);
+        grandTotal += subtotal;
+    });
+
+    // Update the grand total
+    document.getElementById('grand-total').textContent = grandTotal.toFixed(2);
+}
+
+function updateTotals() {
+    const rows = document.querySelectorAll('#tbody-id tr');
+    const itemCount = rows.length;
+    let total = 0;
+
+    rows.forEach(row => {
+        const price = parseFloat(row.cells[1].textContent);
+        const quantity = parseInt(row.querySelector('.quantity-input').value);
+        total += price * quantity;
+    });
+
+    document.getElementById('item').textContent = `${itemCount} (${total.toFixed(2)})`;
+    document.getElementById('subtotal').textContent = total.toFixed(2);
+}
+
+function updateGrandTotal() {
+    const rows = document.querySelectorAll('#tbody-id tr');
+    let grandTotal = 0;
+
+    rows.forEach(row => {
+        const subtotal = parseFloat(row.querySelector('.subtotal').textContent);
+        grandTotal += subtotal;
+    });
+
+    // Update the grand total
+    document.querySelector('.summary .scontent p span').textContent = grandTotal.toFixed(2);
+}
+
+function updateTotals() {
+    const rows = document.querySelectorAll('#tbody-id tr');
+    const itemCount = rows.length;
+    let total = 0;
+
+    rows.forEach(row => {
+        const price = parseFloat(row.cells[1].textContent);
+        const quantity = parseInt(row.querySelector('.quantity-input').value);
+        total += price * quantity;
+    });
+
+    // Update the Items and Total in summary
+    document.querySelector('.summary .scontent p span').textContent = itemCount;
+    document.querySelector('.summary .scontent p:nth-child(2) span').textContent = total.toFixed(2);
+}
+
+document.querySelectorAll('.product-cell').forEach(cell => {
+    cell.addEventListener('click', function() {
+        // Get product details and add the product to the table as already implemented
+        // (code for adding the row here...)
+
+        // Call update functions to refresh summary
+        updateGrandTotal();
+        updateTotals();
+    });
+});
+
+// When the delete button is clicked
+const deleteButton = newRow.querySelector('.delete-btn');
+deleteButton.addEventListener('click', function() {
+    // Remove the row when the delete button is clicked
+    tbody.removeChild(newRow);
+
+    // Update totals after deleting the row
+    updateGrandTotal();
+    updateTotals();
+});
+
+increaseBtn.addEventListener('click', function(event) {
+    event.preventDefault();  // Prevent the default action
+    let currentQuantity = parseInt(quantityInput.value);
+    quantityInput.value = currentQuantity + 1;
+
+    // Update totals after quantity change
+    updateSubtotalAndTotals();
+    updateGrandTotal();
+    updateTotals();
+});
+
+decreaseBtn.addEventListener('click', function(event) {
+    event.preventDefault();  // Prevent the default action
+    let currentQuantity = parseInt(quantityInput.value);
+    if (currentQuantity > 1) {
+        quantityInput.value = currentQuantity - 1;
+
+        // Update totals after quantity change
+        updateSubtotalAndTotals();
+        updateGrandTotal();
+        updateTotals();
+    }
+});
+function updateGrandTotal() {
+    const rows = document.querySelectorAll('#tbody-id tr');
+    let grandTotal = 0;
+
+    rows.forEach(row => {
+        const subtotal = parseFloat(row.querySelector('.subtotal').textContent);
+        grandTotal += subtotal;
+    });
+
+    // Update the grand total
+    document.getElementById('grand-total').textContent = grandTotal.toFixed(2); // Ensure the grand total is updated
+}
+
+
+</script>
+  </body>
+</html>

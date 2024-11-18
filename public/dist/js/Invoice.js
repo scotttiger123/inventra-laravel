@@ -5,6 +5,174 @@ function setTextContentById(id, value) {
     }
 }
 
+
+
+function getOrderForEdit() {
+    
+    var saleId = document.querySelector('input[name="custom_order_id"]').value;
+
+    if (saleId) {
+        fetch(`/get-invoice/${saleId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error); // Alert if there is an error with the response
+                } else {
+                    // If data is valid, populate the order details in the view
+                    populateOrderDetails(data);
+                    console.log(data);
+                    // populateOrderItems(data.items);
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching order data:", error);
+                alert("There was an error retrieving the order data.");
+            });
+    } else {
+        alert("Sale ID is missing or invalid.");
+    }
+}
+
+
+function populateOrderDetails(data) {
+
+    const orderDateInput = document.querySelector('input[name="order_date"]');
+    const customerNameInput = document.querySelector('input[name="customer-name"]');
+    const salespersonNameInput = document.querySelector('input[name="salesperson-name"]');
+    const orderStatusInput = document.querySelector('input[name="order_status"]');
+    const customerIdInput = document.querySelector('input[name="customer_id"]');
+    const salespersonIdInput = document.querySelector('input[name="salesperson_id"]');
+    const paymentStatusInput = document.querySelector('input[name="payment_status"]');
+    const paidAmountInput = document.querySelector('input[name="paid_amount"]');
+    
+    const remainingAmountInput = document.querySelector('input[name="remaining_amount"]');
+    const orderDiscountInput = document.querySelector('input[name="order_discount"]');
+    const discountTypeFlat = document.querySelector('input[name="order_discount_type"][value="flat"]');
+    const discountTypePercentage = document.querySelector('input[name="order_discount_type"][value="percentage"]');
+    const otherChargesInput = document.querySelector('input[name="other_charges"]');  
+    const grossAmountInput = document.querySelector('input[name="gross_amount"]');  
+    const netTotalInput = document.querySelector('input[name="net_amount"]'); 
+    const balanceInput = document.querySelector('input[name="balance"]');
+    
+    // Populate other charges field
+    if (otherChargesInput) {
+        const otherCharges = data.otherCharges || 0;
+        otherChargesInput.value = otherCharges;
+    }
+
+    if (grossAmountInput) {
+        // Temporarily enable the input, set the value, and disable it again
+        grossAmountInput.disabled = false;
+        grossAmountInput.value = data.grossAmount || 0;
+        grossAmountInput.disabled = true;
+    }
+
+    if (netTotalInput) {
+      
+         netTotalInput.disabled = false;
+         netTotalInput.value = data.netTotal.toFixed(2); // Set the value with two decimal points
+         netTotalInput.disabled = true;
+    }
+       
+    if (balanceInput) {
+        balanceInput.disabled = false; 
+        balanceInput.value = data.remainingAmount.toFixed(2);  
+        balanceInput.disabled = true;  
+    }
+
+    if (orderDateInput && customerNameInput && salespersonNameInput && orderStatusInput) {
+        orderDateInput.value = data.order.order_date || '';
+        customerNameInput.value = data.order.customer ? data.order.customer.name : '';
+        salespersonNameInput.value = data.order.sales_manager_name || '';
+        orderStatusInput.value = data.order.status || '';
+
+        if (customerIdInput) customerIdInput.value = data.order.customer ? data.order.customer.id : '';
+        if (salespersonIdInput) salespersonIdInput.value = data.order.sale_manager_id;
+        if (paymentStatusInput) paymentStatusInput.value = data.order.payment_status || '';
+        if (paidAmountInput) paidAmountInput.value = data.order.paid || '';
+        
+        if (remainingAmountInput) remainingAmountInput.value = data.order.remainingAmount || '';
+
+            
+        
+            const discountAmount = data.order.discount_amount || 0;
+            const discountType = data.order.discount_type || '-';  // Default to flat
+            console.log("discount",discountAmount);
+            // Populate order discount value
+            orderDiscountInput.value = discountAmount;
+
+                if (discountType === '-') {
+                    orderDiscountInput.value = discountAmount;  // For flat, show as negative value
+                    discountTypeFlat.checked = true;  // Check the flat radio button
+                    discountTypePercentage.checked = false;  // Uncheck the percentage radio button
+                } else if (discountType === '%') {
+                    orderDiscountInput.value = discountAmount; 
+                    
+                    discountTypePercentage.checked = true;  // Check the percentage radio button
+                    discountTypeFlat.checked = false;  // Uncheck the flat radio button
+                }
+        
+                var table = document.getElementById('orderItemsTable').getElementsByTagName('tbody')[0];
+                
+                
+
+                data.orderItems.forEach(item => {
+                    var newRow = table.insertRow();   
+                    // Set custom attributes on the new row
+                    newRow.setAttribute('data-product-code', item.product_code);
+                    newRow.setAttribute('data-product-id', item.product_id);
+                    newRow.setAttribute('data-uom-id', item.uom_id);
+                
+                    const cell1 = newRow.insertCell(0);
+                    const cell2 = newRow.insertCell(1);
+                    const cell3 = newRow.insertCell(2);
+                    const cell4 = newRow.insertCell(3);
+                    const cell5 = newRow.insertCell(4);
+                    const cell6 = newRow.insertCell(5);
+                    const cell7 = newRow.insertCell(6);
+                    const cell8 = newRow.insertCell(7);
+                    const cell9 = newRow.insertCell(8);
+                
+                    cell1.innerHTML = item.product_name;
+                
+                    const input = createEditableQuantityCell(item.quantity);
+                    cell2.appendChild(input);
+                
+                    cell3.innerHTML = item.uom_name;
+                
+                    cell4.innerHTML = parseFloat(item.unit_price).toFixed(2);
+                
+                    if (item.discount_amount.includes('%')) {
+                        cell5.innerHTML = item.discount_amount;
+                    } else {
+                        cell5.innerHTML = item.discount_amount;
+                    }
+                
+                    cell6.innerHTML = parseFloat(item.net_rate).toFixed(2);
+                    const amount = (item.quantity * item.net_rate).toFixed(2);
+                    cell7.innerHTML = amount;
+                
+                    cell8.innerHTML = item.exit_warehouse ? 'Yes' : 'No';
+                
+                    const deleteButton = document.createElement("button");
+                    deleteButton.type = "button";
+                    deleteButton.innerHTML = "Delete";
+                    deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+                    deleteButton.onclick = function () { removeItem(deleteButton); };
+                    cell9.appendChild(deleteButton);
+                });
+                
+
+
+    } else {
+        console.error('Some required input elements are missing in the DOM.');
+    }
+}
+
+
+
+
+
 function getInvoiceDetails(customOrderId = null) {
     let saleId = customOrderId;
 

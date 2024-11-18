@@ -89,6 +89,15 @@ class OrderController extends Controller
         if (!$customer) {
             return response()->json(['error' => 'Customer not found.'], 404);
         }
+
+
+
+                                    
+        // Fetch the sales manager associated with this order (if any)
+        $salesManager = User::where('id', $order->sale_manager_id)->first();
+        $salesManagerName = $salesManager ? $salesManager->name : '';
+        $order->sales_manager_name = $salesManagerName;
+
     
         // Fetch all order items with product names and UOM details
         $orderItems = OrderItem::where('custom_order_id', $customOrderId)
@@ -114,8 +123,10 @@ class OrderController extends Controller
             $uomName = !empty($item->uom_name) ? $item->uom_name : '-';
     
             return [
+                'product_id' => $item->product_id,
                 'product_name' => $item->product_name,
                 'quantity' => $item->quantity,
+                'uom_id' => $item->uom_id,
                 'uom_name' => $uomName,
                 'unit_price' => $item->unit_price,
                 'discount_amount' => $item->discount_amount . $item->discount_type,
@@ -146,9 +157,12 @@ class OrderController extends Controller
         // Calculate remaining amount
         $paidAmount = (float)$order->paid;
         $remainingAmount = $netTotal - $paidAmount;
-    
+        
+
+
         return response()->json([
             'order' => $order,
+            
             'orderItems' => $orderItemsData,
             'grossAmount' => $grossAmount,
             'orderDiscount' => $orderDiscount,

@@ -2,7 +2,8 @@
   <!-- Logo -->
   <a href="{{ url('/welcome') }}" class="logo">
     <!-- Use asset helper for the logo image -->
-    <img src="{{ asset('dist/img/logo.png') }}" alt="Inventra Logo" style="height: 70px; width: auto;">
+     ADMIN
+    <!-- <img src="{{ asset('dist/img/logo.png') }}" alt="Inventra Logo" style="height: 70px; width: auto;"> -->
   </a>
 
 

@@ -15,6 +15,17 @@ use Illuminate\Support\Facades\Log;
 class PaymentController extends Controller
 {
     
+
+
+      // Show create role form
+      public function create()
+      {
+          
+          $Payment = Payment::all(); // Fetch all roles
+          return view('payments.create', compact('Payment')); // Pass roles to the view
+      }
+
+
     public function index()
     {
         $payments = Payment::all()->map(function ($payment) {
