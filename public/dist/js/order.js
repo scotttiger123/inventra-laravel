@@ -615,3 +615,56 @@ function cancelEditMode() {
     clearOrderItemsTable(); // Clear the items in the order table (if required)
 }
 
+
+// 
+
+document.getElementById('product-input').addEventListener('change', function () {
+    const productCode = this.value; // Get the entered product code
+    const selectedOption = document.querySelector(`#product_name option[value="${productCode}"]`);
+
+    if (selectedOption) {
+        const productId = selectedOption.getAttribute('data-id'); // Get the product ID
+           
+        // Fetch product details using the product ID
+        fetch(`/get-product-details/${productId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    
+                    populateProductFields(data.product);
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching product details:", error);
+                alert("Unable to fetch product details. Please try again.");
+            });
+    } else {
+        alert("Invalid product selected. Please choose from the list.");
+    }
+});
+
+
+
+function populateProductFields(product) {
+    if (product) {
+        // Set UOM abbreviation in the input field
+        const uomInput = document.getElementById('uom_id');
+        uomInput.value = product.uom_abbreviation;
+
+        // Add UOM ID to data-id for further processing
+        const uomOption = document.querySelector(`#UOMList option[value="${product.uom_abbreviation}"]`);
+        if (uomOption) {
+            uomOption.setAttribute('data-id', product.uom_id);
+        }
+
+        // Populate other fields
+        document.getElementById('price_id').value = product.price || '';
+        document.getElementById('qty_id').value = 1;
+        
+    } else {
+        alert('Product details not found.');
+    }
+}
+

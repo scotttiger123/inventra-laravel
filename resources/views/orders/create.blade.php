@@ -12,8 +12,8 @@
         
             <div class="row" >
                 <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box compact-info-box">
-                        <span class="info-box-icon bg-aqua"><i class="fa fa-credit-card"></i></span>
+                    <div class="info-box compact-info-box" >
+                        <span class="info-box-icon bg-aqua"  style="border-radius: 5px;!important"><i class="fa fa-credit-card"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Balance</span>
                             <span class="info-box-number">$1,410</span>
@@ -23,7 +23,7 @@
                 
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box compact-info-box">
-                        <span class="info-box-icon bg-green"><i class="fa fa-cogs"></i></span>
+                        <span class="info-box-icon bg-green" style="border-radius: 5px;!important" ><i class="fa fa-cogs"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Stock</span>
                             <span class="info-box-number">410</span>
@@ -33,7 +33,7 @@
                 
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box compact-info-box">
-                        <span class="info-box-icon bg-yellow"><i class="fa fa-usd"></i></span>
+                        <span class="info-box-icon bg-yellow" style="border-radius: 5px;!important" ><i class="fa fa-usd"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Last Price</span>
                             <span class="info-box-number">$13,648</span>
@@ -43,7 +43,7 @@
                 
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box compact-info-box">
-                        <span class="info-box-icon bg-red"><i class="fa fa-percent"></i></span>
+                        <span class="info-box-icon bg-red" style="border-radius: 5px;!important"><i class="fa fa-percent"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Discount</span>
                             <span class="info-box-number">10%</span>
@@ -171,6 +171,7 @@
                             </div>
                             <div class="col-xs-1">
                                 <input type="number" id="price_id" class="form-control myInput" tabindex="3" name="" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();" placeholder="Price" >
+                                
                             </div>
                             <div class="col-xs-1">
                                 <select id="discount_type" class="form-control myInput" tabindex="4" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">

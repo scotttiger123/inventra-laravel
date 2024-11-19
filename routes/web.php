@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController\OrderController;
+use App\Http\Controllers\PurchaseController\PurchaseController;
 use App\Http\Controllers\ProductController\ProductController;
 use App\Http\Controllers\AuthController\LoginController;
 use App\Http\Controllers\CustomerController\CustomerController;
@@ -30,7 +31,7 @@ Route::post('login', [LoginController::class,'login'])->name('login');
 
 
 
-// Route for listing all invoices
+// Route for listing all invoices / orders 
 
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
@@ -43,6 +44,16 @@ Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('ord
 Route::post('/customer/store', [OrderController::class, 'customerStore'])->name('customer.store');
 Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
 
+
+// Route for listing all purchases 
+
+Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+Route::post('/supplier/store', [PurchaseController::class, 'customerStore'])->name('supplier.store');
+Route::get('get-purchase/{purchaseId}', [PurchaseController::class, 'getPurchase']);
+
+
 //Route::middleware(['auth'])->group(function () {
 
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -52,6 +63,8 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::get('/get-product-details/{code}', [ProductController::class, 'getProductDetails']);
+
 
 
    

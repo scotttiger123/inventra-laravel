@@ -104,4 +104,9 @@ class Product extends Model
     {
         return $query->where('brand_id', $brandId);
     }
+
+    public function uom()
+    {
+        return $this->belongsTo(Uom::class, 'uom_id'); // Assuming `uom_id` is the foreign key
+    }
 }

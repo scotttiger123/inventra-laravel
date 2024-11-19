@@ -17,8 +17,25 @@
             data-toggle="push-menu"
             role="button"
           >
-            <span class="sr-only">Toggle navigation</span>
+            <span class="sr-only">Toggle navigation</span> 
+            
+            
+            
           </a>
+          @if (Request::is('orders/create'))
+           <div class="navbar-left" style="display: flex; align-items: center; padding-left: 20px;">
+              <a href="#" style="padding-top:14px;font-weight: bold; font-size: 18px; color: #000000; display: inline-block;">
+                 Add Sales
+              </a>
+            </div>
+          @endif  
+          @if (Request::is('purchases/create'))
+           <div class="navbar-left" style="display: flex; align-items: center; padding-left: 20px;">
+              <a href="#" style="padding-top:14px;font-weight: bold; font-size: 18px; color: #000000; display: inline-block;">
+                 Add Purchases
+              </a>
+            </div>
+          @endif  
 
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">

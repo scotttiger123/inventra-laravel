@@ -161,6 +161,24 @@ class ProductController extends Controller
     }
 }
 
+        public function getProductDetails($id)
+        {
+            $product = Product::where('id', $id)->first(); // Search by `id`
 
+            if ($product) {
+                return response()->json([
+                    'success' => true,
+                    'product' => [
+                        'cost' => $product->cost,
+                        'price' => $product->price,
+                        'uom_abbreviation' => $product->uom->abbreviation ?? '', 
+                        'uom_id' => $product->uom->id ?? '', 
+                        
+                    ],
+                ]);
+            }
+
+            return response()->json(['success' => false, 'message' => 'Product not found.']);
+        }
 
 }

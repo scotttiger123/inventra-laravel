@@ -26,9 +26,9 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="{{ route('orders.index') }}"><i class="fa fa-file-invoice"></i> Sale View</a></li>
-          <li><a href="{{ route('orders.create') }}"><i class="fa fa-plus-circle"></i> Add Sale Order</a></li>
-          <li><a href="{{ route('orders.create-pos') }}"><i class="fa fa-plus-circle"></i> POS </a></li>
+          <li style="padding-left: 20px;"><a href="{{ route('orders.index') }}"><i class="fa fa-list"></i> Sale View</a></li>
+          <li style="padding-left: 20px;"><a href="{{ route('orders.create') }}"><i class="fa fa-plus-circle"></i> Add Sale Order</a></li>
+          <li style="padding-left: 20px;"><a href="{{ route('orders.create-pos') }}"><i class="fa fa-credit-card"></i> POS</a></li>
         </ul>
       </li>
 
@@ -40,36 +40,38 @@
             <i class="fa fa-angle-left pull-right"></i>
           </span>
         </a>
-        <ul class="treeview-menu">
-          <li><a href="pages/charts/chartjs.html"><i class="fa fa-plus-circle"></i> Create Sale Invoice</a></li>
-          <li><a href="pages/charts/morris.html"><i class="fa fa-credit-card"></i> POS</a></li>
-        </ul>
+        
+          <ul class="treeview-menu">
+            <li style="padding-left: 20px;"><a href="{{ route('purchases.index') }}"><i class="fa fa-list"></i> Purchase Listings </a></li>
+            <li style="padding-left: 20px;"><a href="{{ route('purchases.create') }}"><i class="fa fa-plus-circle"></i> Add Purchase </a></li>
+          </ul>
+        
       </li>
 
       <li class="treeview">
         <a href="#">
-          <i class="fa  fa-signal"></i>
+          <i class="fa fa-signal"></i>
           <span>Reports</span>
           <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="/reports"><i class="fa fa-eye"></i> View Reports</a></li>
+          <li style="padding-left: 20px;"><a href="/reports"><i class="fa fa-eye"></i> View Reports</a></li>
         </ul>
       </li>
 
       <li class="treeview">
         <a href="#">
-          <i class="fa fa-cogs"></i>
+          <i class="fa  fa-signal"></i>
           <span>Products</span>
           <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="/products/create"><i class="fa fa-plus"></i> Create New Product</a></li>
-          <li><a href="/products"><i class="fa fa-list"></i> List Products</a></li>
+          <li style="padding-left: 20px;"><a href="/products/create"><i class="fa fa-plus"></i> Create New Product</a></li>
+          <li style="padding-left: 20px;"><a href="/products"><i class="fa fa-list"></i> List Products</a></li>
         </ul>
       </li>
 
@@ -82,12 +84,12 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="/users/create"><i class="fa fa-user-plus"></i> Create User</a></li>
-          <li><a href="/users"><i class="fa fa-users"></i> User List</a></li>
-          <li><a href="/customers/create"><i class="fa fa-user-plus"></i> Create Customer</a></li>
-          <li><a href="/customers"><i class="fa fa-users"></i> Customer List</a></li>
-          <li><a href="/suppliers/create"><i class="fa fa-user-plus"></i> Create Supplier</a></li>
-          <li><a href="/suppliers"><i class="fa fa-users"></i> Supplier List</a></li>
+          <li style="padding-left: 20px;"><a href="/users/create"><i class="fa fa-user-plus"></i> Create User</a></li>
+          <li style="padding-left: 20px;"><a href="/users"><i class="fa fa-users"></i> User List</a></li>
+          <li style="padding-left: 20px;"><a href="/customers/create"><i class="fa fa-user-plus"></i> Create Customer</a></li>
+          <li style="padding-left: 20px;"><a href="/customers"><i class="fa fa-users"></i> Customer List</a></li>
+          <li style="padding-left: 20px;"><a href="/suppliers/create"><i class="fa fa-user-plus"></i> Create Vendors</a></li>
+          <li style="padding-left: 20px;"><a href="/suppliers"><i class="fa fa-users"></i> Vendor List</a></li>
         </ul>
       </li>
 
@@ -100,9 +102,9 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="/payments/create"><i class="fa fa-dollar-sign"></i> Add Payment</a></li>
-          <li><a href="/payments"><i class="fa fa-list"></i> Payment List</a></li>
-          <li><a href="/payments/transactions"><i class="fa fa-exchange-alt"></i> Payment Transactions</a></li>
+          <li style="padding-left: 20px;"><a href="/payments/create"><i class="fa fa-dollar-sign"></i> Add Payment</a></li>
+          <li style="padding-left: 20px;"><a href="/payments"><i class="fa fa-list"></i> Payment List</a></li>
+          <li style="padding-left: 20px;"><a href="/payments/transactions"><i class="fa fa-exchange-alt"></i> Payment Transactions</a></li>
         </ul>
       </li>
 
@@ -118,8 +120,8 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="/transfers"><i class="fa fa-arrow-right"></i> Transfer Lists </a></li>
-          <li><a href="/transfers/create"><i class="fa fa-arrow-right"></i> AddTransfer</a></li>
+          <li style="padding-left: 20px;"><a href="/transfers"><i class="fa fa-arrow-right"></i> Transfer Lists </a></li>
+          <li style="padding-left: 20px;"><a href="/transfers/create"><i class="fa fa-arrow-right"></i> AddTransfer</a></li>
         </ul>
       </li>
 
@@ -132,10 +134,10 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="/roles/create"><i class="fa fa-wrench"></i> Assign Role/Permission </a></li>
-          <li><a href="/settings"><i class="fa fa-wrench"></i> General Settings</a></li>
-          <li><a href="/settings/user"><i class="fa fa-user-cog"></i> User Settings</a></li>
-          <li><a href="/warehouses"><i class="fa fa-arrow-right"></i> Warehouse</a></li>
+          <li style="padding-left: 20px;"><a href="/roles/create"><i class="fa fa-wrench"></i> Assign Role/Permission </a></li>
+          <li style="padding-left: 20px;"><a href="/settings"><i class="fa fa-wrench"></i> General Settings</a></li>
+          <li style="padding-left: 20px;"><a href="/settings/user"><i class="fa fa-user-cog"></i> User Settings</a></li>
+          <li style="padding-left: 20px;"><a href="/warehouses"><i class="fa fa-arrow-right"></i> Warehouse</a></li>
         </ul>
         
       </li>
@@ -149,7 +151,7 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="/documentation"><i class="fa fa-file-alt"></i> User Guide</a></li>
+          <li style="padding-left: 20px;"><a href="/documentation"><i class="fa fa-file-alt"></i> User Guide</a></li>
         </ul>
       </li>
 

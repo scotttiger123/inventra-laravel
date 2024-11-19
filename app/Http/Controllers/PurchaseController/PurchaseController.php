@@ -1,14 +1,16 @@
 <?php 
-namespace App\Http\Controllers\OrderController;
+namespace App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\Controller; 
-use App\Models\Order;
-use App\Models\OrderItem;
+use App\Models\Purchase;  
+use App\Models\PurchaseItem;  
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Customer;
+use App\Models\Supplier;
 use App\Models\Product;
 use App\Models\Role;
 use App\Models\Uom;
+use App\Models\Warehouse;
+
 
 
 use App\Models\User; 
@@ -19,64 +21,30 @@ use Illuminate\Validation\Rule;
 use Exception;
 
 
-class OrderController extends Controller
+class PurchaseController extends Controller
 {
     
 
     public function create()
     {
         $user = auth()->user();
-    
-        // Get customers created by the current user or their parent
-        $customers = Customer::where('created_by', $user->id)
+        $vendors = Supplier::where('created_by', $user->id)->get();
+        $salePersonRoleId = Role::where('name', 'Purchase Person')->value('id');
+        $purchasepersons = User::where('Role', $salePersonRoleId)->get();
+        $products = Product::where('created_by', $user->id)
             ->orWhere('parent_user_id', $user->id)
             ->orWhere('parent_user_id', $user->parent_id)
             ->get();
-    
-            $salePersonRoleId = Role::where('name', 'Sale Person')->value('id');
-
-            $salespersons = User::where('Role', $salePersonRoleId)->get();
-
-    
-        // Fetch products that belong to the current user or their parent
-        $products = Product::where('created_by', $user->id) // Products created by the current user
-            ->orWhere('parent_user_id', $user->id)
-            ->orWhere('parent_user_id', $user->parent_id) // Products created by the parent of the current user
-            ->get();
-
-            $uoms = Uom::all();  // Assuming the model for Uom is correctly defined
-
-    
-        return view('orders.create', compact('customers', 'salespersons', 'products', 'uoms'));
-
-        
-    }
-    
-
-    public function createPOS()
-    {
-        $user = auth()->user();
-
-        // Get customers created by the current user or their parent
-        $customers = Customer::where('created_by', $user->id)
-        ->orWhere('created_by', $user->parent_id)
-        ->get();
-
-        // Fetch sale managers for additional dropdown if needed
-        $saleManagers = User::where('role', 'sale_manager')->get();
-
-        return view('orders.create-pos', compact('customers', 'saleManagers'));
+        $uoms = Uom::all();
+        $warehouses = Warehouse::where('created_by', $user->id)->get();
+        // Pass all data to the view
+        return view('purchases.create', compact('vendors', 'purchasepersons', 'products', 'uoms', 'warehouses'));
     }
 
-
-
     
 
-
-
-
-
-    public function getInvoice($customOrderId)
+    
+    public function getPurchase($customOrderId)
     {
         $order = Order::where('custom_order_id', $customOrderId)->first();
     
