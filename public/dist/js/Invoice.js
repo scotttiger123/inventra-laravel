@@ -21,6 +21,10 @@ function getOrderForEdit() {
                     // If data is valid, populate the order details in the view
                     populateOrderDetails(data);
                     console.log(data);
+                    document.getElementById('submitOrder').style.display = 'none'; // Hide Submit button
+                    document.getElementById('updateOrder').style.display = 'inline-block'; // Show Update button
+                    document.getElementById('cancelOrder').style.display = 'inline-block'; // Show Cancel button
+                
                     // populateOrderItems(data.items);
                 }
             })

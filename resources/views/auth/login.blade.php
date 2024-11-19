@@ -162,22 +162,24 @@
 
     .btn {
       width: 150px;
-      background-color: #000;
+      
       
       outline: none;
       height: 49px;
       
-      color: #fff;
+      color: #000;
       text-transform: uppercase;
       font-weight: 600;
       margin: 10px 0;
       cursor: pointer;
       transition: 0.5s;
       border-radius: 25px;
+      border : 1px solid #00a65a;
     }
 
     .btn:hover {
-      background-color: #00a65a;
+      color:white;
+      background-color: #000;
     }
 
 .business-banner {

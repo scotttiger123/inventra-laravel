@@ -227,6 +227,13 @@
                                     Submit Order
                                     <i id="loader" style = 'display:none' class="fa fa-refresh fa-spin"></i>
                                 </button>
+                                <button id="updateOrder" style = 'display:none' class="btn btn-warning" type="button">
+                                        updateOrder
+                                    <i id="loader" style = 'display:none' class="fa fa-refresh fa-spin"></i>
+                                </button>
+                                <button type="button" style = 'display:none' id="cancelOrder" class="btn btn-secondary">Cancel</button>
+
+                                
                                 <!-- Success and Error Message Containers -->
                             </div>
                             
@@ -474,6 +481,10 @@
             <div class="modal-body">
                 <form id="create-customer-form" method="POST" action="{{ route('customer.store') }}">
                     @csrf
+                    @isset($order)
+                        <input type="text" name="_method" value="PUT">
+                        <input type="text" id="orderId" value="{{ $order->id }}">
+                    @endisset
                     <div class="form-group">
                         <label for="new-customer-name">Customer Name</label>
                         <input type="text" class="form-control" id="new-customer-name" name="name" placeholder="Enter customer name" required>

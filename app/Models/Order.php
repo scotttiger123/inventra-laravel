@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Order extends Model
 {
     use HasFactory, SoftDeletes;
-
+    protected $primaryKey = 'order_id';
+    
     protected $fillable = [
 
         'custom_order_id',

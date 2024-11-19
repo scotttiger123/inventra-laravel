@@ -129,6 +129,7 @@ class OrderController extends Controller
                 'uom_id' => $item->uom_id,
                 'uom_name' => $uomName,
                 'unit_price' => $item->unit_price,
+                'exit_warehouse' => $item->exit_warehouse,
                 'discount_amount' => $item->discount_amount . $item->discount_type,
                 'net_rate' => $item->net_rate,
                 'amount' => $item->total_after_discount,
@@ -275,6 +276,7 @@ class OrderController extends Controller
         }
     }
 
+    
     private function generateOrderNumber($branchId)
 {
     $year = date('Y');
@@ -300,6 +302,7 @@ class OrderController extends Controller
     // Return the generated order number
     return $prefix.$year.$newNumber;
 }
+
 
     
 
@@ -422,45 +425,100 @@ public function edit($customOrderId)
 }
 
 
-public function update(Request $request, $customOrderId)
+
+public function update(Request $request)
 {
-    // Validate the incoming request
-    $validated = $request->validate([
-        'order_date' => 'required|date',
-        'customer_id' => 'required|exists:customers,id',
-        'gross_amount' => 'required|numeric',
-        'order_discount' => 'required|numeric',
-        'discount_type' => 'required|in:%,-',
-        'other_charges' => 'required|numeric',
-        'net_total' => 'required|numeric',
-        'paid' => 'required|numeric',
-    ]);
+    \Log::info('Order update request data:', $request->all());
 
-    // Find the order by custom_order_id
-    $order = Order::where('custom_order_id', $customOrderId)->first();
+    try {
+        // Start a database transaction
+        DB::beginTransaction();
+        $branchId = auth()->user()->branch_id ?? 1;
 
-    if (!$order) {
-        return redirect()->route('orders.index')->with('error', 'Order not found.');
+        // Check if the order exists by custom_order_id or any other unique identifier (like order_id)
+        $existingOrder = Order::where('custom_order_id', $request->custom_order_id)->first();
+
+        if (!$existingOrder) {
+            return response()->json(['success' => false, 'message' => 'Order not found.']);
+        }
+
+        // Update the order details
+        $existingOrder->customer_id = $request->customer_id;
+        $existingOrder->sale_manager_id = $request->salesperson_id;
+        $existingOrder->total_amount = $request->total_amount;
+        $existingOrder->status = $request->order_status;
+        $existingOrder->other_charges = $request->other_charges ?? 0;
+        $existingOrder->discount_amount = $request->discount_amount ?? 0;
+        $existingOrder->payment_method = $request->payment_method;
+        $existingOrder->order_date = $request->order_date;
+        $existingOrder->sale_note = $request->sale_note;
+        $existingOrder->staff_note = $request->staff_note;
+
+        if ($request->order_discount_type == 'percentage') {
+            $existingOrder->discount_type = $request->order_discount_type . '%';  // Append % for percentage
+        } else {
+            $existingOrder->discount_type = '-';  // Use - for flat discount
+        }
+
+        $existingOrder->discount_amount = $request->order_discount;
+        $existingOrder->other_charges = $request->other_charges;
+        $existingOrder->paid = $request->paid_amount;
+
+        $existingOrder->updated_by = auth()->id();  // Set the user updating the order
+        $existingOrder->save();
+
+        // Clear previous order items before updating (if needed)
+        DB::table('order_items')->where('custom_order_id', $existingOrder->id)->delete();
+
+        // Check if orderData is provided
+        if ($request->has('orderData')) {
+            $orderData = json_decode($request->orderData, true); // Decode JSON string to array
+            if (is_array($orderData)) {
+                \Log::info('Order Data:', $orderData);
+
+                // Insert updated order items
+                foreach ($orderData as $item) {
+                    DB::table('order_items')->insert([
+                        'order_id' => $existingOrder->id,
+                        'product_id' => $item['product_id'],
+                        'uom_id' => $item['uomId'] !== null ? (int) $item['uomId'] : 0,
+                        'quantity' => $item['qty'],
+                        'unit_price' => $item['rate'],
+                        'discount_type' => (strpos($item['discountType'], '%') !== false) ? '%' : '-',
+                        'discount_amount' => $item['discountValue'],
+                        'exit_warehouse' => $item['exit_warehouse'],
+                        'custom_order_id' => $request->custom_order_id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            } else {
+                \Log::error('Invalid orderData format');
+            }
+        } else {
+            \Log::error('Missing orderData');
+        }
+
+        // Commit transaction
+        DB::commit();
+
+        // Return a response indicating success
+        return response()->json(['success' => true, 'message' => 'Order updated successfully.']);
+
+    } catch (Exception $e) {
+        // Rollback transaction if something goes wrong
+        DB::rollBack();
+
+        // Log the error with additional context
+        \Log::error('Order update failed: ' . $e->getMessage(), [
+            'request_data' => $request->all(),
+            'exception' => $e
+        ]);
+
+        // Return a response indicating failure
+        return response()->json(['success' => false, 'message' => 'There was an error updating the order. Please try again later.']);
     }
-
-    // Update the order with the validated data
-    $order->update([
-        'order_date' => $validated['order_date'],
-        'customer_id' => $validated['customer_id'],
-        'grossAmount' => $validated['gross_amount'],
-        'orderDiscount' => $validated['order_discount'],
-        'discount_type' => $validated['discount_type'],
-        'other_charges' => $validated['other_charges'],
-        'netTotal' => $validated['net_total'],
-        'paid' => $validated['paid'],
-        'sale_note' => $request->sale_note,
-        'staff_note' => $request->staff_note,
-    ]);
-
-    return redirect()->route('orders.index')->with('success', 'Order updated successfully.');
 }
-
-
 
 
 

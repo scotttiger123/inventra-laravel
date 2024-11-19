@@ -136,9 +136,39 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         var loader = document.getElementById('loader');
         var button = document.getElementById('submitOrder');
         
+        const timeField = document.getElementById('datetimepicker_dark1');
+        const customerField = document.getElementById('customer-id');
+        
+        // Validate existence of required fields
+        if (!timeField) {
+            console.error('Time field is missing.');
+            showMessage('error', 'Time field is missing in the form.');
+            return;
+        }
+
+        if (!customerField) {
+            console.error('Customer field is missing.');
+            showMessage('error', 'Customer field is missing in the form.');
+            return;
+        }
+
+        // Validate Time field
+        if (!timeField.value) {
+            showMessage('error', 'Please select a valid time.');
+            timeField.focus();
+            return;
+        }
+
+        // Validate Customer field
+        if (!customerField.value || customerField.value === '') {
+            showMessage('error', 'Please select a valid customer.');
+            customerField.focus();
+            return;
+        }
+
         // Disable the button to prevent further clicks
         button.disabled = true;
-        loader.style.display = 'inline-block';
+        $('#loader').show(); 
 
 
         var orderData = getOrderData();  // Get the order data
@@ -157,7 +187,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
             body: formData
         })
         .then(response => {
-            loader.style.display = 'none';
+            $('#loader').fadeOut();
             button.disabled = false;
 
             if (!response.ok) {
@@ -166,7 +196,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
             return response.json();
         })
         .then(data => {
-            loader.style.display = 'none';
+            $('#loader').fadeOut();
             button.disabled = false;
             // Handle the success or error response
             if (data.success) {
@@ -183,7 +213,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
             }
         })
         .catch(error => {
-            loader.style.display = 'none';
+            $('#loader').fadeOut();
             button.disabled = false;
             console.error("Error:", error);
             document.getElementById('error-message').style.display = 'block';
@@ -209,8 +239,9 @@ document.getElementById('submitOrder').addEventListener('click', function () {
             var discountType = row.cells[4].innerText;  // Discount type (percentage or flat)
             var discountValue = parseFloat(row.cells[4].innerText) || 0;  // Discount value
             var netRate = parseFloat(row.cells[6].innerText);  // Net rate after discount
-            var amount = parseFloat(row.cells[5].innerText);  // Amount after discount
-            var exitWarehouse = row.cells[6].innerHTML === 'Yes' ? 1 : 0;
+            var amount = parseFloat(row.cells[6].innerText);  // Amount after discount
+            var exitWarehouse = row.cells[7].innerHTML === 'Yes' ? 1 : 0;
+            
             
     
             // Add the item data to the orderData array
@@ -436,6 +467,8 @@ function recalculateTotals() {
     document.getElementById('other_charges_id').addEventListener('input', recalculateTotals);
     document.querySelector('input[name="order_discount_type"]').addEventListener('change', recalculateTotals);
     document.getElementById('paid_amount_id').addEventListener('input', recalculateTotals);
+    document.getElementById('updateOrder').addEventListener('click', updateOrder);
+    document.getElementById('cancelOrder').addEventListener('click', cancelEditMode);
 
     // Function to remove an item from the table
     function removeItem(button) {
@@ -461,6 +494,124 @@ function showMessage(type, message) {
     // Hide the message after 10 seconds with a fade-out effect
     setTimeout(function() {
         messageDiv.fadeOut();
-    }, 10000); // 10000 milliseconds = 10 seconds
+    }, 5000); // 10000 milliseconds = 10 seconds
+}
+
+
+function updateOrder() {
+
+    const form = document.getElementById('orderForm');
+    const formData = new FormData(form);
+    const loader = document.getElementById('loader');
+    const button = document.getElementById('submitOrder');
+
+    const customOrderId = document.querySelector('input[name="custom_order_id"]').value.trim();
+
+    // Validate custom_order_id
+    if (!customOrderId || customOrderId.length === 0) {
+        showMessage('error', 'Order ID is required.');
+        return;
+    }
+
+        const timeField = document.getElementById('datetimepicker_dark1');
+        const customerField = document.getElementById('customer-id');
+        
+        // Validate existence of required fields
+        if (!timeField) {
+            console.error('Time field is missing.');
+            showMessage('error', 'Time field is missing in the form.');
+            return;
+        }
+
+        if (!customerField) {
+            console.error('Customer field is missing.');
+            showMessage('error', 'Customer field is missing in the form.');
+            return;
+        }
+
+        // Validate Time field
+        if (!timeField.value) {
+            showMessage('error', 'Please select a valid time.');
+            timeField.focus();
+            return;
+        }
+
+        // Validate Customer field
+        if (!customerField.value || customerField.value === '') {
+            showMessage('error', 'Please select a valid customer.');
+            customerField.focus();
+            return;
+        }
+
+
+
+    button.disabled = true;
+    loader.style.display = 'block';
+
+    // Add `_method` to simulate a PUT request
+    formData.append('_method', 'PUT');
+    var orderData = getOrderData();  // Get the order data
+    formData.append('orderData', JSON.stringify(orderData));  // Add the order data as JSON
+
+    fetch(`/orders/${customOrderId}`, {
+        method: 'POST', // Use POST as the base HTTP method
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        loader.style.display = 'none';
+        button.disabled = false;
+
+        if (data.success) {
+            showMessage('success', data.message);
+            form.reset();
+            clearOrderItemsTable();
+
+        } else {
+            showMessage('error', data.message);
+        }
+    })
+    .catch(error => {
+        loader.style.display = 'none';
+        button.disabled = false;
+        console.error("Error:", error);
+        showMessage('error', 'There was an error updating the order.');
+    });
+}
+
+//Clear order
+document.getElementById('cancelOrder').addEventListener('click', function () {
+    // Get the form element
+    const form = document.getElementById('orderForm');
+    
+    // Reset the form
+    form.reset();
+
+    // Clear the order items table
+    clearOrderItemsTable();
+
+    // Optionally, reset the loader and buttons
+    const loader = document.getElementById('loader');
+    const submitButton = document.getElementById('submitOrder');
+    loader.style.display = 'none';
+    submitButton.disabled = false;
+
+    // Optionally show a message
+    showMessage('info', 'Order form has been cleared.');
+});
+
+// Function to switch to create mode
+function cancelEditMode() {
+    document.getElementById('submitOrder').style.display = 'inline-block'; // Show Submit button
+    document.getElementById('updateOrder').style.display = 'none'; // Hide Update button
+    document.getElementById('cancelOrder').style.display = 'none'; // Hide Cancel button
+
+    // Optionally clear the form or reset data
+    document.getElementById('orderForm').reset(); // Reset form fields
+    clearOrderItemsTable(); // Clear the items in the order table (if required)
 }
 
