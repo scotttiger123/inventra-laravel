@@ -51,7 +51,7 @@ Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.
 Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
 Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
 Route::post('/supplier/store', [PurchaseController::class, 'customerStore'])->name('supplier.store');
-Route::get('get-purchase/{purchaseId}', [PurchaseController::class, 'getPurchase']);
+Route::get('get-purchase-invoice/{purchaseId}', [PurchaseController::class, 'getPurchase']);
 
 
 //Route::middleware(['auth'])->group(function () {

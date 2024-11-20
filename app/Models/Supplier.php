@@ -21,7 +21,11 @@ class Supplier extends Model
         'discount_type',
         'discount_value',
     ];
-
+    
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class); // Assuming the 'supplier_id' foreign key is used
+    }
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');

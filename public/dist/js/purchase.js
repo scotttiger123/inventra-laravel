@@ -1,5 +1,151 @@
 
-    
+$(function () {
+    $('#purchase-listings').DataTable({
+        'paging': true,
+        'lengthChange': true,
+        'searching': true,
+        'ordering': true,
+        'info': true,
+        'autoWidth': true,
+        'order': [[0, 'desc']] // Sorts by first column (Payment Date) in descending order
+    });
+});
+
+
+function getPurchaseData() {
+
+    const purchaseData = []; // Array to store the purchase items data
+    const rows = document.getElementById('purchaseItemsTable').getElementsByTagName('tbody')[0].rows;
+
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+
+        const productId = row.getAttribute('data-product-id'); // Product ID
+        const productName = row.cells[0].innerText; // Product name
+        const qty = row.cells[1].querySelector('input').value || 0; // Quantity
+        const uomId = row.getAttribute('data-uom-id'); // Unit of Measure ID
+        const rate = parseFloat(row.cells[3].innerText) || 0; // Rate
+        const discountType = row.cells[4].innerText; // Discount type
+        const discountValue = parseFloat(row.cells[4]?.innerText || 0); // Discount value
+        const netRate = parseFloat(row.cells[5]?.innerText || 0); // Net rate
+        const amount = parseFloat(row.cells[6]?.innerText || 0); // Amount after discount
+        
+        const warehouseID = row.getAttribute('data-warehouse-id'); // Product ID
+
+        // Add item to purchaseData array
+        purchaseData.push({
+            product_id: productId,
+            product_name: productName,
+            qty: parseInt(qty, 10),
+            uom_id: uomId,
+            rate: rate,
+            discount_type: discountType,
+            discount_value: discountValue,
+            net_rate: netRate,
+            amount: amount,
+            inward_warehouse_id: warehouseID ,
+        });
+    }
+
+    return purchaseData; // Return collected purchase data
+}
+
+document.getElementById('submitPurchase').addEventListener('click', function () {
+
+    const form = document.getElementById('purchaseForm');
+    const formData = new FormData(form);
+    const button = document.getElementById('submitPurchase');
+    const loader = document.getElementById('loader');
+
+    // Validate required fields
+    if (!validatePurchaseTimeField() || !validateSupplierField()) {
+        return; // Stop submission if validation fails
+    }
+
+    button.disabled = true;
+    $('#loader').show();
+
+    const purchaseData = getPurchaseData();
+    formData.append('purchaseData', JSON.stringify(purchaseData));
+     // Log the entire formData including the appended orderData for debugging
+     for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }   
+
+    fetch(form.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: formData,
+    })
+        .then(response => {
+            $('#loader').fadeOut();
+            button.disabled = false;
+
+            if (!response.ok) {
+                throw new Error(`Server responded with status ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            $('#loader').fadeOut();
+            button.disabled = false;
+
+            if (data.success) {
+                
+                showMessage('success', data.message);
+                form.reset();
+                clearPurchaseItemsTable();
+                document.getElementById('vendor-name-input').focus();
+                
+            } else {
+                showMessage('error', data.message || 'Purchase submission failed.');
+            }
+        })
+        .catch(error => {
+            $('#loader').fadeOut();
+            button.disabled = false;
+            showMessage('error', error.message || 'An error occurred.');
+        });
+});
+
+function clearPurchaseItemsTable() {
+    // Clear all rows from the order items table's body
+    const tableBody = document.getElementById('purchaseItemsTable').getElementsByTagName('tbody')[0];
+    tableBody.innerHTML = '';
+}
+
+// Validation functions
+function validatePurchaseTimeField() {
+    const timeField = document.getElementById('purchase-date-input');
+    if (!timeField) {
+        showMessage('error', 'Time field is missing in the form.');
+        return false;
+    }
+    if (!timeField.value) {
+        showMessage('error', 'Please select a valid time.');
+        timeField.focus();
+        return false;
+    }
+    return true;
+}
+
+function validateSupplierField() {
+    const supplierField = document.getElementById('vendor-id');
+    if (!supplierField) {
+        showMessage('error', 'Supplier field is missing in the form.');
+        return false;
+    }
+    if (!supplierField.value) {
+        showMessage('error', 'Please select a valid supplier.');
+        supplierField.focus();
+        return false;
+    }
+    return true;
+}
+
     function addItemToPurchase() {
         
         // Get selected customer
@@ -45,7 +191,7 @@
         var rate = parseFloat(document.getElementById('price_id').value);
         var discountType = document.getElementById('discount_type').value; // Discount type (flat or percentage)
         var discountValue = parseFloat(document.getElementById('discount_value').value);
-        var inwardWarehouse = document.getElementById('warehouse-name-input').value;
+        var inwardWarehouse = document.getElementById('warehouse-id').value;
         
         // Get the selected UOM value and UOM id (from data-id)
         var uomInput = document.getElementById('uom-name-input');
@@ -140,11 +286,46 @@
         document.getElementById('discount_value').value = '';
         
         // Recalculate totals after adding the item
-        //recalculateTotals();
+        recalculateTotals();
         document.getElementById('product-input').focus();
     }
     
     
+
+
+    
+function recalculateTotals() {
+
+    var table = document.getElementById('purchaseItemsTable').getElementsByTagName('tbody')[0];
+    var rows = table.rows;
+    var grossAmount = 0;
+    var orderDiscount = parseFloat(document.getElementById('order_discount_id').value) || 0; // Get order discount
+    var otherCharges = parseFloat(document.getElementById('other_charges_id').value) || 0; // Get other charges
+    var netAmount = 0;
+
+    // Loop through the rows of the order items table
+    for (var i = 0; i < rows.length; i++) {
+        var amount = parseFloat(rows[i].cells[6].innerHTML);
+        grossAmount += amount;
+    }
+
+    // Apply discount (flat or percentage)
+    var discountType = document.querySelector('input[name="order_discount_type"]:checked').value;
+    if (discountType === 'percentage') {
+        netAmount = grossAmount - (grossAmount * (orderDiscount / 100));  // Apply discount percentage
+    } else {
+        netAmount = grossAmount - orderDiscount;  // Apply flat discount
+    }
+
+    // Add other charges to the net amount
+    netAmount += otherCharges;  // Add other charges
+
+    // Update the total fields
+    document.getElementById('gross_amount_id').value = grossAmount.toFixed(2);
+    document.getElementById('net_amount_id').value = netAmount.toFixed(2);
+    document.getElementById('balance_id').value = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); // Balance = Net Amount - Paid Amount
+}
+
     
   // Vendor name validation & get id 
 const vendorNameInput = document.getElementById('vendor-name-input');
@@ -176,6 +357,27 @@ warehouseNameInput.addEventListener('input', function() {
 });
 
 
+// Status selection validation and ID assignment
+const statusNameInput = document.getElementById('purchase-status-input');
+const statusIdField = document.getElementById('status-id');
+
+statusNameInput.addEventListener('input', function () {
+    const selectedOption = document.querySelector(`#orderStatusList option[value="${statusNameInput.value}"]`);
+    if (selectedOption) {
+        const statusId = selectedOption.getAttribute('data-id');
+        statusIdField.value = statusId;
+    } else {
+        statusIdField.value = '';  // Reset if no match
+    }
+});
+
+
+
+
+
+
+
+
 // UOM selection validation and ID assignment
 const uomNameInput = document.getElementById('uom-name-input');
 const uomIdField = document.getElementById('uom-id');
@@ -204,3 +406,49 @@ window.onload = function() {
     var formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
     dateInput.value = formattedDate;
 };
+window.onload = function() {
+
+    document.getElementById('vendor-name-input').focus();
+};
+
+
+    document.getElementById('order_discount_id').addEventListener('input', recalculateTotals);
+    document.getElementById('other_charges_id').addEventListener('input', recalculateTotals);
+    document.querySelector('input[name="order_discount_type"]').addEventListener('change', recalculateTotals);
+    document.getElementById('paid_amount_id').addEventListener('input', recalculateTotals);
+    
+    
+    
+    function createEditableQuantityCell(qty) {
+
+        var input = document.createElement('input');
+        input.type = 'number';
+        input.classList.add('form-control', 'form-control-sm');
+        input.value = qty || '';
+        input.min = '0';
+        input.step = '0.01';
+    
+        input.addEventListener('input', function() {
+            var row = input.closest('tr');
+            var newQty = parseFloat(input.value) || 0;
+            var rate = parseFloat(row.cells[3].innerHTML);
+            var discountInfo = row.cells[4].innerHTML;
+            var discountType = discountInfo.includes('%') ? 'percentage' : 'flat';
+            var discountValue = parseFloat(discountInfo) || 0;
+    
+            var netRate = rate;
+            if (discountType === 'percentage' && discountValue > 0) {
+                netRate -= (rate * discountValue) / 100;
+            } else if (discountType === 'flat' && discountValue > 0) {
+                netRate -= discountValue;
+            }
+    
+            var amount = newQty * netRate;
+            row.cells[5].innerHTML = netRate.toFixed(2);
+            row.cells[6].innerHTML = amount.toFixed(2);
+    
+            recalculateTotals();
+        });
+    
+        return input;
+    }

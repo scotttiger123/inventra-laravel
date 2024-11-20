@@ -280,7 +280,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2 col-sm-6 col-12" >
-                                    <div class="small-box">
+                                    <div class="small-box" style = 'height:96px'>
                                         <div class="inner" >
                                             <h3><input type="number"  name = 'order_discount' id="order_discount_id" value="" class="form-control" tabindex="9" placeholder="Order Discount "></h3>
                                             <label >

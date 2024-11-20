@@ -6,48 +6,7 @@
         <div id="success-message" class="alert alert-success" style="display: none;"></div>
         <div id="error-message" class="alert alert-danger" style="display: none;"></div>
         
-        <div class="row">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box compact-info-box">
-                    <span class="info-box-icon bg-aqua" style="border-radius: 5px;!important"><i class="fa fa-credit-card"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Total Purchase</span>
-                        <span class="info-box-number">$1,410</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box compact-info-box">
-                    <span class="info-box-icon bg-green" style="border-radius: 5px;!important"><i class="fa fa-cogs"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Stock Available</span>
-                        <span class="info-box-number">410</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box compact-info-box">
-                    <span class="info-box-icon bg-yellow" style="border-radius: 5px;!important"><i class="fa fa-usd"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Last Purchase Price</span>
-                        <span class="info-box-number">$13,648</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box compact-info-box">
-                    <span class="info-box-icon bg-red" style="border-radius: 5px;!important"><i class="fa fa-percent"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Discount</span>
-                        <span class="info-box-number">10%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        
         <form id="purchaseForm" action="{{ route('purchases.store') }}" method="POST">
             @csrf
             <div class="box-body">
@@ -109,17 +68,21 @@
                                             <input type="hidden" name="warehouse_id" id="warehouse-id">
                                         </div>    
 
+                                        <div class="col-md-2">
+                                                <input type="text" list="orderStatusList" style="width: 100%;" name="purchase_status" 
+                                                    class="form-control myInput" placeholder="Select Status" tabindex="1" id="purchase-status-input">
+                                                <datalist id="orderStatusList">
+                                                    @foreach($statuses as $status)
+                                                        <option value="{{ $status->status_name }}" data-id="{{ $status->id }}">
+                                                            {{ $status->status_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </datalist>
+                                                <input type="hidden" name="status_id" id="status-id">
+                                            </div>
 
                             
-                                        <div class="col-md-2">
-                                            <input type="text" list="orderStatusList" name="order_status" id="order_status" class="form-control myInput" tabindex="1" placeholder="Purchase Status">
-                                            <datalist id="orderStatusList">
-                                                <option value="Received"></option>
-                                                <option value="Pending"></option>
-                                                <option value="Shipped"></option>
-                                                <option value="Return"></option>
-                                            </datalist>
-                                        </div>
+                                       
                         </div>
 
                         <!-- Product Selection -->
@@ -148,15 +111,15 @@
                             
                             <!-- Unit Price -->
                             <div class="col-xs-1">
-                                <input type="number" id="price_id" class="form-control myInput" tabindex="3" name="price" placeholder="Unit Price">
+                                <input type="number" id="price_id" class="form-control myInput" tabindex="3" name="price" placeholder="Unit Price" onKeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
                             </div>
 
                             <!-- Discount -->
                             <div class="col-xs-1">
-                                <input type="number" class="form-control myInput" id="discount_value" placeholder="Discount" tabindex="5" onKeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
+                                <input type="number" class="form-control myInput" id="discount_value" placeholder="Discount" tabindex="4" onKeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
                             </div>
-                            <div class="col-xs-1">
-                                <select id="discount_type" class="form-control myInput" tabindex="4" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
+                            <div class="col-xs-1" >
+                                <select id="discount_type" class="form-control myInput" tabindex="5" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
                                     <option value="percentage">%</option>
                                     <option value="flat">Flat</option>
                                 </select>
@@ -172,6 +135,13 @@
                                 </datalist>
                                 <input type="hidden" name="uom_id" id="uom-id">
                             </div>
+                            <div class="col-xs-1">
+                                <button type="button" class="btn btn-info" onclick="addItemToPurchase()">Add Product</button>
+                            
+                            </div>    
+                            <div class="col-xs-1">
+                                <button id="submitPurchase" class="btn btn-success" type="button">Submit Purchase Order</button>
+                            </div>   
 
                                
                         </div>
@@ -187,10 +157,7 @@
                                     <input type="text" id="purchase_note" name="purchase_note" tabindex="7" placeholder="Purchase Notes / Remarks" class="form-control myInput">
                                 </div>    
                             </div>
-                            <div class="col-xs-4">
-                                <button type="button" class="btn btn-info" onclick="addItemToPurchase()">Add Product</button>
-                                <button id="submitPurchase" class="btn btn-success" type="button">Submit Purchase Order</button>
-                            </div>    
+                            
                         </div>
 
                         
@@ -212,6 +179,7 @@
                                         <th>Net Rate</th>
                                         <th>Amount</th>
                                         <th>Warehouse</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="purchase-items-table-body">
@@ -220,6 +188,73 @@
                             </table>
                         </div>
                     </div>
+
+                        <!-- Financials Section (Gross Amount, Discount, etc.) -->
+                        <div class="table-container" >
+                            <div class="row">
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <div class="small-box" >
+                                        <div class="inner">
+                                            <h3><input name = 'gross_amount' id="gross_amount_id" type="number" value="0" class="form-control"  placeholder="0" readonly></h3>
+                                            <p>GROSS AMOUNT</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-6 col-12" >
+                                    <div class="small-box" style = 'height:96px'>
+                                        <div class="inner" >
+                                            <h3><input type="number"  name = 'order_discount' id="order_discount_id" value="0" class="form-control" tabindex="8" placeholder="Order Discount "></h3>
+                                            <label >
+                                                <input type="radio" name="order_discount_type" id = "flat_discount_radio" class="flat-red" value='flat' checked> Flat 
+                                            </label> &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <label>
+                                                <input type="radio" name="order_discount_type" id="percentage_discount_radio" class="flat-red" value="percentage"> Percentage 
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <div class="small-box">
+                                        <div class="inner">
+                                            <h3><input type = 'number' value ="0" name="other_charges" value="" id = 'other_charges_id' class="form-control" tabindex="9" ></h3>
+                                            <p>OTHER CHARGES</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <div class="small-box">
+                                        <div class="inner">
+                                            <h3><input name="net_amount" id="net_amount_id" type="number"  class="form-control"  readonly></h3>
+                                            <p>NET AMOUNT</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <div class="small-box">
+                                        <div class="inner">
+                                            <h3><input name="paid_amount" id="paid_amount_id" type="number" value = "0" class="form-control" tabindex="10" ></h3>
+                                            <p>PAID AMT</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <div class="small-box">
+                                        <div class="inner">
+                                            <h3><input name="balance" id="balance_id" type="number" class="form-control" readonly></h3>
+                                            <p>BALANCE</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
                 </div>
             </div>
         </form>
