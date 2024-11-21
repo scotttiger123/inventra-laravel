@@ -12,6 +12,8 @@ use App\Http\Controllers\PaymentController\PaymentController;
 use App\Http\Controllers\RoleController\RoleController;
 use App\Http\Controllers\WarehouseController\WarehouseController;
 use App\Http\Controllers\TransferController\TransferController;
+use App\Http\Controllers\CurrencyController\CurrencyController;
+
 
 
 
@@ -52,6 +54,7 @@ Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('pu
 Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
 Route::post('/supplier/store', [PurchaseController::class, 'customerStore'])->name('supplier.store');
 Route::get('get-purchase-invoice/{purchaseId}', [PurchaseController::class, 'getPurchase']);
+Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->name('purchase.destroy');
 
 
 //Route::middleware(['auth'])->group(function () {
@@ -139,5 +142,15 @@ Route::get('get-purchase-invoice/{purchaseId}', [PurchaseController::class, 'get
     Route::put('/transfers/{transfer}', [TransferController::class, 'update'])->name('transfers.update'); // Update a specific transfer
     Route::delete('/transfers/{transfer}', [TransferController::class, 'destroy'])->name('transfers.destroy'); // Delete a transfer
 
+
+
+
+    Route::get('/currencies', [CurrencyController::class, 'index'])->name('currencies.index'); // List all currencies
+    Route::get('/currencies/create', [CurrencyController::class, 'create'])->name('currencies.create'); // Show form to create a currency
+    Route::post('/currencies', [CurrencyController::class, 'store'])->name('currencies.store'); // Store a new currency
+    Route::get('/currencies/{currency}', [CurrencyController::class, 'show'])->name('currencies.show'); // Show a specific currency
+    Route::get('/currencies/{currency}/edit', [CurrencyController::class, 'edit'])->name('currencies.edit'); // Show form to edit a currency
+    Route::put('/currencies/{currency}', [CurrencyController::class, 'update'])->name('currencies.update'); // Update a specific currency
+    Route::delete('/currencies/{currency}', [CurrencyController::class, 'destroy'])->name('currencies.destroy'); // Delete a currency
 
 //});

@@ -130,11 +130,8 @@
 </div>
 
 
-<!-- Modal for Viewing Payment Details -->
-<!-- Modal -->
-<!-- Include html2canvas library -->
-<!-- Include html2canvas library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+
 
 
 <!-- Modal Structure -->

@@ -2,9 +2,84 @@
 
 @section('content')
 <div class="content-wrapper">
+    
     <div class="form-border">
+    
+    
+    <div class="row">
+            @php
+                $totalGrossAmount = 0;
+                $totalDiscount = 0;
+                $totalPaid = 0;
+                $totalDue = 0;
+            @endphp
+
+            <!-- Calculate Totals -->
+            @foreach($purchases as $purchase)
+                @php
+                    $totalGrossAmount += $purchase->grossAmount;
+                    $totalDiscount += ($purchase->discount_type === '%') 
+                        ? ($purchase->grossAmount * $purchase->purchaseDiscount / 100) 
+                        : $purchase->purchaseDiscount;
+                    $totalPaid += $purchase->paid;
+                    $totalDue += max($purchase->remainingAmount, 0); // Only add positive due amounts
+                @endphp
+            @endforeach
+
+            <!-- Display Calculated Totals -->
+            <div class="col-lg-3 col-xs-6">
+                <div class="small-box bg-grey">
+                    <div class="inner">
+                        <h3>{{ number_format($totalGrossAmount, 2) }}</h3>
+                        <p>Gross Amount</p>
+                    </div>
+                    <div class="icon" style="color:#222D32">
+                        <i class="ion ion-cash"></i> <!-- Updated Icon -->
+                    </div>
+                    <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-xs-6">
+                <div class="small-box bg-grey">
+                    <div class="inner">
+                        <h3>{{ number_format($totalDiscount, 2) }}</h3>
+                        <p>Discount</p>
+                    </div>
+                    <div class="icon" style="color:#222D32">
+                        <i class="ion ion-pricetag"></i> <!-- Updated Icon -->
+                    </div>
+                    <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-xs-6">
+                <div class="small-box bg-grey">
+                    <div class="inner">
+                        <h3>{{ number_format($totalPaid, 2) }}</h3>
+                        <p>Paid</p>
+                    </div>
+                    <div class="icon" style="color:#222D32">
+                        <i class="ion ion-checkmark"></i> <!-- Updated Icon -->
+                    </div>
+                    <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-xs-6">
+                <div class="small-box bg-green">
+                    <div class="inner" >
+                        <h3>{{ number_format($totalDue, 2) }}</h3>
+                        <p>Amount Due</p>
+                    </div>
+                    <div class="icon" style="color:#222D32">
+                        <i class="ion ion-clock"></i> <!-- Updated Icon -->
+                    </div>
+                    <a href="#" class="small-box-footer" style="color:black"><i class="ion ion-clock"></i></a>
+                </div>
+            </div>
+        </div>
+
+
         <div class="box-header with-border">
-            <h3 class="box-title custom-title">Purchase Listings</h3>
+            <h3 class="box-title custom-title">Purchase Orders</h3>
             @if(session('success'))
                 <div class="alert alert-success">
                     {{ session('success') }}
@@ -27,8 +102,7 @@
                 <th>Purchase Date</th>
                 <th>Vendor</th>
                 <th>Gross Amount</th>
-                <th>Purchase Discount</th>
-                <th>Discount Type</th>
+                <th>Discount</th>
                 <th>Other Charges</th>
                 <th>Net Total</th>
                 <th>Paid</th>
@@ -43,8 +117,7 @@
                     <td>{{ $purchase->purchase_date }}</td>
                     <td>{{ $purchase->supplier->name ? $purchase->supplier->name : 'N/A' }}</td>
                     <td>{{ $purchase->grossAmount }}</td>
-                    <td>{{ $purchase->purchaseDiscount }}</td>
-                    <td>{{ $purchase->discount_type }}</td>
+                    <td>{{ $purchase->discount_type === '%' ? $purchase->purchaseDiscount . $purchase->discount_type : $purchase->purchaseDiscount }}</td>
                     <td>{{ $purchase->other_charges }}</td>
                     <td>{{ $purchase->netTotal }}</td>
                     <td>{{ $purchase->paid }}</td>
@@ -82,9 +155,34 @@
                                 >
                                     <i class="fa fa-eye"></i> View Purchase
                                 </button>
-                                <a href="https://wa.me/?text={{ urlencode('I would like to view my purchase details.') }}" class="custom-dropdown-item" target="_blank">
-                                    <i class="fa fa-whatsapp"></i> WhatsApp
-                                </a>
+                                <!-- WhatsApp Share Button -->
+                                    <button 
+                                        class="custom-dropdown-item" 
+                                        type="button" 
+                                        onclick="getPurchaseDataForSharing('{{ $purchase->custom_purchase_id }}', 'share')">
+                                        <i class="fa fa-whatsapp"></i> WhatsApp
+                                    </button>
+
+                                    <!-- Print Button -->
+                                    <button 
+                                        class="custom-dropdown-item" 
+                                        type="button" 
+                                        onclick="getPurchaseDataForSharing('{{ $purchase->custom_purchase_id }}', 'print')">
+                                        <i class="fa fa-print"></i> Print
+                                    </button>
+
+                                    <form id="deleteForm-{{ $purchase->custom_purchase_id }}" 
+                                        action="{{ route('purchase.destroy', $purchase->custom_purchase_id) }}" 
+                                        method="POST" 
+                                        class="custom-dropdown-item delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="confirmDeletePurchase({{ $purchase->custom_purchase_id }})" class="delete-btn btn btn-danger">
+                                            <i class="fa fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+
+
                                
                             </div>
                         </div>
@@ -96,7 +194,6 @@
     </div>
 </div>
 
-
 <!-- Modal for Invoice View -->
 <div id="purchaseInvoiceModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="invoiceModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -107,7 +204,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" id="invoiceContent">
+            <div class="modal-body  canva-section" id="invoiceContent">
                 <section class="invoice">
                     <div class="row">
                         <div class="col-xs-12">
@@ -131,10 +228,9 @@
                             </address>
                         </div>
 
-                        <div class="col-sm-4 invoice-col">
+                        <div class="col-sm-4 offset-sm-8 invoice-col">
                             <br>
-                            <b>Purchase Order ID:</b> <span id="purchaseOrderId">N/A</span><br>
-                            <b>Payment Due:</b> <span id="amountDueTop">N/A</span><br>
+                            <b>Purchase #:</b> <span id="purchaseOrderId">N/A</span><br>
                             
                         </div>
                     </div>
@@ -195,14 +291,100 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" onclick="sendReceiptOnWhatsApp()">
-                    <i class="fa fa-whatsapp"></i> Send on WhatsApp
-                </button>
-                <button type="button" class="btn btn-success" onclick="printInvoice()"><i class="fa fa-print"></i> Print</button>
+                
+                <button type="button" class="btn btn-success " onclick="printInvoice()"><i class="fa fa-print"></i> Print</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
+
+
+
+            <div class="modal-body  canva-section-watsapp" style = 'display:none'>
+                <section class="invoice" >
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h2 class="page-header">
+                                <div class="logo-img-invoice">
+                                    <img src="{{ asset('dist/img/logo.png') }}" alt="Inventra Logo">
+                                    <small class="date-inv">Date: <span id="invoiceDate-watsapp">N/A</span></small>
+                                </div>
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div class="row invoice-info">
+                        <div class="col-sm-4 invoice-col">
+                            To
+                            <address>
+                                <strong id="supplierName-watsapp">N/A</strong><br>
+                                <span id="supplierAddress-watsapp">N/A</span><br>
+                                Phone: <span id="supplierPhone-watsapp">N/A</span><br>
+                                Email: <span id="supplierEmail-watsapp">N/A</span>
+                            </address>
+                        </div>
+
+                        <div class="col-sm-4 offset-sm-8 invoice-col">
+                            <br>
+                            <b>Purchase #:</b> <span id="purchaseOrderId">N/A</span><br>
+                            
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Qty</th>
+                                        <th>Uom</th>
+                                        <th>Rate</th>
+                                        <th>Discount</th>
+                                        <th>Net Rate</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="purchaseInvoiceItems-watsapp">
+                                    <!-- Items will be dynamically injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <p class="lead">Note:</p>
+                            <p class="text-muted well well-sm no-shadow" id="purchaseNote" style="margin-top: 10px;">
+                            </p>
+                        </div>
+
+                        <div class="col-xs-6">
+                            <p class="lead">Amount Due : <span id="amountDue">N/A</span></p>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tr>
+                                        <th style="width:50%">Subtotal:</th>
+                                        <td id="subtotalAmount-watsapp">$0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Discount</th>
+                                        <td id="discountAmount-watsapp">0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Other Charges:</th>
+                                        <td id="otherCharges-watsapp">0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Paid:</th>
+                                        <td id="paidAmount-watsapp">0.00</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
 
 @endsection

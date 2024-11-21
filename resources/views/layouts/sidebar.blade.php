@@ -124,6 +124,21 @@
           <li style="padding-left: 20px;"><a href="/transfers/create"><i class="fa fa-arrow-right"></i> AddTransfer</a></li>
         </ul>
       </li>
+      
+    <li class="treeview">
+        <a href="#">
+          <i class="fa fa-money"></i>
+          <span>Currencies</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li style="padding-left: 20px;"><a href="/currencies"><i class="fa fa-list"></i> View Currencies</a></li>
+          <li style="padding-left: 20px;"><a href="/currencies/create"><i class="fa fa-plus-circle"></i> Add Currency</a></li>
+        </ul>
+        
+      </li>
 
       <li class="treeview">
         <a href="#">

@@ -70,7 +70,7 @@ class PurchaseController extends Controller
             ->get();
     
         $purchaseItemsData = $purchaseItems->map(function ($item) {
-            $unitPrice = (float)$item->unit_price;
+            $unitPrice = (float)$item->rate;
             $quantity = (float)$item->quantity;
             $item->total_before_discount = $unitPrice * $quantity;
     
@@ -94,7 +94,7 @@ class PurchaseController extends Controller
                 'uom_name' => $item->uom_name ?: '-',
                 'unit_price' => $unitPrice,
                 'entry_warehouse' => $item->entry_warehouse,
-                'discount_amount' => $item->discount_amount . $item->discount_type,
+                'discount_amount' => $item->discount_value > 0 ? $item->discount_value . $item->discount_type : '0',
                 'net_rate' => $item->net_rate,
                 'amount' => $item->total_after_discount,
             ];
@@ -107,7 +107,7 @@ class PurchaseController extends Controller
         $orderDiscountType = $purchaseOrder->discount_type;
         $orderDiscountAmount = (float)$purchaseOrder->discount_amount;
     
-        $orderDiscount = $orderDiscountType === 'percentage'
+        $orderDiscount = $orderDiscountType === '%'
             ? ($grossAmount * $orderDiscountAmount) / 100
             : $orderDiscountAmount;
     
@@ -164,7 +164,7 @@ class PurchaseController extends Controller
         $purchase->supplier_id = $request->vendor_id;
         $purchase->status = $request->status_id ?? 0;
         $purchase->other_charges = $request->other_charges ?? 0;
-        $purchase->discount_amount = $request->discount_amount ?? 0;
+        $purchase->discount_amount = $request->order_discount ?? 0;
         $purchase->purchase_date = $request->purchase_date;
         $purchase->custom_purchase_id = $purchaseNumber;
         $purchase->purchase_note = $request->purchase_note;
@@ -172,8 +172,8 @@ class PurchaseController extends Controller
         $purchase->paid = $request->paid_amount ?: 0;  
         
         // Set discount type
-        if ($request->discount_type == 'percentage') {
-            $purchase->discount_type = $request->discount_type . '%'; // Append % for percentage
+        if ($request->order_discount_type == 'percentage') {
+            $purchase->discount_type = '%'; // Append % for percentage
         } else {
             $purchase->discount_type = '-'; // Use - for flat discount
         }
@@ -271,47 +271,6 @@ class PurchaseController extends Controller
 }
 
 
-    
-
-    public function customerStore(Request $request)
-{
-    // Validate the incoming request data
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => [
-            'required',
-            'email',
-            Rule::unique('customers', 'email')
-                ->where(function ($query) {
-                    $query->where('created_by', auth()->id())
-                          ->orWhere('parent_user_id', auth()->user()->parent_id);
-                })
-        ],
-        'phone' => [
-            'nullable',
-            'string',
-            'max:15',
-            Rule::unique('customers', 'phone')
-                ->where(function ($query) {
-                    $query->where('created_by', auth()->id())
-                          ->orWhere('parent_user_id', auth()->user()->parent_id);
-                })
-        ],
-        'address' => 'required|string|max:255',
-        'city' => 'required|string|max:255',
-    ]);
-
-    // Create the new customer in the database
-    $customer = Customer::create($validated);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Customer created successfully.',
-        'customer_name' => $customer->name,  // Ensure this is being returned
-        'customer_id' => $customer->id,      // Ensure this is being returned
-    ]);
-}
-
 public function index(Request $request)
 {
     try {
@@ -330,7 +289,7 @@ public function index(Request $request)
             $purchaseItems = PurchaseItem::where('custom_purchase_id', $purchase->custom_purchase_id)->get(); // Get matching purchase items
 
             foreach ($purchaseItems as $item) {
-                $totalBeforeDiscount = $item->unit_price * $item->quantity;
+                $totalBeforeDiscount = $item->rate * $item->quantity;
                 $discountAmount = $item->discount_amount;
 
                 // Calculate the discount for each item
@@ -502,9 +461,20 @@ public function update(Request $request)
 }
 
 
+public function destroy($customPurchaseId)
+{
+    // Fetch the purchase by custom_purchase_id
+    $purchase = Purchase::where('custom_purchase_id', $customPurchaseId)->first();
 
+    if (!$purchase) {
+        return redirect()->back()->with('error', 'Purchase not found.');
+    }
 
+    // Soft delete the purchase
+    $purchase->delete();
 
+    return redirect()->route('purchases.index')->with('success', 'Purchase deleted successfully.');
+}
 
 
 }

@@ -452,3 +452,27 @@ window.onload = function() {
     
         return input;
     }
+
+
+
+
+    
+ 
+function showMessage(type, message) {
+    var messageDiv;
+    
+    // Determine the div based on message type
+    if (type === 'success') {
+        messageDiv = $('#success-message');
+    } else {
+        messageDiv = $('#error-message');
+    }
+
+    // Set the message and show the div
+    messageDiv.text(message).fadeIn();
+
+    // Hide the message after 10 seconds with a fade-out effect
+    setTimeout(function() {
+        messageDiv.fadeOut();
+    }, 5000); // 10000 milliseconds = 10 seconds
+}
