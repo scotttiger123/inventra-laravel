@@ -11,14 +11,14 @@ class ExpenseHeadController extends Controller
         public function index()
             {
                 $expenseHeads = PaymentHead::all(); // Fetch all expenses
-                return view('expenses-heads.index', compact('expenseHeads'));
+                return view('expenses-heads.index-head', compact('expenseHeads'));
             }
 
 
 
         public function create()
         {
-            return view('expenses-heads.create');
+            return view('expenses-heads.create-head');
         }
 
 
@@ -44,13 +44,13 @@ class ExpenseHeadController extends Controller
                 'deleted_by' => $userId,  
             ]);
         
-            return redirect()->route('expenses-heads.index')->with('success', 'Expense Head created successfully.');
+            return redirect()->route('expenses-heads.index-head')->with('success', 'Expense Head created successfully.');
         }
         
         public function edit($id)
         {
             $expenseHead = PaymentHead::findOrFail($id);
-            return view('expenses-heads.edit', compact('expenseHead'));
+            return view('expenses-heads.edit-head', compact('expenseHead'));
         }
         
         public function update(Request $request, $id)
@@ -71,7 +71,7 @@ class ExpenseHeadController extends Controller
                 'updated_by' => $userId,  // Set the updated_by field
             ]);
         
-            return redirect()->route('expenses-heads.index')->with('success', 'Expense Head updated successfully.');
+            return redirect()->route('expenses-heads.index-head')->with('success', 'Expense Head updated successfully.');
         }
 
             
@@ -84,7 +84,7 @@ class ExpenseHeadController extends Controller
         $expenseHead->deleted_by = auth()->id();
         $expenseHead->delete(); // This will soft delete the record
 
-        return redirect()->route('expenses-heads.index')->with('success', 'Expense Head deleted successfully.');
+        return redirect()->route('expenses-heads.index-head')->with('success', 'Expense Head deleted successfully.');
     }
 
 }

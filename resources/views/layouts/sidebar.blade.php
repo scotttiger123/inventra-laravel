@@ -63,7 +63,7 @@
 
       <li class="treeview">
         <a href="#">
-          <i class="fa  fa-signal"></i>
+          <i class="fa fa-cubes"></i>
           <span>Products</span>
           <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
@@ -102,19 +102,24 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/payments/create"><i class="fa fa-dollar-sign"></i> Add Payment</a></li>
-          <li style="padding-left: 20px;"><a href="/payments"><i class="fa fa-list"></i> Payment List</a></li>
-          <li style="padding-left: 20px;"><a href="/payments/transactions"><i class="fa fa-exchange-alt"></i> Payment Transactions</a></li>
+          <li style="padding-left: 20px;"><a href="/payments/create"><i class="fa fa-plus"></i> Add Payment</a></li>
+          <li style="padding-left: 20px;"><a href="/payments"><i class="fa fa-list"></i> Payment Listings</a></li>
         </ul>
       </li>
-
-      <li>
-          <a href="/expenses">
-              <i class="fa fa-money"></i> <span>Income/Expenses Heads</span>
-          </a>
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-rocket"></i>
+          <span>Expenses</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li style="padding-left: 20px;"><a href="/expenses/create"><i class="fa fa-plus"></i> Add Expense</a></li>
+          <li style="padding-left: 20px;"><a href="/expenses-head"><i class="fa fa-list"></i> Expense Categories</a></li>
+        </ul>
       </li>
-
-    <ul class="sidebar-menu" data-widget="tree">
+    
       <li class="treeview">
         <a href="#">
           <i class="fa fa-exchange"></i>
@@ -128,11 +133,6 @@
           <li style="padding-left: 20px;"><a href="/transfers/create"><i class="fa fa-arrow-right"></i> AddTransfer</a></li>
         </ul>
       </li>
-
-     
-
-    
-      
 
       <li class="treeview">
         <a href="#">

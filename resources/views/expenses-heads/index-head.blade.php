@@ -36,7 +36,7 @@
 
         <!-- Button to Add a New Expense Head -->
         <div class="text-right">
-            <a href="{{ route('expenses-heads.create') }}" class="btn btn-success">
+            <a href="{{ route('expenses-heads.create-head') }}" class="btn btn-success">
                 <i class="fa fa-plus"></i> Add Expense Head
             </a>
         </div>
@@ -64,13 +64,13 @@
                                 </button>
                                 <div class="custom-dropdown-menu">
                                     <!-- Edit Expense Head -->
-                                    <a href="{{ route('expenses-heads.edit', $expenseHead->id) }}" class="custom-dropdown-item">
+                                    <a href="{{ route('expenses-heads.edit-head', $expenseHead->id) }}" class="custom-dropdown-item">
                                         <i class="fa fa-edit"></i> Edit
                                     </a>
 
                                     <!-- Delete Expense Head -->
                                     <form id="deleteForm-{{ $expenseHead->id }}" 
-                                          action="{{ route('expenses-heads.destroy', $expenseHead->id) }}" 
+                                          action="{{ route('expenses-heads.destroy-head', $expenseHead->id) }}" 
                                           method="POST" 
                                           class="custom-dropdown-item delete-form">
                                         @csrf

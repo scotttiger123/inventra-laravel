@@ -9,7 +9,7 @@
         </div>
 
         <!-- Form for Creating Expense Head -->
-        <form action="{{ route('expenses-heads.store') }}" method="POST">
+        <form action="{{ route('expenses-heads.store-head') }}" method="POST">
             @csrf
 
             <!-- Expense Head Name -->
@@ -43,7 +43,7 @@
 
             <!-- Submit Button and View Heads -->
             <div class="form-group text-right">
-                <a href="{{ route('expenses-heads.index') }}" class="btn btn-primary">
+                <a href="{{ route('expenses-heads.index-head') }}" class="btn btn-primary">
                     <i class="fa fa-eye"></i> View Heads
                 </a>
                 <button type="submit" class="btn btn-success">

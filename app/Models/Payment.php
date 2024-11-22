@@ -69,6 +69,13 @@ class Payment extends Model
     /**
      * Automatically track who updated or deleted the payment.
      */
+
+     public function paymentHead()
+     {
+         return $this->belongsTo(PaymentHead::class, 'payment_head');
+     }
+
+     
     protected static function booted()
     {
         static::updating(function ($payment) {

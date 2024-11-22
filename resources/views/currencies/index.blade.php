@@ -45,7 +45,7 @@
         <table id="currencies-listings" class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    
                     <th>Name</th>
                     <th>Code</th>
                     <th>Symbol</th>
@@ -55,7 +55,7 @@
             <tbody>
                 @foreach($currencies as $currency)
                     <tr>
-                        <td>{{ $currency->id }}</td>
+                        
                         <td>{{ $currency->name }}</td>
                         <td>{{ $currency->code }}</td>
                         <td>{{ $currency->symbol }}</td>

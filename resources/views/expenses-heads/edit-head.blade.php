@@ -14,7 +14,7 @@
                     </div>
 
                     <!-- Form to Edit Expense Head -->
-                    <form action="{{ route('expenses-heads.update', $expenseHead->id) }}" method="POST">
+                    <form action="{{ route('expenses-heads.update-head', $expenseHead->id) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -37,7 +37,11 @@
                         <!-- Submit Button -->
                         <div class="box-footer">
                             <button type="submit" class="btn btn-primary">Save Changes</button>
-                            <a href="{{ route('expenses-heads.index') }}" class="btn btn-default">Back</a>
+                            
+                                <a href="{{ route('expenses-heads.index-head') }}" class="btn btn-success">
+                                    <i class="fa fa-eye"></i> View Heads
+                                </a>
+                            
                         </div>
                     </form>
 
