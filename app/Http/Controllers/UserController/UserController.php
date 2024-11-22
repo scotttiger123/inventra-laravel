@@ -4,6 +4,7 @@ namespace App\Http\Controllers\UserController;
 
 use App\Http\Controllers\Controller; 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -13,9 +14,11 @@ class UserController extends Controller
 {
     public function create()
     {
-        $parents = User::whereNotNull('parent_id')->get(); // Fetch users with parent
-        return view('users.create', compact('parents'));
+        $parents = User::whereNotNull('parent_id')->get(); // Fetch users with a parent_id
+        $roles = Role::all(); // Fetch all roles
+        return view('users.create', compact('parents', 'roles')); // Pass both variables to the view
     }
+    
 
     public function index()
     {

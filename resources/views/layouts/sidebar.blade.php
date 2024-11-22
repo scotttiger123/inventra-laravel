@@ -108,7 +108,11 @@
         </ul>
       </li>
 
-    </ul>
+      <li>
+          <a href="/expenses">
+              <i class="fa fa-money"></i> <span>Income/Expenses Heads</span>
+          </a>
+      </li>
 
     <ul class="sidebar-menu" data-widget="tree">
       <li class="treeview">
@@ -124,10 +128,15 @@
           <li style="padding-left: 20px;"><a href="/transfers/create"><i class="fa fa-arrow-right"></i> AddTransfer</a></li>
         </ul>
       </li>
+
+     
+
+    
       
-    <li class="treeview">
+
+      <li class="treeview">
         <a href="#">
-          <i class="fa fa-money"></i>
+          <i class="fa fa-dollar"></i>
           <span>Currencies</span>
           <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
@@ -140,6 +149,12 @@
         
       </li>
 
+      <li>
+          <a href="/roles">
+              <i class="fa fa-wrench"></i> <span>Assign Role / Permission</span>
+          </a>
+      </li>
+
       <li class="treeview">
         <a href="#">
           <i class="fa fa-cogs"></i>
@@ -149,7 +164,7 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/roles/create"><i class="fa fa-wrench"></i> Assign Role/Permission </a></li>
+          
           <li style="padding-left: 20px;"><a href="/settings"><i class="fa fa-wrench"></i> General Settings</a></li>
           <li style="padding-left: 20px;"><a href="/settings/user"><i class="fa fa-user-cog"></i> User Settings</a></li>
           <li style="padding-left: 20px;"><a href="/warehouses"><i class="fa fa-arrow-right"></i> Warehouse</a></li>

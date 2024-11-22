@@ -13,6 +13,7 @@ use App\Http\Controllers\RoleController\RoleController;
 use App\Http\Controllers\WarehouseController\WarehouseController;
 use App\Http\Controllers\TransferController\TransferController;
 use App\Http\Controllers\CurrencyController\CurrencyController;
+use App\Http\Controllers\ExpenseHeadController\ExpenseHeadController;
 
 
 
@@ -152,5 +153,16 @@ Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->
     Route::get('/currencies/{currency}/edit', [CurrencyController::class, 'edit'])->name('currencies.edit'); // Show form to edit a currency
     Route::put('/currencies/{currency}', [CurrencyController::class, 'update'])->name('currencies.update'); // Update a specific currency
     Route::delete('/currencies/{currency}', [CurrencyController::class, 'destroy'])->name('currencies.destroy'); // Delete a currency
+
+
+
+    
+    Route::get('/expenses', [ExpenseHeadController::class, 'index'])->name('expenses-heads.index'); // List all expenses
+    Route::get('/expenses/create', [ExpenseHeadController::class, 'create'])->name('expenses-heads.create'); // Show form to create an expense
+    Route::post('/expenses', [ExpenseHeadController::class, 'store'])->name('expenses-heads.store'); // Store a new expense
+    Route::get('/expenses/{expense}', [ExpenseHeadController::class, 'show'])->name('expenses-heads.show'); // Show a specific expense
+    Route::get('/expenses/{expense}/edit', [ExpenseHeadController::class, 'edit'])->name('expenses-heads.edit'); // Show form to edit an expense
+    Route::put('/expenses/{expense}', [ExpenseHeadController::class, 'update'])->name('expenses-heads.update'); // Update a specific expense
+    Route::delete('/expenses/{expense}', [ExpenseHeadController::class, 'destroy'])->name('expenses-heads.destroy'); // Delete an expense
 
 //});

@@ -11,12 +11,14 @@ class PaymentHead extends Model
 
     // Define the fillable fields for mass assignment
     protected $fillable = [
-        'name',  // Name of the payment head (e.g., Customer, Supplier, etc.)
-        'created_by', // User who created the payment head
-        'updated_by', // User who last updated the payment head
+        'name',  
+        'description',  
+        'created_by', 
+        'updated_by',
+        'deleted_by', 
     ];
 
-    // Define the relationships to other models (if any)
+    
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -27,6 +29,10 @@ class PaymentHead extends Model
         return $this->belongsTo(User::class, 'updated_by');
     }
 
+    public function deleter()
+    {
+        return $this->belongsTo(User::class, 'deleted_by'); // Optional, for reference
+    }
     // Soft delete (if necessary)
     use SoftDeletes;
 

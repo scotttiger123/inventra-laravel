@@ -76,22 +76,21 @@
                 </div>
 
                 <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Role</label>
-                        <select name="role" class="form-control myInput">
-                            <option value="">Select Role...</option>
-                            <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                            <option value="manager" {{ old('role') == 'manager' ? 'selected' : '' }}>Manager</option>
-                            <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User</option>
-                            <option value="sales_manager" {{ old('role') == 'sales_manager' ? 'selected' : '' }}>Sales Manager</option>
-
-                        </select>
-                        @error('role')
-                            <span class="validation-msg text-danger">{{ $message }}</span>
-                        @enderror
+                        <div class="form-group">
+                            <label>Role</label>
+                            <select name="role" class="form-control myInput" required>
+                                <option value="">Select Role...</option>
+                                @foreach($roles as $role)
+                                    <option value="{{ $role->id }}" {{ old('role') == $role->id ? 'selected' : '' }}>
+                                        {{ ucfirst($role->name) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('role')
+                                <span class="validation-msg text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
-                </div>
-
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Password *</label>

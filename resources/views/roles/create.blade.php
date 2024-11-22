@@ -4,7 +4,7 @@
 <div class="content-wrapper">
     <div class="form-border">
         <div class="box-header with-border">
-            <h3 class="box-title custom-title">Permissions for Role: {{ ucfirst($role->name) }}</h3>
+            <h3 class="box-title custom-title">Create New Role</h3>
             @if(session('success'))
                 <div class="alert alert-success">
                     {{ session('success') }}
@@ -12,43 +12,23 @@
             @endif
         </div>
 
-        <!-- Button to Edit Role -->
-        <div class="text-right mb-3">
-            <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-primary">
-                <i class="fa fa-edit"></i> Edit Role
-            </a>
-        </div>
-
-        <!-- Permissions Listings Table -->
-        <form action="{{ route('roles.updatePermissions', $role->id) }}" method="POST">
+        <!-- Form to Create Role -->
+        <form action="{{ route('roles.store') }}" method="POST">
             @csrf
-            @method('PUT')
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Permission Name</th>
-                            <th>Access</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($permissions as $permission)
-                            <tr>
-                                <td>{{ ucfirst($permission->name) }}</td>
-                                <td>
-                                    <input type="checkbox" name="permissions[]" value="{{ $permission->name }}" 
-                                           {{ in_array($permission->name, $rolePermissions) ? 'checked' : '' }}>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <div class="form-group">
+                <label for="roleName">Role Name</label>
+                <input type="text" name="name" id="roleName" class="form-control" placeholder="Enter role name" required>
             </div>
 
-            <!-- Submit Button to Update Permissions -->
+            <div class="form-group">
+                <label for="roleDescription">Role Description</label>
+                <textarea name="description" id="roleDescription" class="form-control" placeholder="Enter role description" rows="4" required></textarea>
+            </div>
+
+            <!-- Submit Button -->
             <div class="text-right mt-3">
                 <button type="submit" class="btn btn-success">
-                    <i class="fa fa-save"></i> Update Permissions
+                    <i class="fa fa-save"></i> Create Role
                 </button>
             </div>
         </form>
