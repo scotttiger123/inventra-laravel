@@ -108,6 +108,19 @@
       </li>
       <li class="treeview">
         <a href="#">
+          <i class="fa fa-gg"></i>
+          <span>Incomes</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li style="padding-left: 20px;"><a href="/income/create"><i class="fa fa-plus"></i> Add Income</a></li>
+          <li style="padding-left: 20px;"><a href="/income-head"><i class="fa fa-list"></i> Income Categories</a></li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href="#">
           <i class="fa fa-rocket"></i>
           <span>Expenses</span>
           <span class="pull-right-container">
@@ -168,6 +181,9 @@
           <li style="padding-left: 20px;"><a href="/settings"><i class="fa fa-wrench"></i> General Settings</a></li>
           <li style="padding-left: 20px;"><a href="/settings/user"><i class="fa fa-user-cog"></i> User Settings</a></li>
           <li style="padding-left: 20px;"><a href="/warehouses"><i class="fa fa-arrow-right"></i> Warehouse</a></li>
+          <li style="padding-left: 20px;"><a href="/tax"><i class="fa fa-dot-circle-o"></i> Tax </a></li>
+
+     
         </ul>
         
       </li>

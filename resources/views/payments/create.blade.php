@@ -105,9 +105,9 @@
                     <div class="form-group">
                         <label>Status *</label>
                         <select name="status" class="form-control myInput" required>
-                            <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                            <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                            <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                            
                         </select>
                         @error('status')
                             <span class="validation-msg text-danger">{{ $message }}</span>

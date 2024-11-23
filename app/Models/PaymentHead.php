@@ -13,6 +13,7 @@ class PaymentHead extends Model
     protected $fillable = [
         'name',  
         'description',  
+        'type',
         'created_by', 
         'updated_by',
         'deleted_by', 

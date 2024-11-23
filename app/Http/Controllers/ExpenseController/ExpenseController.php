@@ -105,16 +105,19 @@ public function store(Request $request)
         }
 
             
-    // Soft delete an Expense Head
-    public function destroy($id)
-    {
-        $expenseHead = PaymentHead::findOrFail($id);
+        // PaymentController.php
 
-        // Optionally set 'deleted_by' to the current user
-        $expenseHead->deleted_by = auth()->id();
-        $expenseHead->delete(); // This will soft delete the record
+            public function destroy($payment)
+            {
+                // Find the payment by its ID
+                $payment = Payment::findOrFail($payment);
 
-        return redirect()->route('expenses-heads.index-head')->with('success', 'Expense Head deleted successfully.');
-    }
+                // Perform the delete operation
+                $payment->delete();
+
+                // Redirect back with a success message
+                return redirect()->route('expenses.index')->with('success', 'Payment deleted successfully.');
+            }
+
 
 }

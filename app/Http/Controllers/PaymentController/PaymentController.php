@@ -25,10 +25,10 @@ class PaymentController extends Controller
           return view('payments.create', compact('Payment')); // Pass roles to the view
       }
 
-
-    public function index()
-    {
-        $payments = Payment::all()->map(function ($payment) {
+      public function index()
+      {
+         // Fetch all payments and map payable names for customers and suppliers
+        $payments = Payment::whereIn('payable_type', ['customer', 'supplier'])->get()->map(function ($payment) {
             if ($payment->payable_type === 'customer') {
                 $payment->payable_name = Customer::where('id', $payment->payable_id)->value('name');
             } elseif ($payment->payable_type === 'supplier') {
@@ -36,9 +36,29 @@ class PaymentController extends Controller
             }
             return $payment;
         });
+  
+                // Fetch all payments related to customers and suppliers only
+            
 
-        return view('payments.index', compact('payments'));
-    }
+          // Calculate total debit for all payments (both customer and supplier)
+    $totalDebit = $payments->where('payment_type', 'debit')->sum('amount');
+
+    // Calculate total credit for all payments (both customer and supplier)
+    $totalCredit = $payments->where('payment_type', 'credit')->sum('amount');
+
+
+
+  
+          // Pass all data to the view, including individual payment details
+          return view('payments.index', compact('payments',
+              'totalDebit', 'totalCredit'
+              
+          ));
+      }
+  
+
+
+                
 
     
     public function edit(Payment $payment)

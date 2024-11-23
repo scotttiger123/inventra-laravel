@@ -14,7 +14,12 @@ use App\Http\Controllers\WarehouseController\WarehouseController;
 use App\Http\Controllers\TransferController\TransferController;
 use App\Http\Controllers\CurrencyController\CurrencyController;
 use App\Http\Controllers\ExpenseHeadController\ExpenseHeadController;
+use App\Http\Controllers\IncomeHeadController\IncomeHeadController;
 use App\Http\Controllers\ExpenseController\ExpenseController;
+use App\Http\Controllers\IncomeController\IncomeController;
+use App\Http\Controllers\TaxController\TaxController;
+use App\Http\Controllers\SettingController\SettingController;
+
 
 
 
@@ -171,6 +176,42 @@ Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->
     Route::get('/expenses/create', [ExpenseController::class, 'create'])->name('expenses.create');
     Route::post('/expenses/store', [ExpenseController::class, 'store'])->name('expenses.store');
     Route::get('/expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit'); // Show form to edit an expense
-    Route::put('/expenses/{expense}', [ExpenseHeadController::class, 'update'])->name('expenses.update'); // Update a specific expense
-    Route::delete('/expenses/{expense}', [ExpenseHeadController::class, 'destroy'])->name('expenses.destroy'); // Delete an expense
+    Route::put('/expenses/{expense}', [ExpenseController::class, 'update'])->name('expenses.update'); // Update a specific expense
+    Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy'); // Delete an expense
     
+
+
+
+    Route::get('/income-head', [IncomeHeadController::class, 'index'])->name('income-heads.index-head'); 
+    Route::get('/income-head/create', [IncomeHeadController::class, 'create'])->name('income-heads.create-head'); 
+    Route::post('/income-head', [IncomeHeadController::class, 'store'])->name('income-heads.store-head'); 
+    Route::get('/income-head/{income}', [IncomeHeadController::class, 'show'])->name('income-heads.show'); 
+    Route::get('/income-head/{income}/edit', [IncomeHeadController::class, 'edit'])->name('income-heads.edit-head'); 
+    Route::put('/income-head/{income}', [IncomeHeadController::class, 'update'])->name('income-heads.update-head'); 
+    Route::delete('/income-head/{income}', [IncomeHeadController::class, 'destroy'])->name('income-heads.destroy-head'); // Delete an income head
+
+
+    Route::get('/income', [IncomeController::class, 'index'])->name('income.index'); 
+    Route::get('/income/create', [IncomeController::class, 'create'])->name('income.create'); 
+    Route::post('/income/store', [IncomeController::class, 'store'])->name('income.store'); 
+    Route::get('/income/{income}/edit', [IncomeController::class, 'edit'])->name('income.edit'); 
+    Route::put('/income/{income}', [IncomeController::class, 'update'])->name('income.update'); 
+    Route::delete('/income/{income}', [IncomeController::class, 'destroy'])->name('income.destroy');
+
+
+    Route::get('/tax', [TaxController::class, 'index'])->name('tax.index');
+    Route::get('/tax/create', [TaxController::class, 'create'])->name('tax.create');
+    Route::post('/tax/store', [TaxController::class, 'store'])->name('tax.store');
+    Route::get('/tax/{tax}/edit', [TaxController::class, 'edit'])->name('tax.edit');
+    Route::put('/tax/{tax}', [TaxController::class, 'update'])->name('tax.update');
+    Route::delete('/tax/{tax}', [TaxController::class, 'destroy'])->name('tax.destroy');
+
+
+
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::get('/settings/create', [SettingController::class, 'create'])->name('settings.create');
+    Route::post('/settings/store', [SettingController::class, 'store'])->name('settings.store');
+    Route::get('/settings/{setting}/edit', [SettingController::class, 'edit'])->name('settings.edit');
+    Route::put('/settings/{setting}', [SettingController::class, 'update'])->name('settings.update');
+    Route::delete('/settings/{setting}', [SettingController::class, 'destroy'])->name('settings.destroy');
+

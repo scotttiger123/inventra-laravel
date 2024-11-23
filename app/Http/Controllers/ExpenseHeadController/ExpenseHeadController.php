@@ -39,6 +39,7 @@ class ExpenseHeadController extends Controller
             PaymentHead::create([
                 'name' => $request->name,
                 'description' => $request->description,
+                'type' => 'expense',
                 'created_by' => $userId,  
                 'updated_by' => $userId,  
                 'deleted_by' => $userId,  

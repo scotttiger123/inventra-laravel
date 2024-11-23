@@ -3,6 +3,32 @@
 @section('content')
 <div class="content-wrapper">
     <div class="form-border">
+    <div class="row">
+    <!-- Customer Credit and Debit -->
+    <div class="col-lg-6 col-xs-12">
+        <div class="small-box bg-grey">
+            <div class="inner">
+                <h3>{{ number_format($totalCredit, 2) }}</h3>
+                <p> Credit (  + payment in )</p>
+            </div>
+            <div class="icon" style="color:#222D32">
+                <i class="fa fa-dollar"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-xs-12">
+        <div class="small-box bg-grey">
+            <div class="inner">
+                <h3>{{ number_format($totalDebit, 2) }}</h3>
+                <p> Debit ( - payment out )</p>
+            </div>
+            <div class="icon" style="color:#222D32">
+                <i class="fa fa-dollar"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
         <div class="box-header with-border">
             <h3 class="box-title custom-title">Payment Listings</h3>
             @if(session('success'))
