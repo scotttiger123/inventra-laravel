@@ -12,7 +12,7 @@
 
     <ul class="sidebar-menu" data-widget="tree">
       <li>
-        <a href="{{ route('welcome') }}">
+        <a href="/dashboard">
           <i class="fa fa-pie-chart"></i> <span>Dashboard</span>
         </a>
       </li>

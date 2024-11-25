@@ -30,7 +30,7 @@ class LoginController extends Controller
             // Check if the authenticated user's email is verified
             if (Auth::user()->email_verified_at !== null) {
                     
-                        return redirect()->route('welcome'); // Redirect admins to /employers
+                        return redirect()->route('dashboard'); // Redirect admins to /employers
                     
 
             } else {

@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\DashboardController\DashboardController;;
 use App\Http\Controllers\OrderController\OrderController;
 use App\Http\Controllers\PurchaseController\PurchaseController;
 use App\Http\Controllers\ProductController\ProductController;
@@ -29,6 +31,8 @@ use App\Http\Controllers\SettingController\SettingController;
 Route::get('welcome', function () {
     return view('welcome');
 })->name('welcome');
+
+Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
 
 // Route for auth
 Route::get('/', [LoginController::class,'index'])->name('login');
