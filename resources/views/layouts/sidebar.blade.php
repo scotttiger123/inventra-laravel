@@ -26,9 +26,9 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="{{ route('orders.index') }}"><i class="fa fa-list"></i> Sale View</a></li>
-          <li style="padding-left: 20px;"><a href="{{ route('orders.create') }}"><i class="fa fa-plus-circle"></i> Add Sale Order</a></li>
-          <li style="padding-left: 20px;"><a href="{{ route('orders.create-pos') }}"><i class="fa fa-credit-card"></i> POS</a></li>
+          <li style="padding-left: 20px;"><a href="{{ route('orders.create') }}"><i class="fa fa-dot-circle-o"></i> Add Sale Order</a></li>
+          <li style="padding-left: 20px;"><a href="{{ route('orders.create-pos') }}"><i class="fa fa-dot-circle-o"></i> POS</a></li>
+          <li style="padding-left: 20px;"><a href="{{ route('orders.index') }}"><i class="fa fa-dot-circle-o"></i> Sale View</a></li>
         </ul>
       </li>
 
@@ -42,8 +42,8 @@
         </a>
         
           <ul class="treeview-menu">
-            <li style="padding-left: 20px;"><a href="{{ route('purchases.index') }}"><i class="fa fa-list"></i> Purchase Listings </a></li>
-            <li style="padding-left: 20px;"><a href="{{ route('purchases.create') }}"><i class="fa fa-plus-circle"></i> Add Purchase </a></li>
+            <li style="padding-left: 20px;"><a href="{{ route('purchases.create') }}"><i class="fa fa-dot-circle-o"></i> Add Purchase </a></li>
+            <li style="padding-left: 20px;"><a href="{{ route('purchases.index') }}"><i class="fa fa-dot-circle-o"></i> Purchase Listings </a></li>
           </ul>
         
       </li>
@@ -57,7 +57,7 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/reports"><i class="fa fa-eye"></i> View Reports</a></li>
+          <li style="padding-left: 20px;"><a href="/reports"><i class="fa fa-dot-circle-o"></i> View Reports</a></li>
         </ul>
       </li>
 
@@ -70,8 +70,10 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/products/create"><i class="fa fa-plus"></i> Create New Product</a></li>
-          <li style="padding-left: 20px;"><a href="/products"><i class="fa fa-list"></i> List Products</a></li>
+          <li style="padding-left: 20px;"><a href="/products/create"><i class="fa fa-dot-circle-o"></i> Create New Product</a></li>
+          <li style="padding-left: 20px;"><a href="/products"><i class="fa fa-dot-circle-o"></i> List Products</a></li>
+          <li style="padding-left: 20px;"><a href="/brand"><i class="fa fa-dot-circle-o"></i> Brands</a></li>
+          <li style="padding-left: 20px;"><a href="/category"><i class="fa fa-dot-circle-o"></i> Category</a></li>
         </ul>
       </li>
 
@@ -84,12 +86,12 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/users/create"><i class="fa fa-user-plus"></i> Create User</a></li>
-          <li style="padding-left: 20px;"><a href="/users"><i class="fa fa-users"></i> User List</a></li>
-          <li style="padding-left: 20px;"><a href="/customers/create"><i class="fa fa-user-plus"></i> Create Customer</a></li>
-          <li style="padding-left: 20px;"><a href="/customers"><i class="fa fa-users"></i> Customer List</a></li>
-          <li style="padding-left: 20px;"><a href="/suppliers/create"><i class="fa fa-user-plus"></i> Create Vendors</a></li>
-          <li style="padding-left: 20px;"><a href="/suppliers"><i class="fa fa-users"></i> Vendor List</a></li>
+          <li style="padding-left: 20px;"><a href="/users/create"><i class="fa fa-dot-circle-o"></i> Create User</a></li>
+          <li style="padding-left: 20px;"><a href="/users"><i class="fa fa-dot-circle-o"></i> User List</a></li>
+          <li style="padding-left: 20px;"><a href="/customers/create"><i class="fa fa-dot-circle-o"></i> Create Customer</a></li>
+          <li style="padding-left: 20px;"><a href="/customers"><i class="fa fa-dot-circle-o"></i> Customer List</a></li>
+          <li style="padding-left: 20px;"><a href="/suppliers/create"><i class="fa fa-dot-circle-o"></i> Create Vendor</a></li>
+          <li style="padding-left: 20px;"><a href="/suppliers"><i class="fa fa-dot-circle-o"></i> Vendor List</a></li>
         </ul>
       </li>
 
@@ -102,8 +104,8 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/payments/create"><i class="fa fa-plus"></i> Add Payment</a></li>
-          <li style="padding-left: 20px;"><a href="/payments"><i class="fa fa-list"></i> Payment Listings</a></li>
+          <li style="padding-left: 20px;"><a href="/payments/create"><i class="fa fa-dot-circle-o"></i> Add Payment</a></li>
+          <li style="padding-left: 20px;"><a href="/payments"><i class="fa fa-dot-circle-o"></i> Payment Listings</a></li>
         </ul>
       </li>
       <li class="treeview">
@@ -115,8 +117,8 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/income/create"><i class="fa fa-plus"></i> Add Income</a></li>
-          <li style="padding-left: 20px;"><a href="/income-head"><i class="fa fa-list"></i> Income Categories</a></li>
+          <li style="padding-left: 20px;"><a href="/income/create"><i class="fa fa-dot-circle-o"></i> Add Income</a></li>
+          <li style="padding-left: 20px;"><a href="/income-head"><i class="fa fa-dot-circle-o"></i> Income Categories</a></li>
         </ul>
       </li>
       <li class="treeview">
@@ -128,8 +130,8 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/expenses/create"><i class="fa fa-plus"></i> Add Expense</a></li>
-          <li style="padding-left: 20px;"><a href="/expenses-head"><i class="fa fa-list"></i> Expense Categories</a></li>
+          <li style="padding-left: 20px;"><a href="/expenses/create"><i class="fa fa-dot-circle-o"></i> Add Expense</a></li>
+          <li style="padding-left: 20px;"><a href="/expenses-head"><i class="fa fa-dot-circle-o"></i> Expense Categories</a></li>
         </ul>
       </li>
     
@@ -142,8 +144,8 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/transfers"><i class="fa fa-arrow-right"></i> Transfer Lists </a></li>
-          <li style="padding-left: 20px;"><a href="/transfers/create"><i class="fa fa-arrow-right"></i> AddTransfer</a></li>
+          <li style="padding-left: 20px;"><a href="/transfers"><i class="fa fa-dot-circle-o"></i> Transfer Lists </a></li>
+          <li style="padding-left: 20px;"><a href="/transfers/create"><i class="fa fa-dot-circle-o"></i> AddTransfer</a></li>
         </ul>
       </li>
 
@@ -156,8 +158,8 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/currencies"><i class="fa fa-list"></i> View Currencies</a></li>
-          <li style="padding-left: 20px;"><a href="/currencies/create"><i class="fa fa-plus-circle"></i> Add Currency</a></li>
+          <li style="padding-left: 20px;"><a href="/currencies"><i class="fa fa-dot-circle-o"></i> View Currencies</a></li>
+          <li style="padding-left: 20px;"><a href="/currencies/create"><i class="fa fa-dot-circle-o"></i> Add Currency</a></li>
         </ul>
         
       </li>
@@ -179,8 +181,8 @@
         <ul class="treeview-menu">
           
           <li style="padding-left: 20px;"><a href="/settings"><i class="fa fa-wrench"></i> General Settings</a></li>
-          <li style="padding-left: 20px;"><a href="/settings/user"><i class="fa fa-user-cog"></i> User Settings</a></li>
-          <li style="padding-left: 20px;"><a href="/warehouses"><i class="fa fa-arrow-right"></i> Warehouse</a></li>
+          <li style="padding-left: 20px;"><a href="/settings/user"><i class="fa fa-dot-circle-o"></i> User Settings</a></li>
+          <li style="padding-left: 20px;"><a href="/warehouses"><i class="fa fa-dot-circle-o"></i> Warehouse</a></li>
           <li style="padding-left: 20px;"><a href="/tax"><i class="fa fa-dot-circle-o"></i> Tax </a></li>
 
      
@@ -197,7 +199,7 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/documentation"><i class="fa fa-file-alt"></i> User Guide</a></li>
+          <li style="padding-left: 20px;"><a href="/documentation"><i class="fa fa-dot-circle-o"></i> User Guide</a></li>
         </ul>
       </li>
 

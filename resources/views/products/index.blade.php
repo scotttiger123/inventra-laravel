@@ -2,6 +2,25 @@
 @section('content')
 <div class="content-wrapper">
     <div class="form-border">
+    
+        <div class="row">
+            @php
+                $totalProducts = $totalProducts;  // Total product records
+            @endphp
+
+            <!-- Total Product Records Box -->
+            <div class="col-lg-12 col-xs-12">
+                <div class="small-box bg-grey">
+                    <div class="inner">
+                        <h3>{{ $totalProducts }}</h3>
+                        <p>Product Records</p>
+                    </div>
+                    <div class="icon" style="color:#222D32">
+                        <i class="ion ion-ios-cart"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="box-header with-border">
             <h3 class="box-title custom-title">
                  Products
@@ -21,7 +40,11 @@
                     <th>Name</th>
                     <th>Cost</th>
                     <th>Price</th>
-                    <th>UOM</th>
+                    <th>Brand</th>
+                    <th>Category</th>
+                    <th>stock alert</th>
+                    <th>Uom</th>
+                    <th>Tax(%)</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -31,8 +54,21 @@
                     <td>{{ $product->product_code }}</td>
                     <td>{{ strtoupper($product->product_name) }}</td>
                     <td>{{ $product->cost }}</td>
-                    <td>{{ $product->price }}</td>
-                    <td>{{ $product->uom }}</td>
+                    <td>{{ $product->price }} </td>
+                    <td>{{ $product->brand->name ?? 'N/A' }}</td>
+                    <td>{{ $product->category->name ?? 'N/A' }}</td>
+                    <td>
+                        @if($product->alert_quantity)
+                            <span class="badge badge-badge-danger">{{ $product->alert_quantity }}</span>
+                        @else
+                            N/A
+                        @endif
+                    </td>
+
+                    <td>{{ $product->uom ? $product->uom->name : 'N/A' }}</td> 
+                    <!-- <td>{{ $product->tax ? $product->tax->rate . '%' : 'N/A' }}</td> -->
+
+     
                     <td>                  
                     
                             <div class="custom-dropdown text-center">
@@ -52,11 +88,11 @@
                                         data-name="{{ $product->product_name }}"
                                         data-cost="{{ $product->cost }}"
                                         data-price="{{ $product->price }}"
-                                        data-uom="{{ $product->uom }}"
-                                        data-details="{{ $product->product_details }}"
+                                        data-uom="{{ json_decode($product->uom)->name }}"  
+                                        data-details="{{ $product->product_details ?: 'No details available' }}"      
                                         data-initial-stock="{{ $product->initial_stock }}"
                                         data-alert-quantity="{{ $product->alert_quantity }}"
-                                        data-tax-id="{{ $product->tax_id }}"
+                                        
                                         data-image="{{ $product->image_path ? asset('storage/' . $product->image_path) : asset('dist/img/product-default.jpg') }}"
                                     >
                                         <i class="fa fa-eye"></i> View
@@ -106,10 +142,11 @@
                 <p><strong>Cost:</strong> <span id="product-cost"></span></p>
                 <p><strong>Price:</strong> <span id="product-price"></span></p>
                 <p><strong>UOM:</strong> <span id="product-uom"></span></p>
+
                 <p><strong>Details:</strong> <span id="product-details"></span></p>
                 <p><strong>Initial Stock:</strong> <span id="product-initial-stock"></span></p>
                 <p><strong>Alert Quantity:</strong> <span id="product-alert-quantity"></span></p>
-                <p><strong>Tax ID:</strong> <span id="product-tax-id"></span></p>
+                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

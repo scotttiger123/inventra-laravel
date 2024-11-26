@@ -195,6 +195,7 @@ function getInvoiceDetails(customOrderId = null) {
                     alert(data.error);
                 } else {
                     // Extract values and set defaults
+                    const currencySymbol = data.currencySymbol || '$';  // Default to '$' if currency symbol is not found
                     const grossAmount = (data.grossAmount && !isNaN(data.grossAmount)) ? data.grossAmount.toFixed(2) : '0.00';
                     const otherCharges = (data.otherCharges && !isNaN(data.otherCharges)) ? data.otherCharges.toFixed(2) : '0.00';
                     const netTotal = (data.netTotal && !isNaN(data.netTotal)) ? data.netTotal.toFixed(2) : '0.00';
@@ -223,8 +224,9 @@ function getInvoiceDetails(customOrderId = null) {
                     setTextContentById('invoiceNumber', orderId);
                     setTextContentById('orderId', orderId);
 					setTextContentById('discountAmount', discount_amount);
-                    setTextContentById('AmountDue', AmountDue);
-                    setTextContentById('AmountDueTop', AmountDue);
+                    setTextContentById('AmountDue', `${currencySymbol} ${AmountDue}`);  
+                    setTextContentById('AmountDueTop', `${currencySymbol} ${AmountDue}`); 
+
                     
 					
 					
@@ -234,23 +236,25 @@ function getInvoiceDetails(customOrderId = null) {
                     const invoiceItems = data.orderItems.map(item => `
                         <tr>
                             <td>${item.product_name}</td>
-                            <td>${item.quantity}</td>
-                            <td>${item.uom_name}</td>
-                            <td>${item.unit_price}</td>
+                            <td>${item.quantity} ${item.uom_name}</td>
+                            
+                            <td>${currencySymbol} ${item.unit_price}</td> 
                             <td>
                                 ${item.discount_amount}
                             </td>
-                            <td>${item.net_rate}</td>
-                            <td>$${item.amount.toFixed(2)}</td>
+                            <td>${currencySymbol} ${item.net_rate}</td> 
+                            <td>${currencySymbol} ${item.amount.toFixed(2)}</td> 
+                   
                         </tr>
                     `).join('');
                     document.getElementById('invoiceItems').innerHTML = invoiceItems;
 
                     // Update amounts
-                    setTextContentById('subtotalAmount', `$${grossAmount}`);
-                    setTextContentById('otherCharges', `$${otherCharges}`);
-                    setTextContentById('totalAmount', `$${netTotal}`);
-                    setTextContentById('paidAmount', `$${paidAmount}`);
+                    setTextContentById('subtotalAmount', `${currencySymbol} ${grossAmount}`);
+                    setTextContentById('otherCharges', `${currencySymbol} ${otherCharges}`);
+                    setTextContentById('totalAmount', `${currencySymbol} ${netTotal}`);
+                    setTextContentById('paidAmount', `${currencySymbol} ${paidAmount}`);
+
                     
 
                     // Show the modal
@@ -347,4 +351,175 @@ function printInvoice() {
 
     // Remove the iframe after printing
     document.body.removeChild(iframe);
+}
+
+async function getSaleDataForSharing(customSaleId = null, action = 'print') {
+    $('#loader').show(); 
+    let saleId = customSaleId;
+
+    // If customSaleId is not passed, retrieve it from the input field
+    if (!saleId) {
+        saleId = document.querySelector('input[name="custom_sale_id"]').value;
+        $('#loader').hide(); 
+    }
+
+    if (saleId) {
+        fetch(`/get-invoice/${saleId}`)
+        
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    $('#loader').hide(); 
+                } else {
+                    // Extract values with defaults
+                    const grossAmount = data.grossAmount ? parseFloat(data.grossAmount).toFixed(2) : '0.00';
+                    const otherCharges = data.otherCharges ? parseFloat(data.otherCharges).toFixed(2) : '0.00';
+                    const netTotal = data.netTotal ? parseFloat(data.netTotal).toFixed(2) : '0.00';
+                    const paidAmount = data.paidAmount ? parseFloat(data.paidAmount).toFixed(2) : '0.00';
+                    const amountDue = data.remainingAmount ? parseFloat(data.remainingAmount).toFixed(2) : '0.00';
+
+                    const saleOrder = data.saleOrder || {};
+                    const customer = saleOrder.customer || {};
+
+                    const saleDate = saleOrder.sale_date || 'N/A';
+                    const saleOrderId = saleOrder.custom_sale_id || 'N/A';
+                    const customerName = customer.name || 'N/A';
+                    const customerAddress = customer.address || 'N/A';
+                    const customerPhone = customer.phone || 'N/A';
+                    const customerEmail = customer.email || 'N/A';
+                    const saleNote = saleOrder.sale_note || 'N/A';
+                    const discountAmount = saleOrder.discount_amount || '0.00';
+
+                    // Populate sale invoice details
+                    setTextContentById('invoiceDate-watsapp', saleDate);
+                    setTextContentById('customerName-watsapp', customerName);
+                    setTextContentById('customerAddress-watsapp', customerAddress);
+                    setTextContentById('customerPhone-watsapp', customerPhone);
+                    setTextContentById('customerEmail-watsapp', customerEmail);
+                    setTextContentById('saleNote-watsapp', saleNote);
+                    setTextContentById('saleOrderId-watsapp', saleOrderId);
+                    setTextContentById('discountAmount-watsapp', `${parseFloat(discountAmount).toFixed(2)}`);
+                    setTextContentById('amountDue-watsapp', `${amountDue}`);
+
+                    // Update sale items (Removed UOM column)
+                    const saleItems = (data.saleItems || []).map(item => `
+                        <tr>
+                            <td>${item.product_name || 'N/A'}</td>
+                            <td>${item.quantity || '0'}</td>
+                            <td>${parseFloat(item.unit_price || 0).toFixed(2)}</td>
+                            <td>${item.discount_amount || 'N/A'}</td>
+                            <td>${parseFloat(item.net_rate || 0).toFixed(2)}</td>
+                            <td>${parseFloat(item.amount || 0).toFixed(2)}</td>
+                        </tr>
+                    `).join('');
+                    document.getElementById('saleInvoiceItems-watsapp').innerHTML = saleItems;
+
+                    // Update summary amounts
+                    setTextContentById('subtotalAmount-watsapp', `${grossAmount}`);
+                    setTextContentById('otherCharges-watsapp', `${otherCharges}`);
+                    setTextContentById('paidAmount-watsapp', `${paidAmount}`);
+
+                    // Perform the action (Share or Print)
+                    if (action === 'print') {
+                        $('#loader').hide(); 
+                        printModalContent('.canva-section-watsapp');
+                    } else if (action === 'share') {
+                        $('#loader').hide(); 
+                        shareSectionAsImage('.canva-section-watsapp', {
+                            fileName: 'invoice.png',
+                            title: 'Invoice Share',
+                            text: 'Check out this invoice!',
+                        });
+                    }
+                }
+            })
+            .catch(error => {
+                $('#loader').hide(); 
+                console.error('Error fetching sale invoice:', error.message || error);
+                alert('An error occurred while fetching the sale invoice.');
+            });
+    } else {
+        $('#loader').hide(); 
+        alert('Please enter a Sale ID');
+    }
+}
+
+
+
+async function printModalContent(modalSelector, customPurchaseId = null) {
+    // Get the section content based on the provided selector
+    const section = document.querySelector(modalSelector);
+
+    // Check if the section exists
+    if (!section) {
+        console.error(`Section with selector "${modalSelector}" not found.`);
+        return;
+    }
+
+    // Show the section before capturing it
+    section.style.display = 'block';
+
+    try {
+        // Generate the canvas from the modal content (using section instead of modalContent)
+        const canvas = await html2canvas(section, {
+            useCORS: true,
+            scale: 1, // Adjust for better resolution (increase if needed for higher quality)
+            x: 0, // Optional: Adjust the x position to fit the content
+            y: 0, // Optional: Adjust the y position
+            width: section.offsetWidth, // Ensure the width matches the section's width
+            height: section.offsetHeight, // Ensure the height matches the section's height
+            scrollX: 0, // Disable horizontal scroll when capturing
+            scrollY: 0, // Disable vertical scroll when capturing
+            backgroundColor: null, // Transparent background (useful if modal has custom background)
+        });
+
+        // Convert the canvas to an image
+        const image = canvas.toDataURL("image/png");
+
+        // Open a new window for printing
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write('<html><head><title>Print Invoice</title>');
+        
+        // Add CSS styles for the print layout
+        printWindow.document.write('<style>');
+        printWindow.document.write(`
+            body {
+                margin: 0;
+                padding: 0;
+                text-align: center;
+            }
+            img {
+                width: 100%; /* Ensure the image takes full width */
+                height: auto; /* Maintain aspect ratio */
+                max-width: 100%; /* Prevent image from being stretched */
+            }
+        `);
+        printWindow.document.write('</style>');
+        
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(`<img src="${image}" />`);
+        printWindow.document.write('</body></html>');
+        
+        // Close the document to trigger the print window
+        printWindow.document.close();
+
+        // Wait for the new window to load before triggering the print
+        printWindow.onload = () => {
+            printWindow.print();
+            printWindow.close();
+        };
+
+        // Hide the section after capturing it
+        section.style.display = 'none';
+
+    } catch (error) {
+        console.error("Error generating image for printing:", error);
+        alert("Error generating image for printing.");
+    }
 }

@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Role;
 use App\Models\Uom;
+use App\Models\Tax;
 
 
 use App\Models\User; 
@@ -45,9 +46,10 @@ class OrderController extends Controller
             ->get();
 
             $uoms = Uom::all();  // Assuming the model for Uom is correctly defined
-
+            $taxes = Tax::all(); // Assuming you have a `Tax` model and a table storing tax rates.
+  
     
-        return view('orders.create', compact('customers', 'salespersons', 'products', 'uoms'));
+        return view('orders.create', compact('customers', 'salespersons', 'products', 'uoms','taxes'));
 
         
     }
@@ -90,7 +92,11 @@ class OrderController extends Controller
             return response()->json(['error' => 'Customer not found.'], 404);
         }
 
-
+        $currencySymbol = \App\Models\Setting::where('name', 'currency-symbol')->value('value');
+        if (!$currencySymbol) {
+            $currencySymbol = '$';  // Default to $ if not found
+        }
+    
 
                                     
         // Fetch the sales manager associated with this order (if any)
@@ -154,22 +160,36 @@ class OrderController extends Controller
         // Add other charges and calculate net total
         $otherCharges = (float)$order->other_charges;
         $netTotal = $grossAmountAfterOrderDiscount + $otherCharges;
+        
+        $taxRate = $order->tax_rate; // Assuming tax_rate is stored in the order table
+        $taxAmount = 0;
     
+        if ($taxRate) {
+            $taxAmount = ($netTotal * $taxRate) / 100;
+        }
+    
+        $netTotalWithTax = $netTotal + $taxAmount;
+    
+
+
+
         // Calculate remaining amount
         $paidAmount = (float)$order->paid;
-        $remainingAmount = $netTotal - $paidAmount;
+        $remainingAmount = $netTotalWithTax  - $paidAmount;
         
 
 
         return response()->json([
             'order' => $order,
-            
+            'currencySymbol' => $currencySymbol,
             'orderItems' => $orderItemsData,
             'grossAmount' => $grossAmount,
             'orderDiscount' => $orderDiscount,
             'grossAmountAfterOrderDiscount' => $grossAmountAfterOrderDiscount,
             'otherCharges' => $otherCharges,
             'netTotal' => $netTotal,
+            'taxRate' => $taxRate,
+            'taxAmount' => $taxAmount,
             'paidAmount' => $paidAmount,
             'remainingAmount' => $remainingAmount,
         ]);
@@ -206,6 +226,7 @@ class OrderController extends Controller
             $order->status = $request->order_status;
             $order->other_charges = $request->other_charges ?? 0;
             $order->discount_amount = $request->discount_amount ?? 0;
+            $order->tax_rate = $request->tax_rate ?? 0;
             $order->payment_method = $request->payment_method;
             $order->order_date = $request->order_date;
             $order->custom_order_id = $orderNumber;

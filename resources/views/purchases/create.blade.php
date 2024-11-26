@@ -200,6 +200,21 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <div class="small-box" >
+                                        <div class="inner">
+                                            <h3>
+                                             <select name="tax_rate" id="tax_rate" class="form-control">
+                                                <option value="" selected>Order Tax</option>
+                                                        @foreach($taxes as $tax)
+                                                            <option value="{{ $tax->rate }}">{{ $tax->name }} ({{ $tax->rate }}%)</option>
+                                                        @endforeach
+                                                </select>
+                                            </h3>   
+                                            <p>TAX(%)</p>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-2 col-sm-6 col-12" >
                                     <div class="small-box" style = 'height:96px'>
                                         <div class="inner" >

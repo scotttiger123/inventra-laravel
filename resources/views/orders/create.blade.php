@@ -105,7 +105,7 @@
                                         style="width: 100%;" 
                                         name="salesperson-name" 
                                         class="form-control myInput" 
-                                        placeholder="Select Salesperson Name" 
+                                        placeholder="select sales person" 
                                         tabindex="1" 
                                         id="salesperson-name-input">
 
@@ -276,6 +276,21 @@
                                         <div class="inner">
                                             <h3><input name = 'gross_amount' id="gross_amount_id" type="number" value="0" class="form-control"  placeholder="0" readonly></h3>
                                             <p>GROSS AMOUNT</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-6 col-12">
+                                    <div class="small-box" >
+                                        <div class="inner">
+                                            <h3>
+                                             <select name="tax_rate" id="tax_rate" class="form-control">
+                                                <option value="" selected>Order Tax</option>
+                                                        @foreach($taxes as $tax)
+                                                            <option value="{{ $tax->rate }}">{{ $tax->name }} ({{ $tax->rate }}%)</option>
+                                                        @endforeach
+                                                </select>
+                                            </h3>   
+                                            <p>TAX(%)</p>
                                         </div>
                                     </div>
                                 </div>

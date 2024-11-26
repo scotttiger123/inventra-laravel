@@ -11,19 +11,25 @@ $(function () {
 });
 
 $('#viewProductModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget); // Button that triggered the modal
+
+    var button = $(event.relatedTarget); 
     var modal = $(this);
+    console.log(button.data());
+
+    
+    // Populate modal fields with data from the button's data-* attributes
     modal.find('#product-code').text(button.data('code') || 'N/A');
     modal.find('#product-name').text(button.data('name') || 'N/A');
     modal.find('#product-cost').text(button.data('cost') || 'N/A');
     modal.find('#product-price').text(button.data('price') || 'N/A');
-    modal.find('#product-uom').text(button.data('uom') || 'N/A');
+    modal.find('#product-uom').text(button.data('uom') || 'N/A');  // Display UOM name
     modal.find('#product-details').text(button.data('details') || 'N/A');
     modal.find('#product-initial-stock').text(button.data('initial-stock') || 'N/A');
     modal.find('#product-alert-quantity').text(button.data('alert-quantity') || 'N/A');
-    modal.find('#product-tax-id').text(button.data('tax-id') || 'N/A');
-    modal.find('#product-image').attr('src', button.data('image'));
+    
+    modal.find('#product-image').attr('src', button.data('image') || 'default-image-url.jpg');
 });
+
 
 function confirmDelete(productId) {
     if (confirm('Are you sure you want to delete this product?')) {

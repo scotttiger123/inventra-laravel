@@ -317,6 +317,11 @@ function recalculateTotals() {
         netAmount = grossAmount - orderDiscount;  // Apply flat discount
     }
 
+                                            // Get selected tax rate
+    var taxRate = parseFloat(document.getElementById('tax_rate').value) || 0;
+    var taxAmount = (netAmount * taxRate) / 100;
+    netAmount += taxAmount;
+    
     // Add other charges to the net amount
     netAmount += otherCharges;  // Add other charges
 
@@ -393,8 +398,10 @@ uomNameInput.addEventListener('input', function() {
 });
 
 
-// Set the current date and time as the default value
+
+
 window.onload = function() {
+    
     var dateInput = document.getElementById('purchase-date-input');
     
     var currentDate = new Date();
@@ -405,15 +412,15 @@ window.onload = function() {
     var minutes = currentDate.getMinutes().toString().padStart(2, '0');
     var formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
     dateInput.value = formattedDate;
-};
-window.onload = function() {
-
+    
     document.getElementById('vendor-name-input').focus();
 };
 
 
+
     document.getElementById('order_discount_id').addEventListener('input', recalculateTotals);
     document.getElementById('other_charges_id').addEventListener('input', recalculateTotals);
+    document.getElementById('tax_rate').addEventListener('change', recalculateTotals);
     document.querySelector('input[name="order_discount_type"]').addEventListener('change', recalculateTotals);
     document.getElementById('paid_amount_id').addEventListener('input', recalculateTotals);
     

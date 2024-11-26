@@ -23,12 +23,13 @@
         <table id="order-listings" class="table table-bordered table-striped">
             <thead>
             <tr>
-                <th>Order ID</th> <!-- Add Order ID header -->
+                <th>Sale Id.</th> <!-- Add Order ID header -->
                 <th>Order Date</th>
                 <th>Customer</th>
                 <th>Gross Amount</th>
                 <th>Order Discount</th>
                 <th>Discount Type</th> <!-- Add Discount Type header -->
+                <th>Tax (%) </th>
                 <th>Order Other Charges</th>
                 <th>Net Total</th>
                 <th>Paid</th>
@@ -48,6 +49,7 @@
             <td>{{ $order->grossAmount }}</td>
             <td>{{ $order->orderDiscount }}</td>
             <td>{{ $order->discount_type }}</td>
+            <td>{{ $order->tax_rate ? $order->tax_rate . '%' : '' }}</td>
             <td>{{ $order->other_charges }}</td>
             <td>{{ $order->netTotal }}</td>
             <td>{{ $order->paid }}</td>
@@ -85,9 +87,14 @@
                                         >
                                             <i class="fa fa-eye"></i> View Invoice
                                         </button>
-                                        <a href="https://wa.me/?text={{ urlencode('I would like to view my payment details.') }}" class="custom-dropdown-item" target="_blank">
+
+                                        <button 
+                                            class="custom-dropdown-item" 
+                                            type="button" 
+                                            onclick="getSaleDataForSharing('{{ $order->custom_order_id }}', 'share')">
                                             <i class="fa fa-whatsapp"></i> WhatsApp
-                                        </a>
+                                        </button>
+
                                     <!-- Edit Payment Option -->
                                     <a href="{{ route('order.edit', $order->custom_order_id) }}" class="custom-dropdown-item">
                                         <i class="fa fa-edit"></i> Edit
@@ -149,9 +156,7 @@
                         <div class="col-sm-4 invoice-col">
                             <!-- <b>Invoice #<span id="invoiceNumber">N/A</span></b><br> -->
                             <br>
-                            <b>Order ID:</b> <span id="orderId">N/A</span><br>
-                            <b>Payment Due:</b> <span id="AmountDueTop">N/A</span><br>
-                            <b>Account:</b> <span id="accountNumber">N/A</span>
+                            <b>Order Id:</b> <span id="orderId">N/A</span><br>
                         </div>
                     </div>
 
@@ -163,7 +168,6 @@
                                     <tr>
                                         <th>Product</th>
                                         <th>Qty</th>
-                                        <th>Uom</th>
                                         <th>Rate</th>
                                         <th>Discount</th>
                                         <th>Net Rate</th>
@@ -226,6 +230,95 @@
         </div>
     </div>
 </div>
+
+
+
+
+<div class="modal-body canva-section-watsapp" style="display:none">
+    <section class="invoice">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 class="page-header">
+                    <div class="logo-img-invoice">
+                        <img src="{{ asset('dist/img/logo.png') }}" alt="Inventra Logo">
+                        <small class="date-inv">Date: <span id="invoiceDate-watsapp">N/A</span></small>
+                    </div>
+                </h2>
+            </div>
+        </div>
+
+        <div class="row invoice-info">
+            <div class="col-sm-4 invoice-col">
+                To
+                <address>
+                    <strong id="customerName-watsapp">N/A</strong><br>
+                    <span id="customerAddress-watsapp">N/A</span><br>
+                    Phone: <span id="customerPhone-watsapp">N/A</span><br>
+                    Email: <span id="customerEmail-watsapp">N/A</span>
+                </address>
+            </div>
+
+            <div class="col-sm-4 offset-sm-8 invoice-col">
+                <br>
+                <b>Sale #:</b> <span id="saleOrderId-watsapp">N/A</span><br>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>UOM</th>
+                            <th>Rate</th>
+                            <th>Discount</th>
+                            <th>Net Rate</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="saleInvoiceItems-watsapp">
+                        <!-- Items will be dynamically injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6">
+                <p class="lead">Note:</p>
+                <p class="text-muted well well-sm no-shadow" id="saleNote-watsapp" style="margin-top: 10px;">
+                </p>
+            </div>
+
+            <div class="col-xs-6">
+                <p class="lead">Amount Due: <span id="amountDue-watsapp">N/A</span></p>
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th style="width:50%">Subtotal:</th>
+                            <td id="subtotalAmount-watsapp">$0.00</td>
+                        </tr>
+                        <tr>
+                            <th>Discount:</th>
+                            <td id="discountAmount-watsapp">0.00</td>
+                        </tr>
+                        <tr>
+                            <th>Other Charges:</th>
+                            <td id="otherCharges-watsapp">0.00</td>
+                        </tr>
+                        <tr>
+                            <th>Paid:</th>
+                            <td id="paidAmount-watsapp">0.00</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
 
 
 @endsection

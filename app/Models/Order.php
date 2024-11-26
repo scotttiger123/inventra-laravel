@@ -22,6 +22,7 @@ class Order extends Model
         'sale_note',
         'other_charges', 
         'discount_type', 
+        'tax_rate', 
         'discount_amount', 
         'paid',
         'order_date', 

@@ -48,9 +48,11 @@
                         <label>Brand</label>
                         <select name="brand_id" class="form-control myInput" data-live-search="true">
                             <option value="">Select Brand...</option>
-                            <option value="1" {{ old('brand_id') == 1 ? 'selected' : '' }}>Apple</option>
-                            <option value="2" {{ old('brand_id') == 2 ? 'selected' : '' }}>Samsung</option>
-                            <!-- Add other brands as needed -->
+                            @foreach($brands as $brand)
+                                <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>
+                                    {{ $brand->name }}
+                                </option>
+                            @endforeach
                         </select>
                         @error('brand_id')
                             <span class="validation-msg text-danger">{{ $message }}</span>
@@ -63,9 +65,11 @@
                         <label>Category</label>
                         <select name="category_id" class="form-control myInput">
                             <option value="">Select Category...</option>
-                            <option value="1" {{ old('category_id') == 1 ? 'selected' : '' }}>Electronics</option>
-                            <option value="2" {{ old('category_id') == 2 ? 'selected' : '' }}>Fashion</option>
-                            <!-- Add other categories as needed -->
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
                         </select>
                         @error('category_id')
                             <span class="validation-msg text-danger">{{ $message }}</span>
@@ -108,9 +112,9 @@
                         <label>Tax</label>
                         <select name="tax_id" class="form-control myInput">
                             <option value="">Select Tax...</option>
-                            <option value="1" {{ old('tax_id') == 1 ? 'selected' : '' }}>GST</option>
-                            <option value="2" {{ old('tax_id') == 2 ? 'selected' : '' }}>VAT</option>
-                            <!-- Add other tax options as needed -->
+                            @foreach($taxes as $tax)
+                                <option value="{{ $tax->id }}" {{ old('tax_id') == $tax->id ? 'selected' : '' }}>{{ $tax->name }}</option>
+                            @endforeach
                         </select>
                         @error('tax_id')
                             <span class="validation-msg text-danger">{{ $message }}</span>
@@ -130,15 +134,16 @@
 
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="uom">Unit of Measure</label>
-                        <select name="uom" id="uom" class="form-control myInput">
-                            <option value="pcs" {{ old('uom') == 'pcs' ? 'selected' : '' }}>Pieces</option>
-                            <option value="kg" {{ old('uom') == 'kg' ? 'selected' : '' }}>Kilogram</option>
-                            <option value="ltr" {{ old('uom') == 'ltr' ? 'selected' : '' }}>Litre</option>
-                            <!-- Add more options as needed -->
+                        <label for="uom">Unit of Measurement</label>
+                        <select name="uom" id="uom" class="form-control">
+                            <option value="">Select UOM</option>
+                            @foreach($uoms as $uom)
+                                <option value="{{ $uom->id }}">{{ $uom->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
+
 
                 <div class="col-md-12">
                     <div class="form-group">

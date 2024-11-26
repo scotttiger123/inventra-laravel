@@ -3,16 +3,27 @@ namespace App\Http\Controllers\ProductController;
 
 use App\Http\Controllers\Controller; 
 use App\Models\Product;
+use App\Models\UOM;
+use App\Models\Category;
+use App\Models\Brand;
+use App\Models\Tax;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 
 class ProductController extends Controller
 {
+    
     public function create()
     {
-        return view('products.create');
+        $brands = Brand::all(); 
+        $categories = Category::all(); 
+        $uoms = Uom::all(); 
+        $taxes = Tax::all();
+    
+        return view('products.create', compact('brands', 'categories', 'uoms','taxes'));
     }
+    
 
     public function store(Request $request)
 {
@@ -40,7 +51,7 @@ class ProductController extends Controller
     $product->category_id = $request->input('category_id');
     $product->cost = $request->input('cost');
     $product->price = $request->input('price');
-    $product->uom = $request->input('uom');
+    $product->uom_id = $request->input('uom');
     $product->alert_quantity = $request->input('alert_quantity',0);
     $product->tax_id = $request->input('tax_id');
     $product->initial_stock = $request->input('initial_stock',0);
@@ -75,10 +86,12 @@ class ProductController extends Controller
     
 
     public function index()
-    {
-        $products = Product::with('creator')->get(); // Eager load the creator relationship
-        return view('products.index', compact('products'));
+    {   
+        $totalProducts = Product::count();
+        $products = Product::with(['tax', 'uom', 'creator'])->get(); // Eager load tax, uom, and creator relationships
+        return view('products.index', compact('products','totalProducts'));
     }
+
 
     public function destroy($id)
     {
@@ -95,8 +108,14 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        return view('products.edit', compact('product'));
+        $brands = Brand::all();  
+        $categories = Category::all();  
+        $taxes = Tax::all();  
+        $uoms = Uom::all();  
+    
+        return view('products.edit', compact('product', 'brands', 'categories', 'taxes', 'uoms'));
     }
+    
 
 
     public function update(Request $request, Product $product)
@@ -123,7 +142,7 @@ class ProductController extends Controller
     $product->category_id = $request->input('category_id');
     $product->cost = $request->input('cost');
     $product->price = $request->input('price');
-    $product->uom = $request->input('uom');
+    $product->uom_id = $request->input('uom');
     $product->alert_quantity = $request->input('alert_quantity', 0);
     $product->tax_id = $request->input('tax_id');
     $product->initial_stock = $request->input('initial_stock', 0);

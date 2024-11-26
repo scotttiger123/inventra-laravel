@@ -21,6 +21,9 @@ use App\Http\Controllers\ExpenseController\ExpenseController;
 use App\Http\Controllers\IncomeController\IncomeController;
 use App\Http\Controllers\TaxController\TaxController;
 use App\Http\Controllers\SettingController\SettingController;
+use App\Http\Controllers\BrandController\BrandController;
+use App\Http\Controllers\CategoryController\CategoryController;
+
 
 
 
@@ -41,7 +44,7 @@ Route::get('forgot', [LoginController::class,'forgot'])->name('forgot');
 Route::get('/reset-password-mail-token/{token}/{email}', [ForgotPasswordController::class, 'showResetPasswordForm']);
 Route::get('/candidate-reset-password-mail-token/{token}/{email}', [ForgotPasswordController::class, 'showResetPasswordFormCandidate']);
 Route::post('login', [LoginController::class,'login'])->name('login');
-
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 // Route for listing all invoices / orders 
@@ -218,4 +221,11 @@ Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->
     Route::get('/settings/{setting}/edit', [SettingController::class, 'edit'])->name('settings.edit');
     Route::put('/settings/{setting}', [SettingController::class, 'update'])->name('settings.update');
     Route::delete('/settings/{setting}', [SettingController::class, 'destroy'])->name('settings.destroy');
+
+
+    Route::resource('brand', BrandController::class);
+    Route::resource('category', CategoryController::class);
+
+    
+
 

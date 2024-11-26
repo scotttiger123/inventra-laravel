@@ -165,6 +165,7 @@ class PurchaseController extends Controller
         $purchase->status = $request->status_id ?? 0;
         $purchase->other_charges = $request->other_charges ?? 0;
         $purchase->discount_amount = $request->order_discount ?? 0;
+        $purchase->tax_rate = $request->tax_rate ?? 0;
         $purchase->purchase_date = $request->purchase_date;
         $purchase->custom_purchase_id = $purchaseNumber;
         $purchase->purchase_note = $request->purchase_note;

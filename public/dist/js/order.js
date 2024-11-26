@@ -1,4 +1,18 @@
-
+window.onload = function() {
+    
+    var dateInput = document.getElementById('datetimepicker_dark1');
+    
+    var currentDate = new Date();
+    var year = currentDate.getFullYear();
+    var month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); 
+    var day = currentDate.getDate().toString().padStart(2, '0');
+    var hours = currentDate.getHours().toString().padStart(2, '0');
+    var minutes = currentDate.getMinutes().toString().padStart(2, '0');
+    var formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+    dateInput.value = formattedDate;
+    
+    document.getElementById('customer-name-input').focus();
+};
 
 $(function () {
     $('#order-listings').DataTable({
@@ -387,7 +401,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         document.getElementById('discount_value').value = '';
         
         // Recalculate totals after adding the item
-        recalculateTotals();
+        recalculateTotalsSale();
         document.getElementById('product-input').focus();
     }
     
@@ -423,14 +437,14 @@ document.getElementById('submitOrder').addEventListener('click', function () {
             row.cells[5].innerHTML = netRate.toFixed(2);
             row.cells[6].innerHTML = amount.toFixed(2);
     
-            recalculateTotals();
+            recalculateTotalsSale();
         });
     
         return input;
     }
 
 
-function recalculateTotals() {
+function recalculateTotalsSale() {
 
     var table = document.getElementById('orderItemsTable').getElementsByTagName('tbody')[0];
     var rows = table.rows;
@@ -452,6 +466,12 @@ function recalculateTotals() {
     } else {
         netAmount = grossAmount - orderDiscount;  // Apply flat discount
     }
+    
+    // Get selected tax rate
+    var taxRate = parseFloat(document.getElementById('tax_rate').value) || 0;
+    var taxAmount = (netAmount * taxRate) / 100;
+    netAmount += taxAmount;
+
 
     // Add other charges to the net amount
     netAmount += otherCharges;  // Add other charges
@@ -463,39 +483,41 @@ function recalculateTotals() {
 }
 
     // Add event listeners to trigger recalculation when discount or other charges are modified
-    document.getElementById('order_discount_id').addEventListener('input', recalculateTotals);
-    document.getElementById('other_charges_id').addEventListener('input', recalculateTotals);
-    document.querySelector('input[name="order_discount_type"]').addEventListener('change', recalculateTotals);
-    document.getElementById('paid_amount_id').addEventListener('input', recalculateTotals);
+    document.getElementById('order_discount_id').addEventListener('input', recalculateTotalsSale);
+    document.getElementById('other_charges_id').addEventListener('input', recalculateTotalsSale);
+    document.getElementById('tax_rate').addEventListener('change', recalculateTotalsSale);
+    document.querySelector('input[name="order_discount_type"]').addEventListener('change', recalculateTotalsSale);
+    document.getElementById('paid_amount_id').addEventListener('input', recalculateTotalsSale);
     document.getElementById('updateOrder').addEventListener('click', updateOrder);
     document.getElementById('cancelOrder').addEventListener('click', cancelEditMode);
 
+    
     // Function to remove an item from the table
     function removeItem(button) {
         var row = button.parentNode.parentNode;
         row.parentNode.removeChild(row);
-        recalculateTotals();
+        recalculateTotalsSale();
     }
 
- // Function to show message and hide it after 10 seconds
-function showMessage(type, message) {
-    var messageDiv;
-    
-    // Determine the div based on message type
-    if (type === 'success') {
-        messageDiv = $('#success-message');
-    } else {
-        messageDiv = $('#error-message');
-    }
+ 
+        function showMessage(type, message) {
+            var messageDiv;
+            
+            // Determine the div based on message type
+            if (type === 'success') {
+                messageDiv = $('#success-message');
+            } else {
+                messageDiv = $('#error-message');
+            }
 
-    // Set the message and show the div
-    messageDiv.text(message).fadeIn();
+            // Set the message and show the div
+            messageDiv.text(message).fadeIn();
 
-    // Hide the message after 10 seconds with a fade-out effect
-    setTimeout(function() {
-        messageDiv.fadeOut();
-    }, 5000); // 10000 milliseconds = 10 seconds
-}
+            // Hide the message after 10 seconds with a fade-out effect
+            setTimeout(function() {
+                messageDiv.fadeOut();
+            }, 5000); // 10000 milliseconds = 10 seconds
+        }
 
 
 function updateOrder() {
