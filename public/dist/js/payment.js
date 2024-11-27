@@ -93,3 +93,131 @@ document.addEventListener('DOMContentLoaded', function () {
         
     });
 });
+
+async function getPaymentDataForSharing(voucherId, action = 'print') {
+    $('#loader').show();
+
+    if (voucherId) {
+        try {
+            const response = await fetch(`/get-payment-details/${voucherId}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.error) {
+                alert(data.error);
+                $('#loader').hide();
+                return;
+            }
+
+            const paymentData = data.payment;
+            console.log("DATaa",paymentData);
+
+            const paymentDate = paymentData.payment_date || 'N/A';
+            document.getElementById('modal-payment-date').innerText = `Date: ${paymentDate}`;
+
+            const amount = paymentData.amount ? parseFloat(paymentData.amount).toFixed(2) : '0.00';
+            
+            document.getElementById('modal-amount-watsapp').innerText = `${paymentData.currency} ${amount}`;
+
+
+            const paymentType = paymentData.payment_type || 'N/A';
+            document.getElementById('modal-amount-label-receipt').innerText = paymentType;
+            
+            
+            const currencyIcon = (paymentData.payment_type == 'credit') ? '../../dist/img/currency-green.png' : (paymentData.payment_type == 'debit') ? '../../dist/img/currency-red.png' : null; // Only green or red images
+            document.getElementById('currency-icon-watsapp-receipt').src = currencyIcon;
+            
+
+            document.getElementById('modal-note').innerText = paymentData.note || 'No additional notes';
+
+            document.getElementById('modal-payable-name-receipt').innerText = paymentData.payable_name || '';
+
+            document.querySelector('.canva-section-watsapp').style.display = 'block';
+ 
+            
+            
+
+
+            if (action === 'print') {
+                $('#loader').hide();
+                printModalContent('.canva-section-watsapp');
+            } else if (action === 'share') {
+                $('#loader').hide();
+                shareSectionAsImagePaymentReceipt('.canva-section-watsapp', {
+                    fileName: 'payment-receipt.png',
+                    title: 'Payment Receipt',
+                    text: 'Check out this payment receipt!'
+                });
+            }
+
+        } catch (error) {
+            console.error('Error fetching payment details:', error.message || error);
+            $('#loader').hide();
+            alert('An error occurred while fetching payment details.');
+        }
+    } else {
+        $('#loader').hide();
+        alert('Please enter a voucher ID');
+    }
+}
+
+
+async function shareSectionAsImagePaymentReceipt(sectionSelector, options = {}) {
+    const section = document.querySelector(sectionSelector);
+
+    if (!section) {
+        console.error(`Section with selector "${sectionSelector}" not found.`);
+        return;
+    }
+
+    // Show the section before capturing it
+    section.style.display = 'block';
+
+    try {
+        const canvas = await html2canvas(section, { useCORS: true });
+        const image = canvas.toDataURL("image/png");
+
+        // Check the canvas data
+        console.log("Canvas image generated:", image);
+
+        const blob = await fetch(image).then((res) => res.blob());
+
+        // Check the blob size
+        console.log(`Blob size: ${blob.size} bytes`);
+
+        if (blob.size === 0) {
+            alert("Failed to generate a valid image. Please check the section content.");
+            return;
+        }
+
+        const file = new File([blob], options.fileName || "document.png", {
+            type: "image/png",
+        });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: options.title || "Shared Content",
+                text: options.text || "Check out this!",
+            });
+
+            console.log("Shared successfully!");
+        } else {
+            alert("Your browser does not support image sharing! Downloading the image instead.");
+            const link = document.createElement("a");
+            link.href = image;
+            link.download = options.fileName || "document.png";
+            link.click();
+        }
+    } catch (error) {
+        console.error("Error during sharing:", error);
+        alert(`Sharing failed: ${error.message}`);
+    } finally {
+        
+        //section.style.display = 'none';
+    }
+}

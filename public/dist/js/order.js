@@ -690,3 +690,9 @@ function populateProductFields(product) {
     }
 }
 
+
+function confirmDeleteOrder(id) {
+    if (confirm('Are you sure you want to delete this order ?')) {
+        document.getElementById('deleteForm-' + id).submit();
+    }
+}

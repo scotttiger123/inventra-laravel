@@ -129,9 +129,19 @@
                                     >
                                         <i class="fa fa-eye"></i> View
                                     </button>
-                                    <a href="https://wa.me/?text={{ urlencode('I would like to view my payment details.') }}" class="custom-dropdown-item" target="_blank">
+                                    <button 
+                                        class="custom-dropdown-item" 
+                                        type="button" 
+                                        onclick="getPaymentDataForSharing('{{ $payment->id }}', 'share')">
                                         <i class="fa fa-whatsapp"></i> WhatsApp
-                                    </a>
+                                    </button>
+                                        <!-- Print Button -->
+                                    <button 
+                                        class="custom-dropdown-item" 
+                                        type="button" 
+                                        onclick="getPaymentDataForSharing('{{ $payment->id }}', 'print')">
+                                        <i class="fa fa-print"></i> Print
+                                    </button>
                                 <!-- Edit Payment Option -->
                                 <a href="{{ route('payments.edit', $payment->id) }}" class="custom-dropdown-item">
                                     <i class="fa fa-edit"></i> Edit
@@ -202,15 +212,57 @@
     </div>
 </div>
 
+
+    <div class="modal-body canva-section-watsapp">
+        <div class="receipt-card-share" >
+            <div class="receipt-header">
+                <h1 class="receipt-title">Payment Receipt</h1>
+                <div class="receipt-date" id="modal-payment-date"></div>
+                                        
+            </div>
+            
+            <div class="amount-section" id="amount-section">
+                <div class="amount-label" id ="modal-amount-label-receipt" ></div>
+                <div class="amount" id="modal-amount-watsapp">250000</div>
+                <div class="doller-icon" >
+                    <img id="currency-icon-watsapp-receipt" src="" alt="Currency" width="80" height="80" /> 
+                </div>
+            </div>
+            <!-- Note Section -->
+            <div class="note-section">
+                <strong>Note:</strong> <span id="modal-note"></span>
+            </div>
+            <div class="store-section">
+                <div class="store-name" id="modal-payable-name-receipt"></div>
+                <img class="logo" src="../../dist/img/logo.png" alt="inventra" width="100" height="100" />
+            </div>
+        </div>
+    </div>    
+
+
+
 <!-- Custom Styles for Receipt Card -->
 <style>
-<!-- Custom Styles for Receipt Card -->
-<style>
-    .receipt-card {
-        background: white;
-        width: 100%;
+    .modal-amount-label-receipt { 
+
+        text-transform: uppercase; 
+    }   
+    .receipt-card-share{
+        background-color: white;
+        width: 500%;
         max-width: 400px;
         border-radius: 16px;
+        border: 1px solid black;
+        padding: 24px;
+        margin: auto;
+        font-family: Arial, sans-serif;
+    }
+    .receipt-card {
+        background-color: white;
+        width: 500%;
+        max-width: 400px;
+        border-radius: 16px;
+        border: 1px solid black;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         padding: 24px;
         margin: auto;
@@ -236,7 +288,7 @@
     }
 
     .amount-section {
-        background: #ff5a5f;
+        background: #000000;
         border-radius: 12px;
         padding: 20px;
         color: white;
@@ -248,11 +300,13 @@
     .amount-label {
         font-size: 18px;
         margin-bottom: 8px;
+        text-transform: uppercase; 
     }
 
     .amount {
         font-size: 32px;
         font-weight: bold;
+        color:white;
     }
 
     .doller-icon {
@@ -277,8 +331,9 @@
 
     .store-name {
         font-size: 18px;
-        color: #333;
-        text-transform: capitalize;
+        color: #000;
+        text-transform: capitalize; 
+
     }
 
     .logo {
@@ -302,13 +357,7 @@
     margin: 0;
     }
 
-    .receipt-card {
-    border: 1px solid white;
-    border-radius: 15px;
-    padding: 1rem;
-    box-shadow: 0 4px 22px rgba(0, 0, 0, 0.2); 
-}
-
+  
 </style>
 
 
@@ -516,22 +565,6 @@
 
 
 
-
-
-    // Function to send the receipt as an image via WhatsApp
-function sendReceiptOnWhatsApp() {
-    // Capture the receipt as an image using html2canvas
-    html2canvas(document.getElementById('receipt-card'), {
-        onrendered: function (canvas) {
-            const imageUrl = canvas.toDataURL('image/png');
-            const clientWhatsAppNumber = '+923214630027'; // Replace with actual client number
-
-            // Send the image to WhatsApp via a URL
-            const whatsappUrl = `https://wa.me/${clientWhatsAppNumber}?text=Check%20out%20this%20receipt%20image.%0A${encodeURIComponent(imageUrl)}`;
-            window.open(whatsappUrl, '_blank');
-        }
-    });
-}
 
 </script>
 

@@ -126,7 +126,7 @@ class OrderController extends Controller
             $item->net_rate = $item->unit_price - $item->discount_amount_calculated / $item->quantity;
             $item->total_after_discount = $item->total_before_discount - $item->discount_amount_calculated;
     
-            $uomName = !empty($item->uom_name) ? $item->uom_name : '-';
+            $uomName = !empty($item->uom_name) ? $item->uom_name : '';
     
             return [
                 'product_id' => $item->product_id,
@@ -136,7 +136,7 @@ class OrderController extends Controller
                 'uom_name' => $uomName,
                 'unit_price' => $item->unit_price,
                 'exit_warehouse' => $item->exit_warehouse,
-                'discount_amount' => $item->discount_amount . $item->discount_type,
+                'discount_amount' => $item->discount_amount,
                 'net_rate' => $item->net_rate,
                 'amount' => $item->total_after_discount,
             ];
@@ -380,67 +380,86 @@ class OrderController extends Controller
         'customer_id' => $customer->id,      // Ensure this is being returned
     ]);
 }
+            public function index(Request $request)
+            {
+                try {
+                    $user = auth()->user();
+                    $userId = $user->id;
+                    $parentUserId = $user->parent_id;
 
-public function index(Request $request)
-{
-    try {
-        $user = auth()->user();
-        $userId = $user->id;
-        $parentUserId = $user->parent_id;
+                    $totalGrossAmount = 0;
+                    $totalOrderDiscount = 0;
+                    $totalNetAmount = 0;
+                    $totalPaid = 0;
+                    $totalAmountDue = 0; // Total amount due
 
-        $orders = Order::whereIn('created_by', [$userId, $parentUserId])
-                       ->with('customer')
-                       ->orderBy('created_at', 'desc')
-                       ->get();
-        foreach ($orders as $order) {
-            $grossAmount = 0;
-            $orderItems = OrderItem::where('custom_order_id', $order->custom_order_id)->get(); // Get matching order items
+                    $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
 
-            foreach ($orderItems as $item) {
-                $totalBeforeDiscount = $item->unit_price * $item->quantity;
-                $discountAmount = $item->discount_amount;
+                    $orders = Order::whereIn('created_by', [$userId, $parentUserId])
+                                ->with('customer')
+                                ->orderBy('created_at', 'desc')
+                                ->get();
 
-                // Calculate the discount for each item
-                if ($item->discount_type == '%') {
-                    $discountAmountCalculated = ($totalBeforeDiscount * $discountAmount) / 100;
-                } else {
-                    $discountAmountCalculated = $discountAmount;
+                    foreach ($orders as $order) {
+                        $grossAmount = 0;
+                        $orderItems = OrderItem::where('custom_order_id', $order->custom_order_id)->get();
+
+                        foreach ($orderItems as $item) {
+                            $totalBeforeDiscount = $item->unit_price * $item->quantity;
+                            $discountAmount = $item->discount_amount;
+
+                            if ($item->discount_type == '%') {
+                                $discountAmountCalculated = ($totalBeforeDiscount * $discountAmount) / 100;
+                            } else {
+                                $discountAmountCalculated = $discountAmount;
+                            }
+
+                            $grossAmount += $totalBeforeDiscount - $discountAmountCalculated;
+                        }
+
+                        $orderDiscount = 0;
+                        if ($order->discount_type == '%') {
+                            $orderDiscount = ($grossAmount * $order->discount_amount) / 100;
+                        } else {
+                            $orderDiscount = $order->discount_amount;
+                        }
+
+                        $grossAmountAfterOrderDiscount = $grossAmount - $orderDiscount;
+                        $netTotal = $grossAmountAfterOrderDiscount + $order->other_charges;
+                        $remainingAmount = $netTotal - $order->paid;
+
+                        // Add remaining amount to totalAmountDue
+                        $totalAmountDue += $remainingAmount;
+
+                        // Add other totals
+                        $order->grossAmount = $grossAmount;
+                        $order->orderDiscount = $orderDiscount;
+                        $order->grossAmountAfterOrderDiscount = $grossAmountAfterOrderDiscount;
+                        $order->netTotal = $netTotal;
+                        $order->remainingAmount = $remainingAmount;
+
+                        $totalGrossAmount += $grossAmount;
+                        $totalOrderDiscount += $orderDiscount;
+                        $totalNetAmount += $netTotal;
+                        $totalPaid += $order->paid;
+                    }
+
+                    // Pass totals to the view
+                    return view('orders.index', compact(
+                        'orders',
+                        'totalGrossAmount',
+                        'totalOrderDiscount',
+                        'totalNetAmount',
+                        'totalPaid',
+                        'totalAmountDue',
+                        'currencySymbol' 
+                    ));
+                } catch (Exception $e) {
+                    \Log::error('Failed to fetch orders: ' . $e->getMessage());
+                    return redirect()->back()->withErrors('Failed to fetch orders. Please try again later.');
                 }
-
-                $grossAmount += $totalBeforeDiscount - $discountAmountCalculated;
             }
 
-            // Apply order-level discount (percentage or flat)
-            $orderDiscount = 0;
-            if ($order->discount_type == '%') {
-                $orderDiscount = ($grossAmount * $order->discount_amount) / 100; // Calculate discount as a percentage
-            } else {
-                $orderDiscount = $order->discount_amount; // Flat discount amount
-            }
-
-            // Calculate gross amount after order-level discount
-            $grossAmountAfterOrderDiscount = $grossAmount - $orderDiscount;
-
-            // Add other charges to calculate the net total
-            $netTotal = $grossAmountAfterOrderDiscount + $order->other_charges;
-
-            // Calculate remaining amount
-            $remainingAmount = $netTotal - $order->paid;
-
-            // Attach the calculated values to the order object
-            $order->grossAmount = $grossAmount;
-            $order->orderDiscount = $orderDiscount;
-            $order->grossAmountAfterOrderDiscount = $grossAmountAfterOrderDiscount;
-            $order->netTotal = $netTotal;
-            $order->remainingAmount = $remainingAmount;
-        }
-
-        return view('orders.index', compact('orders'));
-    } catch (Exception $e) {
-        \Log::error('Failed to fetch orders: ' . $e->getMessage());
-        return redirect()->back()->withErrors('Failed to fetch orders. Please try again later.');
-    }
-}
 
 
 
@@ -567,6 +586,25 @@ public function update(Request $request)
 }
 
 
+public function destroy($customOrderId)
+{
+    try {
+        $order = Order::where('custom_order_id', $customOrderId)->first();
+
+        if (!$order) {
+            return redirect()->route('orders.index')->with('error', 'Order not found.');
+        }
+
+      
+        OrderItem::where('custom_order_id', $customOrderId)->delete();
+        $order->delete();
+
+        return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
+    } catch (\Exception $e) {
+        \Log::error('Error deleting order: ' . $e->getMessage());
+        return redirect()->route('orders.index')->with('error', 'Failed to delete order. Please try again later.');
+    }
+}
 
 
 

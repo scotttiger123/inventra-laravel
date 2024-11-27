@@ -180,9 +180,10 @@ function populateOrderDetails(data) {
 function getInvoiceDetails(customOrderId = null) {
     let saleId = customOrderId;
 
-    // If customOrderId is not passed as an argument, get the value from the input field
+    $('#loader').show(); 
     if (!saleId) {
         saleId = document.querySelector('input[name="custom_order_id"]').value;
+        $('#loader').hide(); 
     }
 
 
@@ -194,6 +195,7 @@ function getInvoiceDetails(customOrderId = null) {
                 if (data.error) {
                     alert(data.error);
                 } else {
+                    $('#loader').hide(); 
                     // Extract values and set defaults
                     const currencySymbol = data.currencySymbol || '$';  // Default to '$' if currency symbol is not found
                     const grossAmount = (data.grossAmount && !isNaN(data.grossAmount)) ? data.grossAmount.toFixed(2) : '0.00';
@@ -259,21 +261,25 @@ function getInvoiceDetails(customOrderId = null) {
 
                     // Show the modal
                     $('#invoiceModal').modal('show');
+                    $('#loader').hide(); 
                 }
             })
             .catch(error => {
+                $('#loader').hide(); 
                 console.error('Error fetching invoice:', error);
                 alert('An error occurred while fetching the invoice.');
             });
     } else {
+        $('#loader').hide(); 
         alert('Please enter a Sale ID');
+        
     }
 }
 
 function printInvoice() {
     // Get the modal content
 
-	
+
     var printContents = document.getElementById('invoiceContent').innerHTML;
 
     // Create a temporary iframe for printing
@@ -352,12 +358,10 @@ function printInvoice() {
     // Remove the iframe after printing
     document.body.removeChild(iframe);
 }
-
 async function getSaleDataForSharing(customSaleId = null, action = 'print') {
     $('#loader').show(); 
     let saleId = customSaleId;
 
-    // If customSaleId is not passed, retrieve it from the input field
     if (!saleId) {
         saleId = document.querySelector('input[name="custom_sale_id"]').value;
         $('#loader').hide(); 
@@ -365,7 +369,6 @@ async function getSaleDataForSharing(customSaleId = null, action = 'print') {
 
     if (saleId) {
         fetch(`/get-invoice/${saleId}`)
-        
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -377,26 +380,28 @@ async function getSaleDataForSharing(customSaleId = null, action = 'print') {
                     alert(data.error);
                     $('#loader').hide(); 
                 } else {
-                    // Extract values with defaults
-                    const grossAmount = data.grossAmount ? parseFloat(data.grossAmount).toFixed(2) : '0.00';
-                    const otherCharges = data.otherCharges ? parseFloat(data.otherCharges).toFixed(2) : '0.00';
-                    const netTotal = data.netTotal ? parseFloat(data.netTotal).toFixed(2) : '0.00';
-                    const paidAmount = data.paidAmount ? parseFloat(data.paidAmount).toFixed(2) : '0.00';
-                    const amountDue = data.remainingAmount ? parseFloat(data.remainingAmount).toFixed(2) : '0.00';
+                    console.log(data);
 
-                    const saleOrder = data.saleOrder || {};
-                    const customer = saleOrder.customer || {};
+                    const currencySymbol = data.currencySymbol ? `${data.currencySymbol} ` : '';  // Adding a space after the symbol
+                    
+                    const grossAmount = data.grossAmount ? `${currencySymbol}${parseFloat(data.grossAmount).toFixed(2)}` : `${currencySymbol}0.00`;
+                    const otherCharges = data.otherCharges ? `${currencySymbol}${parseFloat(data.otherCharges).toFixed(2)}` : `${currencySymbol}0.00`;
+                    const netTotal = data.netTotal ? `${currencySymbol}${parseFloat(data.netTotal).toFixed(2)}` : `${currencySymbol}0.00`;
+                    const paidAmount = data.paidAmount ? `${currencySymbol}${parseFloat(data.paidAmount).toFixed(2)}` : `${currencySymbol}0.00`;
+                    const amountDue = data.remainingAmount ? `${currencySymbol}${parseFloat(data.remainingAmount).toFixed(2)}` : `${currencySymbol}0.00`;
 
-                    const saleDate = saleOrder.sale_date || 'N/A';
-                    const saleOrderId = saleOrder.custom_sale_id || 'N/A';
+                    const order = data.order || {};
+                    const customer = order.customer || {};
+
+                    const saleDate = order.order_date || 'N/A';
+                    const saleOrderId = order.custom_order_id || 'N/A';
                     const customerName = customer.name || 'N/A';
                     const customerAddress = customer.address || 'N/A';
                     const customerPhone = customer.phone || 'N/A';
                     const customerEmail = customer.email || 'N/A';
-                    const saleNote = saleOrder.sale_note || 'N/A';
-                    const discountAmount = saleOrder.discount_amount || '0.00';
+                    const saleNote = order.sale_note || 'N/A';
+                    const discountAmount = order.discount_amount ? `${currencySymbol}${parseFloat(order.discount_amount).toFixed(2)}` : `${currencySymbol}0.00`;
 
-                    // Populate sale invoice details
                     setTextContentById('invoiceDate-watsapp', saleDate);
                     setTextContentById('customerName-watsapp', customerName);
                     setTextContentById('customerAddress-watsapp', customerAddress);
@@ -404,36 +409,33 @@ async function getSaleDataForSharing(customSaleId = null, action = 'print') {
                     setTextContentById('customerEmail-watsapp', customerEmail);
                     setTextContentById('saleNote-watsapp', saleNote);
                     setTextContentById('saleOrderId-watsapp', saleOrderId);
-                    setTextContentById('discountAmount-watsapp', `${parseFloat(discountAmount).toFixed(2)}`);
-                    setTextContentById('amountDue-watsapp', `${amountDue}`);
+                    setTextContentById('discountAmount-watsapp', discountAmount);
+                    setTextContentById('amountDue-watsapp', amountDue);
 
-                    // Update sale items (Removed UOM column)
-                    const saleItems = (data.saleItems || []).map(item => `
+                    const saleItems = (data.orderItems || []).map(item => `
                         <tr>
                             <td>${item.product_name || 'N/A'}</td>
                             <td>${item.quantity || '0'}</td>
-                            <td>${parseFloat(item.unit_price || 0).toFixed(2)}</td>
-                            <td>${item.discount_amount || 'N/A'}</td>
-                            <td>${parseFloat(item.net_rate || 0).toFixed(2)}</td>
-                            <td>${parseFloat(item.amount || 0).toFixed(2)}</td>
+                            <td>${currencySymbol}${parseFloat(item.unit_price || 0).toFixed(2)}</td>
+                            <td>${currencySymbol}${parseFloat(item.discount_amount || 0).toFixed(2)}</td>
+                            <td>${currencySymbol}${parseFloat(item.net_rate || 0).toFixed(2)}</td>
+                            <td>${currencySymbol}${parseFloat(item.amount || 0).toFixed(2)}</td>
                         </tr>
                     `).join('');
                     document.getElementById('saleInvoiceItems-watsapp').innerHTML = saleItems;
 
-                    // Update summary amounts
-                    setTextContentById('subtotalAmount-watsapp', `${grossAmount}`);
-                    setTextContentById('otherCharges-watsapp', `${otherCharges}`);
-                    setTextContentById('paidAmount-watsapp', `${paidAmount}`);
+                    setTextContentById('subtotalAmount-watsapp', grossAmount);
+                    setTextContentById('otherCharges-watsapp', otherCharges);
+                    setTextContentById('paidAmount-watsapp', paidAmount);
 
-                    // Perform the action (Share or Print)
                     if (action === 'print') {
                         $('#loader').hide(); 
                         printModalContent('.canva-section-watsapp');
                     } else if (action === 'share') {
                         $('#loader').hide(); 
-                        shareSectionAsImage('.canva-section-watsapp', {
+                        shareSectionAsImageSaleOrder('.canva-section-watsapp', {
                             fileName: 'invoice.png',
-                            title: 'Invoice Share',
+                            title: 'Invoice',
                             text: 'Check out this invoice!',
                         });
                     }
@@ -447,6 +449,65 @@ async function getSaleDataForSharing(customSaleId = null, action = 'print') {
     } else {
         $('#loader').hide(); 
         alert('Please enter a Sale ID');
+    }
+}
+
+
+
+
+async function shareSectionAsImageSaleOrder(sectionSelector, options = {}) {
+    const section = document.querySelector(sectionSelector);
+
+    if (!section) {
+        console.error(`Section with selector "${sectionSelector}" not found.`);
+        return;
+    }
+
+    // Show the section before capturing it
+    section.style.display = 'block';
+
+    try {
+        const canvas = await html2canvas(section, { useCORS: true });
+        const image = canvas.toDataURL("image/png");
+
+        // Check the canvas data
+        console.log("Canvas image generated:", image);
+
+        const blob = await fetch(image).then((res) => res.blob());
+
+        // Check the blob size
+        console.log(`Blob size: ${blob.size} bytes`);
+
+        if (blob.size === 0) {
+            alert("Failed to generate a valid image. Please check the section content.");
+            return;
+        }
+
+        const file = new File([blob], options.fileName || "document.png", {
+            type: "image/png",
+        });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: options.title || "Shared Content",
+                text: options.text || "Check out this!",
+            });
+
+            console.log("Shared successfully!");
+        } else {
+            alert("Your browser does not support image sharing! Downloading the image instead.");
+            const link = document.createElement("a");
+            link.href = image;
+            link.download = options.fileName || "document.png";
+            link.click();
+        }
+    } catch (error) {
+        console.error("Error during sharing:", error);
+        alert(`Sharing failed: ${error.message}`);
+    } finally {
+        
+        section.style.display = 'none';
     }
 }
 

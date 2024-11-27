@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="col-lg-3 col-xs-6">
-                <div class="small-box bg-green">
+                <div class="small-box"  style = 'background-color:#B13C2E'>
                     <div class="inner" >
                         <h3>{{ number_format($totalDue, 2) }}</h3>
                         <p>Amount Due</p>

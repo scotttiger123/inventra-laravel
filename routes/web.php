@@ -123,6 +123,7 @@ Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->
     Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
     Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
     Route::get('/payments/get-payable-options/{head}', [PaymentController::class, 'getPayableOptions'])->name('payments.getPayableOptions');
+    Route::get('/get-payment-details/{voucherId}', [PaymentController::class, 'getPaymentDetails']);
 
 
     // Role routes

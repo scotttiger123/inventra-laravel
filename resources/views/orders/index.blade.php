@@ -3,6 +3,77 @@
 @section('content')
 <div class="content-wrapper">
     <div class="form-border">
+                <div class="row">
+                <!-- Gross Amount -->
+                <div class="col-lg-3 col-xs-6">
+                    <div class="small-box bg-grey">
+                        <div class="inner">
+                            <h3>{{ $currencySymbol . number_format($totalGrossAmount, 2) }}</h3>
+                            <p>Gross Amount</p>
+                        </div>
+                        <div class="icon" style="color:#222D32">
+                            <i class="ion ion-cash"></i> <!-- Icon for Gross Amount -->
+                        </div>
+                        <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+
+                <!-- Discount Amount -->
+                <div class="col-lg-3 col-xs-6">
+                    <div class="small-box bg-grey">
+                        <div class="inner">
+                            <h3>{{ $currencySymbol . number_format($totalOrderDiscount, 2) }}</h3>
+                            <p>Discount</p>
+                        </div>
+                        <div class="icon" style="color:#222D32">
+                            <i class="ion ion-pricetags"></i> <!-- Icon for Discount -->
+                        </div>
+                        <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+
+                <!-- Paid Amount -->
+                <div class="col-lg-3 col-xs-6">
+                    <div class="small-box bg-grey">
+                        <div class="inner">
+                            <h3>{{ $currencySymbol . number_format($totalPaid, 2) }}</h3>
+                            <p>Paid</p>
+                        </div>
+                        <div class="icon" style="color:#222D32">
+                            <i class="ion ion-calculator"></i> <!-- Icon for Paid Amount -->
+                        </div>
+                        <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+
+                <!-- Amount Due -->
+                <div class="col-lg-3 col-xs-6">
+                    <div class="small-box" style="background-color:#008548">
+                        <div class="inner">
+                            <h3>{{ $currencySymbol . number_format($totalAmountDue, 2) }}</h3>
+                            <p>Amount Due</p>
+                        </div>
+                        <div class="icon" style="color:#222D32">
+                            <i class="ion ion-card"></i> <!-- Icon for Amount Due -->
+                        </div>
+                        <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+
+                <!-- <div class="col-lg-3">
+                    <h4>Total Gross Amount: <strong>{{ number_format($totalGrossAmount, 2) }}</strong></h4>
+                </div>
+                <div class="col-lg-3">
+                    <h4>Total Discount: <strong></strong></h4>
+                </div>
+                <div class="col-lg-3">
+                    <h4>Total Net Amount: <strong></strong></h4>
+                </div>
+                <div class="col-lg-3">
+                    <h4>Total Paid: <strong></strong></h4>
+                </div> -->
         <div class="box-header with-border">
             <h3 class="box-title custom-title">Order Listings</h3>
             @if(session('success'))
@@ -10,8 +81,12 @@
                     {{ session('success') }}
                 </div>
             @endif
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
         </div>
-
         <!-- Button to Add a New Order -->
         <div class="text-right">
             <a href="{{ route('orders.create') }}" class="btn btn-success">
@@ -94,25 +169,35 @@
                                             onclick="getSaleDataForSharing('{{ $order->custom_order_id }}', 'share')">
                                             <i class="fa fa-whatsapp"></i> WhatsApp
                                         </button>
+                                            <!-- Print Button -->
+                                        <button 
+                                            class="custom-dropdown-item" 
+                                            type="button" 
+                                            onclick="getSaleDataForSharing('{{ $order->custom_order_id }}', 'print')">
+                                            <i class="fa fa-print"></i> Print
+                                        </button>
+                                        <form id="deleteForm-{{ $order->custom_order_id }}" 
+                                            action="{{ route('orders.destroy', $order->custom_order_id) }}" 
+                                            method="POST" 
+                                            class="custom-dropdown-item delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" onclick="confirmDeleteOrder({{ $order->custom_order_id }})" class="delete-btn btn btn-danger">
+                                                <i class="fa fa-trash"></i> Delete
+                                            </button>
+                                        </form>
 
-                                    <!-- Edit Payment Option -->
-                                    <a href="{{ route('order.edit', $order->custom_order_id) }}" class="custom-dropdown-item">
-                                        <i class="fa fa-edit"></i> Edit
-                                </a>
-                        </div>
-                </div>
-            </td>
-        </tr>
-    @endforeach
-</tbody>
+                                    </div>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
         </table>
     </div>
 </div>
 
-<!-- Modal for Viewing Order Details -->
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 <!-- Modal for Invoice View -->
 <div id="invoiceModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="invoiceModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -134,10 +219,7 @@
                                   <img src="{{ asset('dist/img/logo.png') }}" alt="Inventra Logo">
                                   <small class="date-inv">Date: <span id="invoiceDate">N/A</span></small>
                                   </div>
-                              
-                                
-                               
-                            </h2>
+                              </h2>
                         </div>
                     </div>
 
@@ -221,9 +303,7 @@
              <!-- this row will not appear when printing -->
       
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" onclick="sendReceiptOnWhatsApp()">
-                    <i class="fa fa-whatsapp"></i> Send on WhatsApp
-                </button>
+                
                 <button type="button" class="btn btn-success" onclick="printInvoice()"><i class="fa fa print"></i> Print</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
@@ -271,7 +351,6 @@
                         <tr>
                             <th>Product</th>
                             <th>Qty</th>
-                            <th>UOM</th>
                             <th>Rate</th>
                             <th>Discount</th>
                             <th>Net Rate</th>

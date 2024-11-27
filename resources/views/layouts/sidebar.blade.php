@@ -28,7 +28,7 @@
         <ul class="treeview-menu">
           <li style="padding-left: 20px;"><a href="{{ route('orders.create') }}"><i class="fa fa-dot-circle-o"></i> Add Sale Order</a></li>
           <li style="padding-left: 20px;"><a href="{{ route('orders.create-pos') }}"><i class="fa fa-dot-circle-o"></i> POS</a></li>
-          <li style="padding-left: 20px;"><a href="{{ route('orders.index') }}"><i class="fa fa-dot-circle-o"></i> Sale View</a></li>
+          <li style="padding-left: 20px;"><a href="{{ route('orders.index') }}"><i class="fa fa-dot-circle-o"></i> Sales order</a></li>
         </ul>
       </li>
 

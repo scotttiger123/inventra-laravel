@@ -27,7 +27,7 @@ class PaymentController extends Controller
 
       public function index()
       {
-         // Fetch all payments and map payable names for customers and suppliers
+         
         $payments = Payment::whereIn('payable_type', ['customer', 'supplier'])->get()->map(function ($payment) {
             if ($payment->payable_type === 'customer') {
                 $payment->payable_name = Customer::where('id', $payment->payable_id)->value('name');
@@ -37,18 +37,11 @@ class PaymentController extends Controller
             return $payment;
         });
   
-                // Fetch all payments related to customers and suppliers only
-            
+                    
+        $totalDebit = $payments->where('payment_type', 'debit')->sum('amount');
+    
+        $totalCredit = $payments->where('payment_type', 'credit')->sum('amount');
 
-          // Calculate total debit for all payments (both customer and supplier)
-    $totalDebit = $payments->where('payment_type', 'debit')->sum('amount');
-
-    // Calculate total credit for all payments (both customer and supplier)
-    $totalCredit = $payments->where('payment_type', 'credit')->sum('amount');
-
-
-
-  
           // Pass all data to the view, including individual payment details
           return view('payments.index', compact('payments',
               'totalDebit', 'totalCredit'
@@ -163,4 +156,47 @@ class PaymentController extends Controller
         $payment->delete();
         return redirect()->route('payments.index')->with('success', 'Payment deleted successfully!');
     }
+
+
+
+    public function getPaymentDetails($voucherId)
+    {
+        try {
+            $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
+            $payment = Payment::findOrFail($voucherId);
+    
+            $payableType = $payment->payable_type;
+            $payableId = $payment->payable_id;
+    
+            if ($payableType == 'customer') {
+                $payable = Customer::findOrFail($payableId);
+                $payableName = $payable->name;
+            } elseif ($payableType == 'supplier') {
+                $payable = Supplier::findOrFail($payableId);
+                $payableName = $payable->name;
+            } else {
+                $payableName = 'Unknown';
+            }
+    
+            $data = [
+                'payment' => [
+                    'payment_date' => $payment->payment_date,
+                    'amount' =>  number_format($payment->amount, 2), // Format amount with currency
+                    'payment_type' => $payment->payment_type,
+                    
+                    'payment_method' => $payment->payment_method,
+                    'note' => $payment->note,
+                    'payable_name'  => $payableName,
+                    'currency'      => $currencySymbol,
+                    
+                ]
+            ];
+    
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Payment not found or an error occurred.'], 404);
+        }
+    }
+    
+
 }
