@@ -59,7 +59,7 @@
                         <label for="payable_id_label" id="payableLabel">Payable  *</label>
                         <select name="payable_id" class="form-control myInput" id="payable_id" required>
                             <option value="">Select...</option>
-                            <!-- Options will be populated via AJAX -->
+                            
                         </select>
                         @error('payable_id')
                             <span class="validation-msg text-danger">{{ $message }}</span>

@@ -478,9 +478,16 @@ function recalculateTotalsSale() {
 
     // Update the total fields
     document.getElementById('gross_amount_id').value = grossAmount.toFixed(2);
+    document.getElementById('gross_amount_label').textContent = grossAmount.toFixed(2); 
+    
+    
+    
     document.getElementById('net_amount_id').value = netAmount.toFixed(2);
-    document.getElementById('balance_id').value = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); // Balance = Net Amount - Paid Amount
-}
+    document.getElementById('net_amount_label').textContent = netAmount.toFixed(2);
+    
+    document.getElementById('balance_id').value = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); 
+    document.getElementById('balance_label').textContent = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); 
+}   
 
     // Add event listeners to trigger recalculation when discount or other charges are modified
     document.getElementById('order_discount_id').addEventListener('input', recalculateTotalsSale);

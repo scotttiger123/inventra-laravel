@@ -57,9 +57,7 @@ $(document).ready(function() {
 
 document.addEventListener('DOMContentLoaded', function () {
     $('#viewPaymentModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-
-        // Extract data from data-* attributes
+        var button = $(event.relatedTarget); 
         
         var payableName = button.data('payable_name');
         var amount = button.data('amount');
@@ -67,14 +65,11 @@ document.addEventListener('DOMContentLoaded', function () {
         var paymentType = button.data('payment_type');
         var paymentMethod = button.data('payment_method');
         var note = button.data('note');
-        var paymentDate = button.data('payment_date'); // Make sure this is in a readable format (e.g., Y-m-d)
+        var paymentDate = button.data('payment_date'); 
         
-        var amountLabel = (paymentType == 'credit') ? 'Got' : (paymentType == 'debit') ? 'Paid' : 'Amount';
-        var amountSectionColor = (paymentType == 'credit') ? '#28a745' : (paymentType == 'debit') ? '#dc3545' : '#007bff'; // Green for credit, Red for debit, Blue for default
-        var imageSource = (paymentType == 'credit') ? '../../dist/img/currency-red.png' : (paymentType == 'debit') ? '../../dist/img/currency-green.png' : null; // Only green or red images
-
-        
-        
+        var amountLabel = paymentType;
+        var amountSectionColor = 'black'
+        var imageSource = (paymentType == 'credit') ? '../../dist/img/currency-green.png' : (paymentType == 'debit') ? '../../dist/img/currency-red.png' : null; // Only green or red images
 
         // Update the modal's content
         var modal = $(this);
@@ -117,7 +112,7 @@ async function getPaymentDataForSharing(voucherId, action = 'print') {
             console.log("DATaa",paymentData);
 
             const paymentDate = paymentData.payment_date || 'N/A';
-            document.getElementById('modal-payment-date').innerText = `Date: ${paymentDate}`;
+            document.getElementById('modal-payment-date-receipt-watsapp').innerText = `${paymentDate}`;
 
             const amount = paymentData.amount ? parseFloat(paymentData.amount).toFixed(2) : '0.00';
             
@@ -132,7 +127,7 @@ async function getPaymentDataForSharing(voucherId, action = 'print') {
             document.getElementById('currency-icon-watsapp-receipt').src = currencyIcon;
             
 
-            document.getElementById('modal-note').innerText = paymentData.note || 'No additional notes';
+            document.getElementById('modal-note-receipt-watsapp').innerText = paymentData.note || 'No additional notes';
 
             document.getElementById('modal-payable-name-receipt').innerText = paymentData.payable_name || '';
 
@@ -218,6 +213,15 @@ async function shareSectionAsImagePaymentReceipt(sectionSelector, options = {}) 
         alert(`Sharing failed: ${error.message}`);
     } finally {
         
-        //section.style.display = 'none';
+        section.style.display = 'none';
     }
 }
+
+
+function confirmDeletePayment(id) {
+    if (confirm('Are you sure you want to delete this payment ?')) {
+        document.getElementById('deleteForm-' + id).submit();
+    }
+}
+
+

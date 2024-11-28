@@ -41,35 +41,33 @@
                 </div>
 
                 <!-- Payment Head Selection -->
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Payment Head *</label>
-                        <select id="payment_head" name="payment_head" class="form-control myInput" required>
-                            <option value="">Select Head...</option>
-                            <option value="customer" {{ old('payment_head', $payment->payment_head) == 'customer' ? 'selected' : '' }}>Customer</option>
-                            <option value="supplier" {{ old('payment_head', $payment->payment_head) == 'supplier' ? 'selected' : '' }}>Supplier</option>
-                        </select>
-                        @error('payment_head')
-                            <span class="validation-msg text-danger">{{ $message }}</span>
-                        @enderror
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Payment Head *</label>
+                            <select id="payment_head" name="payment_head" class="form-control myInput" required>
+                                <option value="">Select Head...</option>
+                                <option value="customer" {{ old('payment_head', $payment->payable_type) == 'customer' ? 'selected' : '' }}>Customer</option>
+                                <option value="supplier" {{ old('payment_head', $payment->payable_type) == 'supplier' ? 'selected' : '' }}>Supplier</option>
+                            </select>
+                            
+                        </div>
                     </div>
-                </div>
 
-               <!-- Payable ID Dropdown -->
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="payable_id" id="payableLabel">Payable *</label>
-                        <select name="payable_id" class="form-control" id="payable_id" required>
-                            <option value="">Select...</option>
-                            @foreach($payables as $payable)
-                                <option value="{{ $payable->id }}" 
-                                    {{ old('payable_id', $payment->payable_id) == $payable->id ? 'selected' : '' }}>
-                                    {{ $payable->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                        <label for="payable_id_label" id="payableLabel">Payable  *</label>
+                            <select name="payable_id" class="form-control" id="payable_id" required>
+                                <option value="">Select...</option>
+                                @foreach($payables as $payable)
+                                    <option value="{{ $payable->id }}" 
+                                        {{ old('payable_id', $payment->payable_id) == $payable->id ? 'selected' : '' }}>
+                                        {{ $payable->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                </div>
+
 
                 <!-- Amount Field -->
                 <div class="col-md-4">

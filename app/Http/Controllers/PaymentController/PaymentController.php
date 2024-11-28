@@ -53,77 +53,99 @@ class PaymentController extends Controller
 
                 
 
-    
-    public function edit(Payment $payment)
-    {
-        $paymentHeads = PaymentHead::all();
-        $user = auth()->user();
-        $parentUserId = $user->parent_user_id;
+      public function edit(Payment $payment)
+      { 
+            $paymentHeads = PaymentHead::all();
 
-        if ($payment->payment_head == 'customer') {
-            $payables = Customer::where('parent_user_id', $parentUserId)->get();
-        } else {
-            $payables = Supplier::where('parent_user_id', $parentUserId)->get();
-        }
-
-        return view('payments.edit', compact('payment', 'paymentHeads', 'payables'));
-    }
+          if ($payment->payable_type  == 'customer') {
+              $payables = Customer::all(); 
+          } elseif ($payment->payable_type  == 'supplier') {
+              $payables = Supplier::all(); 
+          } else {
+              $payables = collect(); 
+          }
+      
+          return view('payments.edit', compact('payment', 'payables','paymentHeads'));
+      }
+      
 
     
-    public function getPayableOptions($head)
-    {
-        // Log to verify that $head is received correctly
-        \Log::debug('Payment Head:', [$head]);
-    
-        $user = auth()->user();
-        $parentUserId = $user->parent_user_id;
-    
-        $customers = [];
-        $suppliers = [];
-    
-        if ($head === 'customer') {
-            $customers = Customer::where(function ($query) use ($parentUserId, $user) {
-                $query->where('parent_user_id', $parentUserId)
-                      ->orWhere('created_by', $user->id);
-            })->get();
-        } elseif ($head === 'supplier') {
-            $suppliers = Supplier::where(function ($query) use ($parentUserId, $user) {
-                $query->where('parent_user_id', $parentUserId)
-                      ->orWhere('created_by', $user->id);
-            })->get();
-        }
-    
-        return response()->json(['customers' => $customers, 'suppliers' => $suppliers]);
-    }
-    
-
-
-
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'amount' => 'required|numeric',
-            'status' => 'required|in:pending,completed,cancelled',
-            'payment_type' => 'required|in:credit,debit',
+        public function getPayableOptions($head)
+        {
             
-        ]);
+            \Log::debug('Payment Head:', [$head]);
+        
+            $user = auth()->user();
+            $parentUserId = $user->parent_user_id;
+        
+            $customers = [];
+            $suppliers = [];
+        
+            if ($head === 'customer') {
+                $customers = Customer::where(function ($query) use ($parentUserId, $user) {
+                    $query->where('parent_user_id', $parentUserId)
+                        ->orWhere('created_by', $user->id);
+                })->get();
+            } elseif ($head === 'supplier') {
+                $suppliers = Supplier::where(function ($query) use ($parentUserId, $user) {
+                    $query->where('parent_user_id', $parentUserId)
+                        ->orWhere('created_by', $user->id);
+                })->get();
+            }
+        
+            return response()->json(['customers' => $customers, 'suppliers' => $suppliers]);
+        }
+        
 
-        Payment::create([
-            'amount' => $request->amount,
-            'status' => $request->status,
-            'payment_type' => $request->payment_type,
-            'payable_id' => $request->payable_id,
-            'payable_type' => $request->payable_type,
-            'payment_method' => $request->payment_method,
-            'payment_date' => $request->payment_date,
-            'note' => $request->note,
-            'created_by' => auth()->id(), 
-            
-        ]);
 
-        return redirect()->route('payments.create')->with('success', 'Payment created successfully!');
-    }
+
+
+        public function store(Request $request)
+        {
+            $request->validate([
+                'amount' => 'required|numeric',
+                'status' => 'required|in:pending,completed,cancelled',
+                'payment_type' => 'required|in:credit,debit',
+                'payable_id' => 'required|integer',
+                'payable_type' => 'required|string',
+                'payment_method' => 'required|string',
+                'payment_date' => 'required|date',
+                'note' => 'nullable|string',
+                'payment_head' => 'required|string',
+            ]);
+        
+            // Determine the payment_head ID
+            $paymentHeadId = null;
+        
+            if ($request->input('payment_head') == 'customer') {
+                $paymentHead = PaymentHead::where('type', 'customer')->first();
+                if ($paymentHead) {
+                    $paymentHeadId = $paymentHead->id;
+                }
+            } elseif ($request->input('payment_head') == 'supplier') {
+                $paymentHead = PaymentHead::where('type', 'supplier')->first();
+                if ($paymentHead) {
+                    $paymentHeadId = $paymentHead->id;
+                }
+            }
+        
+            // Create the payment record
+            Payment::create([
+                'amount' => $request->amount,
+                'status' => $request->status,
+                'payment_type' => $request->payment_type,
+                'payable_id' => $request->payable_id,
+                'payable_type' => $request->payable_type,
+                'payment_method' => $request->payment_method,
+                'payment_date' => $request->payment_date,
+                'note' => $request->note,
+                'payment_head' => $paymentHeadId, // Store the payment_head as ID
+                'created_by' => auth()->id(),
+            ]);
+        
+            return redirect()->route('payments.create')->with('success', 'Payment created successfully!');
+        }
+        
 
     public function show(Payment $payment)
     {
@@ -131,25 +153,52 @@ class PaymentController extends Controller
     }
 
     public function update(Request $request, $id)
-        {
-            $request->validate([
-                'payment_head' => 'required|string',
-                'payable_id' => 'required|integer',
-                'amount' => 'required|numeric',
-                'payment_date' => 'required|date',
-                'invoice_id' => 'nullable|integer',
-                'status' => 'required|string',
-                'payment_type' => 'required|string',
-                'payment_method' => 'required|string',
-                'note' => 'nullable|string',
-            ]);
-
-            $payment = Payment::findOrFail($id);
-            $payment->update($request->all());
-
-            return redirect()->route('payments.edit', $payment->id)->with('success', 'Payment updated successfully');
+    {
+        $request->validate([
+            'payment_head' => 'required|string',
+            'payable_id' => 'required|integer',
+            'amount' => 'required|numeric',
+            'payment_date' => 'required|date',
+            'invoice_id' => 'nullable|integer',
+            'status' => 'required|string',
+            'payment_type' => 'required|string',
+            'payment_method' => 'required|string',
+            'note' => 'nullable|string',
+        ]);
+    
+        $paymentHeadId = null;
+    
+        if ($request->input('payment_head') == 'customer') {
+            $paymentHead = PaymentHead::where('type', 'customer')->first();
+            if ($paymentHead) {
+                $paymentHeadId = $paymentHead->id;
+            }
+        } elseif ($request->input('payment_head') == 'supplier') {
+            $paymentHead = PaymentHead::where('type', 'supplier')->first();
+            if ($paymentHead) {
+                $paymentHeadId = $paymentHead->id;
+            }
         }
-
+    
+        $payment = Payment::findOrFail($id);
+    
+        $payment->payment_head = $paymentHeadId;
+        $payment->payable_id = $request->input('payable_id');
+        $payment->amount = $request->input('amount');
+        $payment->payment_date = $request->input('payment_date');
+        $payment->invoice_id = $request->input('invoice_id');
+        $payment->status = $request->input('status');
+        $payment->payment_type = $request->input('payment_type');
+        $payment->payment_method = $request->input('payment_method');
+        $payment->note = $request->input('note');
+        $payment->updated_by = auth()->user()->id;
+    
+        $payment->save();
+    
+        return redirect()->route('payments.edit', $payment->id)->with('success', 'Payment updated successfully');
+    }
+    
+        
 
     public function destroy(Payment $payment)
     {

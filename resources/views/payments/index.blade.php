@@ -32,8 +32,14 @@
         <div class="box-header with-border">
             <h3 class="box-title custom-title">Payment Listings</h3>
             @if(session('success'))
-                <div class="alert alert-success">
+                <div class="alert alert-success" id="successMessage">
                     {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger" id="errorMessage">
+                    {{ session('error') }}
                 </div>
             @endif
         </div>
@@ -50,7 +56,6 @@
             <thead>
                 <tr>
                     <th>Payment Date</th>
-                    
                     <th>Payable</th>
                     <th>Amount</th>
                     <th>Payment Type</th>
@@ -69,8 +74,6 @@
                         @else
                             N/A
                         @endif
-
-
                     </td>
 
                     
@@ -164,16 +167,16 @@
         </table>
     </div>
 </div>
-
-
-
-
-
-
 <!-- Modal Structure -->
 <div class="modal fade" id="viewPaymentModal" tabindex="-1" role="dialog" aria-labelledby="viewPaymentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
+        <div class="modal-header">
+                <h5 class="modal-title" id="invoiceModalLabel">Receipt Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             <div class="modal-body">
                 <!-- Receipt Card -->
                 <div class="receipt-card" id="receipt-card">
@@ -186,51 +189,48 @@
                     <div class="amount-section" id="amount-section">
                         <div class="amount-label" id ="modal-amount-label" ></div>
                         <div class="amount" id="modal-amount"></div>
-                        <div class="doller-icon" onclick="sendReceiptOnWhatsApp()">
-                            <img id="currency-icon" src="" alt="Currency" width="150" height="150" /> <!-- Image to be dynamically updated -->
+                        <div class="doller-icon" >
+                            <img id="currency-icon" src="" alt="Currency" width="80" height="80" /> 
                     
                         </div>
                     </div>
                     <!-- Note Section -->
                     <div class="note-section">
-                        <strong>Note:</strong> <span id="modal-note"></span>
+                         <span id="modal-note"></span>
                     </div>
                     <div class="store-section">
-                        <div class="store-name" id="modal-payable-name">Ali General Store</div>
+                        <div class="store-name" id="modal-payable-name"></div>
                         <img class="logo" src="../../dist/img/logo.png" alt="inventra" width="100" height="100" />
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <!-- Print and WhatsApp buttons -->
-                <div class="d-flex justify-content-between w-100">
-                    <button type="button" class="btn btn-primary" onclick="printReceipt()">Print Receipt</button>
-                    <button type="button" class="btn btn-success" onclick="sendReceiptOnWhatsApp()">Send on WhatsApp</button>
-                </div>
+            <button type="button" class="btn btn-success" onclick="printReceipt()"><i class="fa fa print"></i> Print</button>
+                
             </div>
         </div>
     </div>
 </div>
 
 
-    <div class="modal-body canva-section-watsapp">
+    <div class="modal-body canva-section-watsapp" style = "display:none">
         <div class="receipt-card-share" >
             <div class="receipt-header">
                 <h1 class="receipt-title">Payment Receipt</h1>
-                <div class="receipt-date" id="modal-payment-date"></div>
+                <div class="receipt-date" id="modal-payment-date-receipt-watsapp"></div>
                                         
             </div>
             
             <div class="amount-section" id="amount-section">
                 <div class="amount-label" id ="modal-amount-label-receipt" ></div>
-                <div class="amount" id="modal-amount-watsapp">250000</div>
+                <div class="amount" id="modal-amount-watsapp"></div>
                 <div class="doller-icon" >
                     <img id="currency-icon-watsapp-receipt" src="" alt="Currency" width="80" height="80" /> 
                 </div>
             </div>
             <!-- Note Section -->
             <div class="note-section">
-                <strong>Note:</strong> <span id="modal-note"></span>
+                <strong></strong> <span id="modal-note-receipt-watsapp"></span>
             </div>
             <div class="store-section">
                 <div class="store-name" id="modal-payable-name-receipt"></div>
@@ -311,15 +311,14 @@
 
     .doller-icon {
         position: absolute;
-        right: 20px;
+        right: 10px;
         top: 50%;
         transform: translateY(-50%);
         width: 170px;
-        height: 170px;
-        border-radius: 50%;
+        height: 100px;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: right;
+        justify-content: right;
     }
 
     .store-section {
@@ -360,11 +359,8 @@
   
 </style>
 
-
-
-<!-- JavaScript Functions -->
 <script>
-    // Function to open the modal with payment data
+
     function openPaymentModal(paymentData) {
         document.getElementById("modal-payment-date").textContent = paymentData.date;
         document.getElementById("modal-payable-name").textContent = paymentData.payable;
@@ -374,7 +370,7 @@
     }
 
     function printReceipt() {
-    const modal = $('#viewPaymentModal'); // Get the modal to extract dynamic data
+    const modal = $('#viewPaymentModal'); 
     
     // Extract dynamic values from modal
     const payableName = modal.find('#modal-payable-name').text();
@@ -382,13 +378,13 @@
     const amountLabel = modal.find('#modal-amount-label').text();
     const paymentDate = modal.find('#modal-payment-date').text();
     const currencyIconSrc = modal.find('#currency-icon').attr('src');
-    const note = modal.find('#modal-note').text(); // Get the note text from the modal
+    const note = modal.find('#modal-note').text(); 
     
-    // Set background colors based on payment type
+    
     const paymentType = modal.find('#modal-payment-type').text();
     const amountSectionColor = (paymentType == 'credit') ? '#28a745' : (paymentType == 'debit') ? '#dc3545' : '#007bff'; // Green for credit, Red for debit, Blue for default
 
-    // Open a new print window
+    
     const printWindow = window.open("", "_blank");
 
     printWindow.document.open();
@@ -425,7 +421,8 @@
                         margin-bottom: 20px;
                     }
                     .amount-section {
-                        background: ${amountSectionColor};
+                        
+                        background-color: black;
                         padding: 20px;
                         border-radius: 12px;
                         color: white;
@@ -436,6 +433,7 @@
                         font-weight: bold;
                     }
                     .amount-label {
+                        text-transform: uppercase; 
                         font-size: 20px;
                         margin-bottom: 10px;
                     }
@@ -466,13 +464,18 @@
                         color: #888;
                         margin-top: 20px;
                     }
-                    /* Make print view look identical to modal */
+                    
                     @media print {
                         body {
                             font-family: Arial, sans-serif !important;
                             background: white !important;
                             margin: 0 !important;
                         }
+                            .amount-label {
+                                text-transform: uppercase; 
+                                font-size: 20px;
+                                margin-bottom: 10px;
+                            }
                         .receipt-card {
                             width: 100% !important;
                             max-width: 600px !important;    
@@ -487,7 +490,7 @@
                             height:auto
                         }
                         .amount-section {
-                            background: ${amountSectionColor} !important;
+                            background: black;
                             color: white !important;
                             padding: 20px !important;
                             border-radius: 12px !important;
@@ -562,14 +565,6 @@
     printWindow.document.close();
 }
 
-
-
-
-
 </script>
-
-
-
-
 
 @endsection

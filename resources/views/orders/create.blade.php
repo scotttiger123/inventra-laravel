@@ -11,42 +11,47 @@
             <div id="error-message" class="alert alert-danger" style="display: none;"></div>
         
             <div class="row" >
+            <div class="col-lg-3 col-xs-6">
+                <div class="small-box bg-grey">
+                    <div class="inner">
+                        <h3 id ="gross_amount_label">0.00</h3>
+                        <p>Gross Amount</p>
+                        <input type = 'hidden' name = 'gross_amount' id="gross_amount_id" type="number" value="0" class="form-control"  placeholder="0" readonly></h3>
+                    </div>
+                    <div class="icon" style="color:#222D32">
+                        <i class="ion ion-pricetag"></i> <!-- Updated Icon -->
+                    </div>
+                </div>
+            </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box compact-info-box" >
-                        <span class="info-box-icon bg-aqua"  style="border-radius: 5px;!important"><i class="fa fa-credit-card"></i></span>
+                        <span class="info-box-icon bg-grey"  style="border-radius: 5px;!important"><i class="fa fa-credit-card"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Balance</span>
-                            <span class="info-box-number">$1,410</span>
+                            <span class="info-box-text">Net  Amount</span>
+                            <span class="info-box-number" id ="net_amount_label" >0.00</span>
+                            <input type = 'hidden' name="net_amount" id="net_amount_id" type="number"  class="form-control"  readonly></h3>
                         </div>
                     </div>
                 </div>
                 
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box compact-info-box">
-                        <span class="info-box-icon bg-green" style="border-radius: 5px;!important" ><i class="fa fa-cogs"></i></span>
+                        <span class="info-box-icon" style="border-radius: 5px;!important" ><i class="fa fa-usd"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Stock</span>
-                            <span class="info-box-number">410</span>
+                            <span class="info-box-text">Paid Amount</span>
+                            <span class="info-box-number">0.00</span>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box compact-info-box">
-                        <span class="info-box-icon bg-yellow" style="border-radius: 5px;!important" ><i class="fa fa-usd"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Last Price</span>
-                            <span class="info-box-number">$13,648</span>
+                <div class="col-lg-3 col-xs-6">
+                    <div class="small-box"  >
+                        <div class="inner" >
+                            <h3 id ="balance_label">0.00</h3>
+                            <p>Amount Due</p>
+                            <input type = 'hidden' name="balance" id="balance_id" type="number" class="form-control" readonly></h3>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box compact-info-box">
-                        <span class="info-box-icon bg-red" style="border-radius: 5px;!important"><i class="fa fa-percent"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Discount</span>
-                            <span class="info-box-number">10%</span>
+                        <div class="icon" style="color:#222D32">
+                            <i class="ion ion-clock"></i> <!-- Updated Icon -->
                         </div>
                     </div>
                 </div>
@@ -266,83 +271,59 @@
                                 </table>
                             </div>
                         </div>
-                        <!-- End Order Item -->
-
+    
                         <!-- Financials Section (Gross Amount, Discount, etc.) -->
                         <div class="table-container" >
                             <div class="row">
-                                <div class="col-md-2 col-sm-6 col-12">
-                                    <div class="small-box" >
-                                        <div class="inner">
-                                            <h3><input name = 'gross_amount' id="gross_amount_id" type="number" value="0" class="form-control"  placeholder="0" readonly></h3>
-                                            <p>GROSS AMOUNT</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2 col-sm-6 col-12">
-                                    <div class="small-box" >
-                                        <div class="inner">
-                                            <h3>
-                                             <select name="tax_rate" id="tax_rate" class="form-control">
+                                <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <div class="info-box custom">
+                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-envelope-o"></i></span>
+                                        <div class="info-box-content">
+                                            <select name="tax_rate" id="tax_rate" class="form-control">
                                                 <option value="" selected>Order Tax</option>
-                                                        @foreach($taxes as $tax)
-                                                            <option value="{{ $tax->rate }}">{{ $tax->name }} ({{ $tax->rate }}%)</option>
-                                                        @endforeach
-                                                </select>
-                                            </h3>   
-                                            <p>TAX(%)</p>
+                                                    @foreach($taxes as $tax)
+                                                        <option value="{{ $tax->rate }}">{{ $tax->name }} ({{ $tax->rate }}%)</option>
+                                                    @endforeach
+                                            </select>
+                                            <span class="info-box-number"> TAX(%)</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-2 col-sm-6 col-12" >
-                                    <div class="small-box" style = 'height:96px'>
-                                        <div class="inner" >
-                                            <h3><input type="number"  name = 'order_discount' id="order_discount_id" value="" class="form-control" tabindex="9" placeholder="Order Discount "></h3>
+                                <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <div class="info-box custom">
+                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-envelope-o"></i></span>
+                                        <div class="info-box-content">
+                                            <input type="number"  name = 'order_discount' id="order_discount_id" value="" class="form-control" tabindex="9" placeholder="Order Discount ">
+                                            <span class="info-box-number"> 
                                             <label >
                                                 <input type="radio" name="order_discount_type" id = "flat_discount_radio" class="flat-red" value='flat' checked> Flat 
                                             </label> &nbsp;&nbsp;&nbsp;&nbsp;
                                             <label>
                                                 <input type="radio" name="order_discount_type" id="percentage_discount_radio" class="flat-red" value="percentage"> Percentage 
                                             </label>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="col-md-2 col-sm-6 col-12">
-                                    <div class="small-box">
-                                        <div class="inner">
-                                            <h3><input type = 'number' name="other_charges" value="" id = 'other_charges_id' class="form-control" tabindex="9" ></h3>
-                                            <p>OTHER CHARGES</p>
+                                <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <div class="info-box custom" >
+                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-envelope-o"></i></span>
+                                        <div class="info-box-content">
+                                            <input type = 'number' name="other_charges" value="" id = 'other_charges_id' class="form-control" tabindex="9" >
+                                            <span class="info-box-number"> OTHER CHARGES</span>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="col-md-2 col-sm-6 col-12">
-                                    <div class="small-box">
-                                        <div class="inner">
-                                            <h3><input name="net_amount" id="net_amount_id" type="number"  class="form-control"  readonly></h3>
-                                            <p>NET AMOUNT</p>
+                                <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <div class="info-box custom">
+                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-envelope-o"></i></span>
+                                        <div class="info-box-content">
+                                            <input name="paid_amount" id="paid_amount_id" type="number" class="form-control" tabindex="10" >
+                                            <span class="info-box-number"> PAID AMOUNT</span>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="col-md-2 col-sm-6 col-12">
-                                    <div class="small-box">
-                                        <div class="inner">
-                                            <h3><input name="paid_amount" id="paid_amount_id" type="number" class="form-control" tabindex="10" ></h3>
-                                            <p>PAID AMT</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2 col-sm-6 col-12">
-                                    <div class="small-box">
-                                        <div class="inner">
-                                            <h3><input name="balance" id="balance_id" type="number" class="form-control" readonly></h3>
-                                            <p>BALANCE</p>
-                                        </div>
-                                    </div>
-                                </div>
+                            
                             </div>
                         </div>
 
