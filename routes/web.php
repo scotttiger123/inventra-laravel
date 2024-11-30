@@ -25,17 +25,11 @@ use App\Http\Controllers\BrandController\BrandController;
 use App\Http\Controllers\CategoryController\CategoryController;
 
 
+// Route::get('welcome', function () {
+//     return view('welcome');
+// })->name('welcome');
 
 
-
-
-
-
-Route::get('welcome', function () {
-    return view('welcome');
-})->name('welcome');
-
-Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
 
 // Route for auth
 Route::get('/', [LoginController::class,'index'])->name('login');
@@ -47,7 +41,10 @@ Route::post('login', [LoginController::class,'login'])->name('login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
-// Route for listing all invoices / orders 
+
+Route::middleware(['auth'])->group(function () { 
+
+Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
 
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
@@ -63,15 +60,16 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
 
 // Route for listing all purchases 
 
-Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
-Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
-Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
-Route::post('/supplier/store', [PurchaseController::class, 'customerStore'])->name('supplier.store');
-Route::get('get-purchase-invoice/{purchaseId}', [PurchaseController::class, 'getPurchase']);
-Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->name('purchase.destroy');
+    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+    Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+    Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+    Route::post('/supplier/store', [PurchaseController::class, 'customerStore'])->name('supplier.store');
+    Route::get('get-purchase-invoice/{purchaseId}', [PurchaseController::class, 'getPurchase']);
+    Route::put('/purchases/{order}', [PurchaseController::class, 'update'])->name('purchase.update');
+    Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->name('purchase.destroy');
 
 
-//Route::middleware(['auth'])->group(function () {
+
 
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
@@ -228,5 +226,5 @@ Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->
     Route::resource('category', CategoryController::class);
 
     
-
+});
 

@@ -31,16 +31,17 @@ class TaxController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'rate' => 'required|numeric|min:0',
-        ]);
-    
-        Tax::create($request->only('name', 'rate'));
-    
-        return redirect()->route('tax.index')->with('success', 'Tax created successfully.');
-    }
+{
+    $request->validate([
+        'name' => 'required|string|max:255|unique:taxes,name',
+        'rate' => 'required|numeric|min:0',
+    ]);
+
+    Tax::create($request->only('name', 'rate'));
+
+    return redirect()->route('tax.index')->with('success', 'Tax created successfully.');
+}
+
     
     public function edit($id)
     {

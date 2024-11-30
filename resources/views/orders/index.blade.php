@@ -56,24 +56,10 @@
                         <div class="icon" style="color:#222D32">
                             <i class="ion ion-card"></i> <!-- Icon for Amount Due -->
                         </div>
-                        <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                        <a href="/orders" class="small-box-footer" style="color:black"> <i class="fa fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
             </div>
-
-
-                <!-- <div class="col-lg-3">
-                    <h4>Total Gross Amount: <strong>{{ number_format($totalGrossAmount, 2) }}</strong></h4>
-                </div>
-                <div class="col-lg-3">
-                    <h4>Total Discount: <strong></strong></h4>
-                </div>
-                <div class="col-lg-3">
-                    <h4>Total Net Amount: <strong></strong></h4>
-                </div>
-                <div class="col-lg-3">
-                    <h4>Total Paid: <strong></strong></h4>
-                </div> -->
         <div class="box-header with-border">
             <h3 class="box-title custom-title">Order Listings</h3>
             @if(session('success'))
@@ -103,7 +89,6 @@
                 <th>Customer</th>
                 <th>Gross Amount</th>
                 <th>Order Discount</th>
-                <th>Discount Type</th> <!-- Add Discount Type header -->
                 <th>Tax (%) </th>
                 <th>Order Other Charges</th>
                 <th>Net Total</th>
@@ -122,9 +107,14 @@
             <td>{{ $order->order_date }}</td>
             <td>{{ $order->customer ? $order->customer->name : 'N/A' }}</td>
             <td>{{ $order->grossAmount }}</td>
-            <td>{{ $order->orderDiscount }}</td>
-            <td>{{ $order->discount_type }}</td>
-            <td>{{ $order->tax_rate ? $order->tax_rate . '%' : '' }}</td>
+            <td>
+                @if($order->discount_type === '%')
+                    {{ $order->discount_amount }} %
+                @else
+                    {{ $order->discount_amount }} 
+                @endif
+            </td>
+            <td>{{ $order->tax_rate ? $order->tax_rate : '' }}</td>
             <td>{{ $order->other_charges }}</td>
             <td>{{ $order->netTotal }}</td>
             <td>{{ $order->paid }}</td>

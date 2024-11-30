@@ -3,10 +3,9 @@ function getPurchaseInvoiceDetails(customPurchaseId = null) {
 
     $('#loader').show(); 
     
-    // If customPurchaseId is not passed, retrieve it from the input field
     if (!purchaseId) {
         $('#loader').hide(); 
-        purchaseId = document.querySelector('input[name="custom_purchase_id"]').value;
+        purchaseId = document.querySelector('input[name="custom_purchase_order_id"]').value;
     }
 
     if (purchaseId) {
@@ -21,59 +20,51 @@ function getPurchaseInvoiceDetails(customPurchaseId = null) {
                 if (data.error) {
                     $('#loader').hide(); 
                     alert(data.error);
-                    
                 } else {
-                    // Extract values with defaults
-                    const grossAmount = data.grossAmount ? parseFloat(data.grossAmount).toFixed(2) : '0.00';
-                    const otherCharges = data.otherCharges ? parseFloat(data.otherCharges).toFixed(2) : '0.00';
-                    const netTotal = data.netTotal ? parseFloat(data.netTotal).toFixed(2) : '0.00';
-                    const paidAmount = data.paidAmount ? parseFloat(data.paidAmount).toFixed(2) : '0.00';
-                    const amountDue = data.remainingAmount ? parseFloat(data.remainingAmount).toFixed(2) : '0.00';
+                    const currencySymbol = data.currencySymbol || ''; // Get the currency symbol from the API
 
+                    const grossAmount = data.grossAmount ? `${currencySymbol} ${parseFloat(data.grossAmount).toFixed(2)}` : `${currencySymbol}0.00`;
+                    const otherCharges = data.otherCharges ? `${currencySymbol} ${parseFloat(data.otherCharges).toFixed(2)}` : `${currencySymbol}0.00`;
+                    const netTotal = data.netTotal ? `${currencySymbol} ${parseFloat(data.netTotal).toFixed(2)}` : `${currencySymbol}0.00`;
+                    const paidAmount = data.paidAmount ? `${currencySymbol} ${parseFloat(data.paidAmount).toFixed(2)}` : `${currencySymbol}0.00`;
+                    const amountDue = data.remainingAmount ? `${currencySymbol} ${parseFloat(data.remainingAmount).toFixed(2)}` : `${currencySymbol}0.00`;
+                    const discountAmount = data.purchaseOrder.discount_amount ? `${currencySymbol}${parseFloat(data.purchaseOrder.discount_amount).toFixed(2)}` : `${currencySymbol}0.00`;
+
+                    // Extract other details
                     const purchaseOrder = data.purchaseOrder || {};
                     const supplier = purchaseOrder.supplier || {};
-
+                    
                     const purchaseDate = purchaseOrder.purchase_date || 'N/A';
                     const purchaseOrderId = purchaseOrder.custom_purchase_id || 'N/A';
                     const supplierName = supplier.name || 'N/A';
-                    const supplierAddress = supplier.address || 'N/A';
-                    const supplierPhone = supplier.phone || 'N/A';
-                    const supplierEmail = supplier.email || 'N/A';
                     const purchaseNote = purchaseOrder.purchase_note || 'N/A';
-                    const discountAmount = purchaseOrder.discount_amount || '0.00';
 
-                    // Populate purchase invoice details
+                    // Populate details
                     setTextContentById('invoiceDate', purchaseDate);
                     setTextContentById('supplierName', supplierName);
-                    setTextContentById('supplierAddress', supplierAddress);
-                    setTextContentById('supplierPhone', supplierPhone);
-                    setTextContentById('supplierEmail', supplierEmail);
                     setTextContentById('purchaseNote', purchaseNote);
                     setTextContentById('purchaseOrderId', purchaseOrderId);
-                    setTextContentById('discountAmount', `${parseFloat(discountAmount).toFixed(2)}`);
-                    setTextContentById('amountDue', `${amountDue}`);
-                    
+                    setTextContentById('discountAmount', discountAmount);
+                    setTextContentById('amountDue', amountDue);
 
                     // Update purchase items
                     const purchaseItems = (data.purchaseItems || []).map(item => `
                         <tr>
                             <td>${item.product_name || 'N/A'}</td>
-                            <td>${item.quantity || '0'}</td>
-                            <td>${item.uom_name || 'N/A'}</td>
-                            <td>${parseFloat(item.unit_price || 0).toFixed(2)}</td>
+                            <td>${item.quantity || '0'} ${item.uom_name || ''}</td> 
+                            <td>${currencySymbol}${parseFloat(item.unit_price || 0).toFixed(2)}</td>
                             <td>${item.discount_amount || 'N/A'}</td>
-                            <td>${parseFloat(item.net_rate || 0).toFixed(2)}</td>
-                            <td>${parseFloat(item.amount || 0).toFixed(2)}</td>
+                            <td>${currencySymbol}${parseFloat(item.net_rate || 0).toFixed(2)}</td>
+                            <td>${currencySymbol}${parseFloat(item.amount || 0).toFixed(2)}</td>
                         </tr>
                     `).join('');
                     document.getElementById('purchaseInvoiceItems').innerHTML = purchaseItems;
 
-                    // Update summary amounts
-                    setTextContentById('subtotalAmount', `${grossAmount}`);
-                    setTextContentById('otherCharges', `${otherCharges}`);
-                    // setTextContentById('totalAmount', `${netTotal}`);
-                    setTextContentById('paidAmount', `${paidAmount}`);
-
+                    setTextContentById('subtotalAmount', grossAmount);
+                    setTextContentById('otherCharges', otherCharges);
+                    setTextContentById('paidAmount', paidAmount);
+                    setTextContentById('taxRate', `${data.taxRate}`);
+                    
                     $('#loader').hide(); 
                     $('#purchaseInvoiceModal').modal('show');
                 }
@@ -81,7 +72,7 @@ function getPurchaseInvoiceDetails(customPurchaseId = null) {
             .catch(error => {
                 $('#loader').hide(); 
                 console.error('Error fetching purchase invoice:', error.message || error);
-                alert('An error occurred while fetching the purchase invoice.');
+                alert('No invoice found.');
             });
     } else {
         $('#loader').hide(); 
@@ -89,7 +80,7 @@ function getPurchaseInvoiceDetails(customPurchaseId = null) {
     }
 }
 
-// Utility function to set text content by element ID
+
 function setTextContentById(elementId, text) {
     const element = document.getElementById(elementId);
     if (element) {
@@ -101,40 +92,40 @@ function setTextContentById(elementId, text) {
 
 
 async function printModalContent(modalSelector, customPurchaseId = null) {
-    // Get the section content based on the provided selector
+    
     const section = document.querySelector(modalSelector);
 
-    // Check if the section exists
+    
     if (!section) {
         console.error(`Section with selector "${modalSelector}" not found.`);
         return;
     }
 
-    // Show the section before capturing it
+    
     section.style.display = 'block';
 
     try {
-        // Generate the canvas from the modal content (using section instead of modalContent)
+        
         const canvas = await html2canvas(section, {
             useCORS: true,
-            scale: 1, // Adjust for better resolution (increase if needed for higher quality)
-            x: 0, // Optional: Adjust the x position to fit the content
-            y: 0, // Optional: Adjust the y position
-            width: section.offsetWidth, // Ensure the width matches the section's width
-            height: section.offsetHeight, // Ensure the height matches the section's height
-            scrollX: 0, // Disable horizontal scroll when capturing
-            scrollY: 0, // Disable vertical scroll when capturing
-            backgroundColor: null, // Transparent background (useful if modal has custom background)
+            scale: 1, 
+            x: 0, 
+            y: 0, 
+            width: section.offsetWidth, 
+            height: section.offsetHeight, 
+            scrollX: 0, 
+            scrollY: 0, 
+            backgroundColor: null, 
         });
 
-        // Convert the canvas to an image
+        
         const image = canvas.toDataURL("image/png");
 
-        // Open a new window for printing
+        
         const printWindow = window.open('', '_blank');
         printWindow.document.write('<html><head><title>Print Invoice</title>');
         
-        // Add CSS styles for the print layout
+        
         printWindow.document.write('<style>');
         printWindow.document.write(`
             body {
@@ -154,16 +145,16 @@ async function printModalContent(modalSelector, customPurchaseId = null) {
         printWindow.document.write(`<img src="${image}" />`);
         printWindow.document.write('</body></html>');
         
-        // Close the document to trigger the print window
+        
         printWindow.document.close();
 
-        // Wait for the new window to load before triggering the print
+        
         printWindow.onload = () => {
             printWindow.print();
             printWindow.close();
         };
 
-        // Hide the section after capturing it
+        
         section.style.display = 'none';
 
     } catch (error) {

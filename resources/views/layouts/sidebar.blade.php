@@ -1,15 +1,5 @@
 <aside class="main-sidebar">
   <section class="sidebar">
-    <div class="user-panel">
-      <div class="pull-left image">
-        <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
-      </div>
-      <div class="pull-left info">
-        <p>{{ Auth::user()->name ?? 'Guest' }}</p>
-        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-      </div>
-    </div>
-
     <ul class="sidebar-menu" data-widget="tree">
       <li>
         <a href="/dashboard">
@@ -145,7 +135,8 @@
         </a>
         <ul class="treeview-menu">
           <li style="padding-left: 20px;"><a href="/transfers"><i class="fa fa-dot-circle-o"></i> Transfer Lists </a></li>
-          <li style="padding-left: 20px;"><a href="/transfers/create"><i class="fa fa-dot-circle-o"></i> AddTransfer</a></li>
+          <li style="padding-left: 20px;"><a href="/transfers/create"><i class="fa fa-dot-circle-o"></i> Add Transfer</a></li>
+          <li style="padding-left: 20px;"><a href="/warehouses"><i class="fa fa-dot-circle-o"></i> Warehouse</a></li>
         </ul>
       </li>
 
@@ -161,15 +152,12 @@
           <li style="padding-left: 20px;"><a href="/currencies"><i class="fa fa-dot-circle-o"></i> View Currencies</a></li>
           <li style="padding-left: 20px;"><a href="/currencies/create"><i class="fa fa-dot-circle-o"></i> Add Currency</a></li>
         </ul>
-        
       </li>
-
       <li>
           <a href="/roles">
               <i class="fa fa-wrench"></i> <span>Assign Role / Permission</span>
           </a>
       </li>
-
       <li class="treeview">
         <a href="#">
           <i class="fa fa-cogs"></i>
@@ -179,12 +167,10 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          
-          <li style="padding-left: 20px;"><a href="/settings"><i class="fa fa-wrench"></i> General Settings</a></li>
-          <li style="padding-left: 20px;"><a href="/settings/user"><i class="fa fa-dot-circle-o"></i> User Settings</a></li>
-          <li style="padding-left: 20px;"><a href="/warehouses"><i class="fa fa-dot-circle-o"></i> Warehouse</a></li>
+          <li style="padding-left: 20px;"><a href="/settings"><i class="fa fa-dot-circle-o"></i> General Settings</a></li>
           <li style="padding-left: 20px;"><a href="/tax"><i class="fa fa-dot-circle-o"></i> Tax </a></li>
-
+          <li style="padding-left: 20px;"><a href="/"><i class="fa fa-dot-circle-o"></i> Backup Database </a></li>
+          https://stocky.getstocky.com/app/settings/Backup#
      
         </ul>
         

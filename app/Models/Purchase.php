@@ -13,21 +13,23 @@ class Purchase extends Model
     protected $primaryKey = 'purchase_id'; // Primary key for the purchase table
 
     protected $fillable = [
-        'custom_purchase_id', // Custom purchase identifier
-        'branch_id', // Branch where the purchase was made
-        'supplier_id', // ID of the supplier
-        'purchase_manager_id', // ID of the purchase manager handling the entry
-        'status', // Status of the purchase (e.g., completed, pending)
-        'staff_note', // Notes added by staff
-        'purchase_note', // Notes specific to the purchase
-        'additional_charges', // Additional charges applied
-        'discount_type', // Discount type (percentage or flat)
-        'discount_amount', // Discount value
+        'purchase_id',
+        'custom_purchase_id', 
+        'branch_id', 
+        'supplier_id', 
+        'purchase_manager_id', 
+        'status', 
+        'staff_note', 
+        'purchase_note', 
+        'additional_charges', 
+        'discount_type', 
+        'discount_amount', 
         'paid', 
-        'purchase_date', // Date of the purchase
-        'updated_by', // User who updated the record
-        'deleted_by', // User who deleted the record
-        'created_by', // User who created the record
+        'tax_rat', 
+        'purchase_date', 
+        'updated_by', 
+        'deleted_by', 
+        'created_by', 
     ];
 
     /**

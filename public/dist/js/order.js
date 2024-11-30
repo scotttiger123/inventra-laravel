@@ -703,3 +703,19 @@ function confirmDeleteOrder(id) {
         document.getElementById('deleteForm-' + id).submit();
     }
 }
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname.includes('orders')) {
+      
+      const body = document.body;
+      
+      if (!body.classList.contains('sidebar-collapse')) {
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        if (sidebarToggle) {
+          sidebarToggle.click(); 
+        }
+      }
+    }
+  });

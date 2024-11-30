@@ -11,6 +11,7 @@ use App\Models\Role;
 use App\Models\Uom;
 use App\Models\Status;
 use App\Models\Warehouse;
+use App\Models\Tax;
 
 
 
@@ -39,15 +40,22 @@ class PurchaseController extends Controller
         $uoms = Uom::all();
         $statuses = Status::all();
         $warehouses = Warehouse::where('created_by', $user->id)->get();
-        // Pass all data to the view
-        return view('purchases.create', compact('vendors', 'purchasepersons', 'products', 'uoms', 'warehouses','statuses'));
+        $taxes = Tax::all();
+        
+        return view('purchases.create', compact('vendors', 'purchasepersons', 'products', 'uoms', 'warehouses','statuses','taxes'));
     }
 
     
     public function getPurchase($customOrderId)
     {
-        $purchaseOrder = Purchase::where('custom_purchase_id', $customOrderId)->first();
-    
+        // $purchaseOrder = Purchase::where('custom_purchase_id', $customOrderId)->first();
+        
+
+        $purchaseOrder = Purchase::where('custom_purchase_id', $customOrderId)
+            ->leftJoin('statuses', 'statuses.id', '=', 'purchases.status') 
+            ->select('purchases.*', 'statuses.status_name')
+            ->first();
+
         if (!$purchaseOrder) {
             return response()->json(['error' => 'Purchase Order not found.'], 404);
         }
@@ -62,11 +70,19 @@ class PurchaseController extends Controller
         $purchaseManager = User::find($purchaseOrder->purchase_manager_id);
         $purchaseOrder->purchase_manager_name = $purchaseManager ? $purchaseManager->name : '';
     
-        // Fetch all purchase items with product names and UOM details
-        $purchaseItems = PurchaseItem::where('custom_purchase_id', $customOrderId)
+        $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
+        
+        
+            $purchaseItems = PurchaseItem::where('custom_purchase_id', $customOrderId)
             ->join('products', 'products.id', '=', 'purchase_items.product_id')
             ->leftJoin('uoms', 'uoms.id', '=', 'purchase_items.uom_id')
-            ->select('purchase_items.*', 'products.product_name', 'uoms.abbreviation as uom_name')
+            ->leftJoin('warehouses', 'warehouses.id', '=', 'purchase_items.inward_warehouse_id') 
+            ->select(
+                'purchase_items.*', 
+                'products.product_name', 
+                'uoms.abbreviation as uom_name', 
+                'warehouses.name as warehouse_name' // Select warehouse name
+            )
             ->get();
     
         $purchaseItemsData = $purchaseItems->map(function ($item) {
@@ -74,7 +90,7 @@ class PurchaseController extends Controller
             $quantity = (float)$item->quantity;
             $item->total_before_discount = $unitPrice * $quantity;
     
-            // Calculate product-level discount
+            // Calculate product-level 
             $discountAmount = (float)$item->discount_amount;
             if (strpos($item->discount_type, '%') !== false) {
                 $discountPercentage = (float)rtrim($item->discount_amount, '%');
@@ -91,19 +107,21 @@ class PurchaseController extends Controller
                 'product_name' => $item->product_name,
                 'quantity' => $quantity,
                 'uom_id' => $item->uom_id,
-                'uom_name' => $item->uom_name ?: '-',
+                'uom_name' => $item->uom_name ?: '',
                 'unit_price' => $unitPrice,
-                'entry_warehouse' => $item->entry_warehouse,
+                'entry_warehouse' => $item->inward_warehouse_id,
+                'warehouse_name' => $item->warehouse_name, 
+      
                 'discount_amount' => $item->discount_value > 0 ? $item->discount_value . $item->discount_type : '0',
                 'net_rate' => $item->net_rate,
                 'amount' => $item->total_after_discount,
             ];
         });
     
-        // Calculate gross amount
+        
         $grossAmount = $purchaseItemsData->sum('amount');
     
-        // Apply order-level discount
+        
         $orderDiscountType = $purchaseOrder->discount_type;
         $orderDiscountAmount = (float)$purchaseOrder->discount_amount;
     
@@ -113,13 +131,21 @@ class PurchaseController extends Controller
     
         $grossAmountAfterOrderDiscount = $grossAmount - $orderDiscount;
     
-        // Add other charges and calculate net total
+        
         $otherCharges = (float)$purchaseOrder->other_charges;
         $netTotal = $grossAmountAfterOrderDiscount + $otherCharges;
     
+        // Calculate Tax amount
+        $taxRate = $purchaseOrder->tax_rate; 
+        $taxAmount = 0;
+        if ($taxRate) {
+            $taxAmount = ($netTotal * $taxRate) / 100;
+        }
+        $netTotalWithTax = $netTotal + $taxAmount;
+
         // Calculate remaining amount
         $paidAmount = (float)$purchaseOrder->paid;
-        $remainingAmount = $netTotal - $paidAmount;
+        $remainingAmount = $netTotalWithTax - $paidAmount;
     
         return response()->json([
             'purchaseOrder' => $purchaseOrder,
@@ -129,8 +155,11 @@ class PurchaseController extends Controller
             'grossAmountAfterOrderDiscount' => $grossAmountAfterOrderDiscount,
             'otherCharges' => $otherCharges,
             'netTotal' => $netTotal,
+            'taxRate' => $purchaseOrder->tax_rate,
             'paidAmount' => $paidAmount,
             'remainingAmount' => $remainingAmount,
+            'currencySymbol' => $currencySymbol,
+            
         ]);
     }
     
@@ -161,6 +190,7 @@ class PurchaseController extends Controller
 
         // Create the purchase record
         $purchase = new Purchase();
+        
         $purchase->supplier_id = $request->vendor_id;
         $purchase->status = $request->status_id ?? 0;
         $purchase->other_charges = $request->other_charges ?? 0;
@@ -195,16 +225,27 @@ class PurchaseController extends Controller
                 foreach ($purchaseData as $item) {
                     
 
+                    // Retrieve the product's cost_price from the products table
+                    $product = \DB::table('products')->where('id', $item['product_id'])->first();
+
+                    if ($product) {
+                        $costPrice = $product->cost;  
+                    } else {
+                        $costPrice = null; 
+                    }
+
                     
                     $inwardWarehouseId = empty($item['inward_warehouse_id']) ? 0 : $item['inward_warehouse_id'];
                     $discount_value = empty($item['discount_value']) ? 0 : $item['discount_value'];
 
                     DB::table('purchase_items')->insert([
+                        'order_id' => $purchase->purchase_id,
                         'custom_purchase_id' => $purchaseNumber,
                         'product_id' => $item['product_id'],
                         'uom_id' => $item['uom_id'] !== null ? (int)$item['uom_id'] : 0,
                         'quantity' => $item['qty'],
                         'rate' => $item['rate'],
+                        'cost_price' => $costPrice, 
                         'discount_type' => (strpos($item['discount_type'], '%') !== false) ? '%' : '-',
                         'discount_value' => $discount_value,
                         'net_rate' => $item['net_rate'], // Assuming netRate is calculated and sent in request
@@ -250,11 +291,11 @@ class PurchaseController extends Controller
     $year = date('Y');
     $prefix = $branchId;
 
-    // Get the last order for the current year and branch, ordered by custom_order_id (to get the latest order)
-    $lastOrder = Purchase::whereYear('created_at', $year)
-                      ->where('branch_id', $branchId)
-                      ->orderBy('custom_purchase_id', 'desc')
-                      ->first();
+        $lastOrder = Purchase::withTrashed() // Include soft-deleted records
+        ->whereYear('created_at', $year)
+        ->where('branch_id', $branchId)
+        ->orderBy('custom_purchase_id', 'desc')
+        ->first();
 
     // If no orders exist for the current year and branch, start with '001'
     if ($lastOrder) {
@@ -279,7 +320,8 @@ public function index(Request $request)
         $userId = $user->id;
         $parentUserId = $user->parent_id;
 
-        // Fetch purchases instead of orders
+        $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
+
         $purchases = Purchase::whereIn('created_by', [$userId, $parentUserId])
                              ->with('supplier')  
                              ->orderBy('created_at', 'desc')
@@ -287,7 +329,7 @@ public function index(Request $request)
 
         foreach ($purchases as $purchase) {
             $grossAmount = 0;
-            $purchaseItems = PurchaseItem::where('custom_purchase_id', $purchase->custom_purchase_id)->get(); // Get matching purchase items
+            $purchaseItems = PurchaseItem::where('custom_purchase_id', $purchase->custom_purchase_id)->get(); 
 
             foreach ($purchaseItems as $item) {
                 $totalBeforeDiscount = $item->rate * $item->quantity;
@@ -317,14 +359,22 @@ public function index(Request $request)
             // Add other charges to calculate the net total
             $netTotal = $grossAmountAfterPurchaseDiscount + $purchase->other_charges;
 
+            // Calculate Tax
+            $taxRate = $purchase->tax_rate; 
+            $taxAmount = 0;
+            if ($taxRate) {
+                $taxAmount = ($netTotal * $taxRate) / 100;
+            }
+            $netTotalWithTax = $netTotal + $taxAmount;
+    
             // Calculate remaining amount
-            $remainingAmount = $netTotal - $purchase->paid;
+            $remainingAmount = $netTotalWithTax - $purchase->paid;
 
             // Attach the calculated values to the purchase object
             $purchase->grossAmount = $grossAmount;
             $purchase->purchaseDiscount = $purchaseDiscount;
             $purchase->grossAmountAfterPurchaseDiscount = $grossAmountAfterPurchaseDiscount;
-            $purchase->netTotal = $netTotal;
+            $purchase->netTotal = $netTotalWithTax;
             $purchase->remainingAmount = $remainingAmount;
         }
 
@@ -359,56 +409,60 @@ public function edit($customOrderId)
 
 public function update(Request $request)
 {
-    \Log::info('Order update request data:', $request->all());
+    \Log::info('Purchase Order update request data:', $request->all());
 
     try {
         // Start a database transaction
         DB::beginTransaction();
         $branchId = auth()->user()->branch_id ?? 1;
 
-        // Check if the order exists by custom_order_id or any other unique identifier (like order_id)
-        $existingOrder = Order::where('custom_order_id', $request->custom_order_id)->first();
+        // Check if the purchase order exists by custom_purchase_order_id or any other unique identifier (like purchase_order_id)
+        $existingPurchaseOrder = Purchase::where('custom_purchase_id', $request->custom_purchase_order_id)->first();
 
-        if (!$existingOrder) {
-            return response()->json(['success' => false, 'message' => 'Order not found.']);
+        if (!$existingPurchaseOrder) {
+            return response()->json(['success' => false, 'message' => 'Purchase order not found.']);
         }
 
-        // Update the order details
-        $existingOrder->customer_id = $request->customer_id;
-        $existingOrder->sale_manager_id = $request->salesperson_id;
-        $existingOrder->total_amount = $request->total_amount;
-        $existingOrder->status = $request->order_status;
-        $existingOrder->other_charges = $request->other_charges ?? 0;
-        $existingOrder->discount_amount = $request->discount_amount ?? 0;
-        $existingOrder->payment_method = $request->payment_method;
-        $existingOrder->order_date = $request->order_date;
-        $existingOrder->sale_note = $request->sale_note;
-        $existingOrder->staff_note = $request->staff_note;
+        // Update the purchase order details
+        $existingPurchaseOrder->supplier_id = $request->vendor_id;
+        $existingPurchaseOrder->purchase_manager_id = $request->purchase_manager_id;
+        // $existingPurchaseOrder->total_amount = $request->total_amount;
+        $existingPurchaseOrder->status = $request->status_id;
+        $existingPurchaseOrder->other_charges = $request->other_charges ?? 0;
+        $existingPurchaseOrder->discount_amount = $request->order_discount ?? 0;
+        
+        // $existingPurchaseOrder->payment_method = $request->payment_method;
+        $existingPurchaseOrder->purchase_date = $request->purchase_date;
+        $existingPurchaseOrder->purchase_note = $request->purchase_note;
+        $existingPurchaseOrder->staff_note = $request->staff_note;
+        $existingPurchaseOrder->tax_rate = $request->tax_rate ?? 0;
 
         if ($request->order_discount_type == 'percentage') {
-            $existingOrder->discount_type = $request->order_discount_type . '%';  // Append % for percentage
+            $existingPurchaseOrder->discount_type =  '%'; 
         } else {
-            $existingOrder->discount_type = '-';  // Use - for flat discount
+            $existingPurchaseOrder->discount_type = '-';  
         }
 
-        $existingOrder->discount_amount = $request->order_discount;
-        $existingOrder->other_charges = $request->other_charges;
-        $existingOrder->paid = $request->paid_amount;
+        
 
-        $existingOrder->updated_by = auth()->id();  // Set the user updating the order
-        $existingOrder->save();
+        $existingPurchaseOrder->discount_amount = $request->order_discount;
+        $existingPurchaseOrder->other_charges = $request->other_charges ?? 0;
+        $existingPurchaseOrder->paid = $request->paid_amount ?? 0;
 
-        // Clear previous order items before updating (if needed)
-        DB::table('order_items')->where('order_id', $existingOrder->id)->delete();
+        $existingPurchaseOrder->updated_by = auth()->id();  // Set the user updating the purchase order
+        $existingPurchaseOrder->save();
 
-        // Check if orderData is provided
-        if ($request->has('orderData')) {
-            $orderData = json_decode($request->orderData, true); // Decode JSON string to array
-            if (is_array($orderData)) {
-                \Log::info('Order Data:', $orderData);
+        // Clear previous purchase order items before updating (if needed)
+        DB::table('purchase_items')->where('order_id', $existingPurchaseOrder->purchase_id)->delete();
 
-                // Insert updated order items
-                foreach ($orderData as $item) {
+        // Check if purchaseOrderData is provided
+        if ($request->has('purchaseOrderData')) {
+            $purchaseOrderData = json_decode($request->purchaseOrderData, true); // Decode JSON string to array
+            if (is_array($purchaseOrderData)) {
+                \Log::info('Purchase Order Data:', $purchaseOrderData);
+
+                // Insert updated purchase order items
+                foreach ($purchaseOrderData as $item) {
 
                     $product = \DB::table('products')->where('id', $item['product_id'])->first();
 
@@ -418,48 +472,49 @@ public function update(Request $request)
                         $costPrice = null; 
                     }
                   
-                    DB::table('order_items')->insert([
-                        'order_id' => $existingOrder->order_id,
+                    DB::table('purchase_items')->insert([
+                        'order_id' => $existingPurchaseOrder->purchase_id,
                         'product_id' => $item['product_id'],
-                        'uom_id' => $item['uomId'] !== null ? (int) $item['uomId'] : 0,
+                        'uom_id' => $item['uom_id'] !== null ? (int) $item['uom_id'] : 0,
                         'quantity' => $item['qty'],
-                        'unit_price' => $item['rate'],
-                        'discount_type' => (strpos($item['discountType'], '%') !== false) ? '%' : '-',
-                        'discount_amount' => $item['discountValue'],
-                        'exit_warehouse' => $item['exit_warehouse'],
-                        'custom_order_id' => $request->custom_order_id,
+                        'rate' => $item['rate'],
+                        'discount_type' => (strpos($item['discount_type'], '%') !== false) ? '%' : '-',
+                        'discount_value' => $item['discount_value'] ?? 0,
+                        'inward_warehouse_id' => $item['inward_warehouse_id'] ?? 0,
+                        'custom_purchase_id' => $request->custom_purchase_order_id,
                         'cost_price' => $costPrice,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
                 }
             } else {
-                \Log::error('Invalid orderData format');
+                \Log::error('Invalid purchaseOrderData format');
             }
         } else {
-            \Log::error('Missing orderData');
+            \Log::error('Missing purchaseOrderData');
         }
 
         // Commit transaction
         DB::commit();
 
         // Return a response indicating success
-        return response()->json(['success' => true, 'message' => 'Order updated successfully.']);
+        return response()->json(['success' => true, 'message' => 'Purchase order updated successfully.']);
 
     } catch (Exception $e) {
         // Rollback transaction if something goes wrong
         DB::rollBack();
 
         // Log the error with additional context
-        \Log::error('Order update failed: ' . $e->getMessage(), [
+        \Log::error('Purchase order update failed: ' . $e->getMessage(), [
             'request_data' => $request->all(),
             'exception' => $e
         ]);
 
         // Return a response indicating failure
-        return response()->json(['success' => false, 'message' => 'There was an error updating the order. Please try again later.']);
+        return response()->json(['success' => false, 'message' => 'There was an error updating the purchase order. Please try again later.']);
     }
 }
+
 
 
 public function destroy($customPurchaseId)

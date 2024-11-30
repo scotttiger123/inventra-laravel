@@ -3,26 +3,20 @@
 @section('content')
 <div class="content-wrapper">
     <div class="form-border">
-        <!-- <div class="box-header with-border">
-            <h3 class="box-title custom-title">Create Order</h3>
-            
-        </div> -->
             <div id="success-message" class="alert alert-success" style="display: none;"></div>
             <div id="error-message" class="alert alert-danger" style="display: none;"></div>
         
             <div class="row" >
-            <div class="col-lg-3 col-xs-6">
-                <div class="small-box bg-grey">
-                    <div class="inner">
-                        <h3 id ="gross_amount_label">0.00</h3>
-                        <p>Gross Amount</p>
-                        <input type = 'hidden' name = 'gross_amount' id="gross_amount_id" type="number" value="0" class="form-control"  placeholder="0" readonly></h3>
-                    </div>
-                    <div class="icon" style="color:#222D32">
-                        <i class="ion ion-pricetag"></i> <!-- Updated Icon -->
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box compact-info-box" >
+                        <span class="info-box-icon bg-grey"  style="border-radius: 5px;!important"><i class="ion ion-pricetag"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Gross Amount</span>
+                            <span class="info-box-number" id ="gross_amount_label" >0.00</span>
+                            <input type = 'hidden' name = 'gross_amount' id="gross_amount_id" type="number" value="0" class="form-control"  placeholder="0" readonly></h3>
+                        </div>
                     </div>
                 </div>
-            </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box compact-info-box" >
                         <span class="info-box-icon bg-grey"  style="border-radius: 5px;!important"><i class="fa fa-credit-card"></i></span>
@@ -43,15 +37,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-xs-6">
-                    <div class="small-box"  >
-                        <div class="inner" >
-                            <h3 id ="balance_label">0.00</h3>
-                            <p>Amount Due</p>
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box compact-info-box" >
+                        <span class="info-box-icon bg-grey"  style="border-radius: 5px;!important"><i class="fa fa-money"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Amount Due</span>
+                            <span class="info-box-number" id ="balance_label" >0.00</span>
                             <input type = 'hidden' name="balance" id="balance_id" type="number" class="form-control" readonly></h3>
-                        </div>
-                        <div class="icon" style="color:#222D32">
-                            <i class="ion ion-clock"></i> <!-- Updated Icon -->
                         </div>
                     </div>
                 </div>
@@ -66,7 +58,7 @@
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="input-group" style="width: 100%;"> 
-                                    <div class="input-group-addon" onclick="GetItems(this.value)" data-toggle="modal" data-target="#">
+                                    <div class="input-group-addon" onclick="GetItems(this.value)" >
                                     <i class="fa fa-calendar"></i>
 
                                     </div>
@@ -100,11 +92,10 @@
                                             <input type="hidden" name="customer_id" id="customer-id">
                                         </div>
                             </div>
-
-                            <!-- Salesperson Selection -->
+                           
                             <div class="col-md-2">
                                 <div class="input-group" style="width: 100%;"> 
-                                    <!-- Input for selecting salesperson name -->
+                                    
                                     <input type="text" 
                                         list="salesperson-names" 
                                         style="width: 100%;" 
@@ -119,21 +110,19 @@
                                             <option value="{{ $salesperson->name }}" data-id="{{ $salesperson->id }}">{{ $salesperson->name }}</option>
                                         @endforeach
                                     </datalist>
-
-                                    <!-- Hidden field for storing salesperson ID -->
+                                  
                                     <input type="hidden" name="salesperson_id" id="salesperson-id">
                                 </div>
                             </div>
                                <!-- Search Button to Get Invoice -->
                                 <div class="col-md-2">
                                     <div class="input-group" style="width: 100%;">
-                                        <!-- Search Button for Get Invoice -->
-                                        <div class="input-group-addon" onclick="getInvoiceDetails()" data-toggle="modal" data-target="#invoiceModal">
+                                      
+                                        <div class="input-group-addon" onclick="getInvoiceDetails()" >
                                             <i class="fa fa-search"></i>
                                         </div>
                                         <input type="text" list="orderList" name="custom_order_id" class="form-control myInput" placeholder="Sale Id.">
-
-                                        <!-- Edit Button (Optional for Future Use) -->
+                                       
                                         <div onclick="getOrderForEdit()" class="input-group-addon" data-toggle="modal" >
                                             <i class="fa fa-edit"></i>
                                         </div>
@@ -148,8 +137,6 @@
                                     <option value="Pending">Pending</option>
                                 </datalist>
                             </div>
-                            
-                            
                         </div>
                         <div class="row">
                                                     
@@ -277,7 +264,7 @@
                             <div class="row">
                                 <div class="col-md-3 col-sm-6 col-xs-12">
                                     <div class="info-box custom">
-                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-envelope-o"></i></span>
+                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-percent"></i></span>
                                         <div class="info-box-content">
                                             <select name="tax_rate" id="tax_rate" class="form-control">
                                                 <option value="" selected>Order Tax</option>
@@ -291,7 +278,7 @@
                                 </div>
                                 <div class="col-md-3 col-sm-6 col-xs-12">
                                     <div class="info-box custom">
-                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-envelope-o"></i></span>
+                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-tag"></i></span>
                                         <div class="info-box-content">
                                             <input type="number"  name = 'order_discount' id="order_discount_id" value="" class="form-control" tabindex="9" placeholder="Order Discount ">
                                             <span class="info-box-number"> 
@@ -307,7 +294,7 @@
                                 </div>
                                 <div class="col-md-3 col-sm-6 col-xs-12">
                                     <div class="info-box custom" >
-                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-envelope-o"></i></span>
+                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-money"></i></span>
                                         <div class="info-box-content">
                                             <input type = 'number' name="other_charges" value="" id = 'other_charges_id' class="form-control" tabindex="9" >
                                             <span class="info-box-number"> OTHER CHARGES</span>
@@ -316,7 +303,7 @@
                                 </div>
                                 <div class="col-md-3 col-sm-6 col-xs-12">
                                     <div class="info-box custom">
-                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-envelope-o"></i></span>
+                                        <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-dollar"></i></span>
                                         <div class="info-box-content">
                                             <input name="paid_amount" id="paid_amount_id" type="number" class="form-control" tabindex="10" >
                                             <span class="info-box-number"> PAID AMOUNT</span>
@@ -336,10 +323,6 @@
 
 <!-- Models  -->
  
-
-
-
-
 <!-- Modal for Invoice View -->
 <div id="invoiceModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="invoiceModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -361,8 +344,6 @@
                                   <img src="{{ asset('dist/img/logo.png') }}" alt="Inventra Logo">
                                   <small class="date-inv">Date: <span id="invoiceDate">N/A</span></small>
                                   </div>
-                              
-                                
                                
                             </h2>
                         </div>
@@ -381,7 +362,7 @@
                         </div>
 
                         <div class="col-sm-4 invoice-col">
-                            <!-- <b>Invoice #<span id="invoiceNumber">N/A</span></b><br> -->
+                            
                             <br>
                             <b>Order ID:</b> <span id="orderId">N/A</span><br>
                             <b>Payment Due:</b> <span id="AmountDueTop">N/A</span><br>
@@ -397,7 +378,6 @@
                                     <tr>
                                         <th>Product</th>
                                         <th>Qty</th>
-                                        <th>Uom</th>
                                         <th>Rate</th>
                                         <th>Discount</th>
                                         <th>Net Rate</th>
@@ -429,6 +409,10 @@
                                         <td id="subtotalAmount">$0.00</td>
                                     </tr>
                                     <tr>
+                                        <th>Tax(%)</th>
+                                        <td id="taxRate">0.00</td>
+                                    </tr>
+                                    <tr>
                                         <th>Discount</th>
                                         <td id="discountAmount">0.00</td>
                                     </tr>
@@ -457,13 +441,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
 
 <!-- Create customer modal  -->
 <div class="modal fade" id="CreateNewCustomerModal" tabindex="-1" role="dialog" aria-labelledby="CreateNewCustomerModalLabel" aria-hidden="true">

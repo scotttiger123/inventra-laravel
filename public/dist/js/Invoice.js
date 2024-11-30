@@ -16,16 +16,16 @@ function getOrderForEdit() {
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    alert(data.error); // Alert if there is an error with the response
+                    alert(data.error); 
                 } else {
-                    // If data is valid, populate the order details in the view
+                    
                     populateOrderDetails(data);
-                    console.log(data);
-                    document.getElementById('submitOrder').style.display = 'none'; // Hide Submit button
-                    document.getElementById('updateOrder').style.display = 'inline-block'; // Show Update button
-                    document.getElementById('cancelOrder').style.display = 'inline-block'; // Show Cancel button
+                    
+                    document.getElementById('submitOrder').style.display = 'none'; 
+                    document.getElementById('updateOrder').style.display = 'inline-block';
+                    document.getElementById('cancelOrder').style.display = 'inline-block';
                 
-                    // populateOrderItems(data.items);
+                    
                 }
             })
             .catch(error => {
@@ -41,7 +41,7 @@ function getOrderForEdit() {
 function populateOrderDetails(data) {
 
     const orderDateInput = document.querySelector('input[name="order_date"]');
-    const customerNameInput = document.querySelector('input[name="customer-name"]');
+    const customerNameInput = document.querySelector('input[name="vendor_name"]');
     const salespersonNameInput = document.querySelector('input[name="salesperson-name"]');
     const orderStatusInput = document.querySelector('input[name="order_status"]');
     const customerIdInput = document.querySelector('input[name="customer_id"]');
@@ -256,6 +256,7 @@ function getInvoiceDetails(customOrderId = null) {
                     setTextContentById('otherCharges', `${currencySymbol} ${otherCharges}`);
                     setTextContentById('totalAmount', `${currencySymbol} ${netTotal}`);
                     setTextContentById('paidAmount', `${currencySymbol} ${paidAmount}`);
+                    setTextContentById('taxRate', `${data.taxRate}%`);
 
                     
 
@@ -358,6 +359,7 @@ function printInvoice() {
     // Remove the iframe after printing
     document.body.removeChild(iframe);
 }
+
 async function getSaleDataForSharing(customSaleId = null, action = 'print') {
     $('#loader').show(); 
     let saleId = customSaleId;

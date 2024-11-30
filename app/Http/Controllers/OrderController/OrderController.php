@@ -161,7 +161,7 @@ class OrderController extends Controller
         $otherCharges = (float)$order->other_charges;
         $netTotal = $grossAmountAfterOrderDiscount + $otherCharges;
         
-        $taxRate = $order->tax_rate; // Assuming tax_rate is stored in the order table
+        $taxRate = $order->tax_rate; 
         $taxAmount = 0;
     
         if ($taxRate) {
@@ -426,8 +426,18 @@ class OrderController extends Controller
 
                         $grossAmountAfterOrderDiscount = $grossAmount - $orderDiscount;
                         $netTotal = $grossAmountAfterOrderDiscount + $order->other_charges;
-                        $remainingAmount = $netTotal - $order->paid;
 
+                        // Calculate Tax
+                        $taxRate = $order->tax_rate; 
+                        $taxAmount = 0;
+                        if ($taxRate) {
+                            $taxAmount = ($netTotal * $taxRate) / 100;
+                        }
+                        $netTotalWithTax = $netTotal + $taxAmount;
+
+                        $remainingAmount = $netTotalWithTax - $order->paid;
+                        
+                        
                         // Add remaining amount to totalAmountDue
                         $totalAmountDue += $remainingAmount;
 
@@ -435,7 +445,7 @@ class OrderController extends Controller
                         $order->grossAmount = $grossAmount;
                         $order->orderDiscount = $orderDiscount;
                         $order->grossAmountAfterOrderDiscount = $grossAmountAfterOrderDiscount;
-                        $order->netTotal = $netTotal;
+                        $order->netTotal = $netTotalWithTax;
                         $order->remainingAmount = $remainingAmount;
 
                         $totalGrossAmount += $grossAmount;

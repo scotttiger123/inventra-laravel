@@ -103,6 +103,7 @@
                 <th>Vendor</th>
                 <th>Gross Amount</th>
                 <th>Discount</th>
+                <th>Tax (%) </th>
                 <th>Other Charges</th>
                 <th>Net Total</th>
                 <th>Paid</th>
@@ -118,6 +119,7 @@
                     <td>{{ $purchase->supplier->name ? $purchase->supplier->name : 'N/A' }}</td>
                     <td>{{ $purchase->grossAmount }}</td>
                     <td>{{ $purchase->discount_type === '%' ? $purchase->purchaseDiscount . $purchase->discount_type : $purchase->purchaseDiscount }}</td>
+                    <td>{{ $purchase->tax_rate ? $purchase->tax_rate : '' }}</td>
                     <td>{{ $purchase->other_charges }}</td>
                     <td>{{ $purchase->netTotal }}</td>
                     <td>{{ $purchase->paid }}</td>
@@ -242,7 +244,6 @@
                                     <tr>
                                         <th>Product</th>
                                         <th>Qty</th>
-                                        <th>Uom</th>
                                         <th>Rate</th>
                                         <th>Discount</th>
                                         <th>Net Rate</th>
@@ -270,6 +271,10 @@
                                     <tr>
                                         <th style="width:50%">Subtotal:</th>
                                         <td id="subtotalAmount">$0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tax(%)</th>
+                                        <td id="taxRate">0.00</td>
                                     </tr>
                                     <tr>
                                         <th>Discount</th>
