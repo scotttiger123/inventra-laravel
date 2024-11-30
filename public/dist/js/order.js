@@ -126,11 +126,32 @@ productNameInput.addEventListener('input', function() {
     const selectedOption = document.querySelector(`#product_name option[value="${productNameInput.value}"]`);
     if (selectedOption) {
         const productId = selectedOption.getAttribute('data-id');
-        productIdField.value = productId; // Assuming you have a hidden input field to store the product ID
+        productIdField.value = productId; 
     } else {
         productIdField.value = ''; // Clear product ID if no valid selection
     }
 });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const orderStatusInput = document.getElementById('order_status');
+    const orderStatusIdField = document.getElementById('status-id');
+
+    orderStatusInput.addEventListener('input', function() {
+        const selectedOption = document.querySelector(`#orderStatusList option[value="${orderStatusInput.value}"]`);
+        
+        if (selectedOption) {
+            const statusId = selectedOption.getAttribute('data-id');
+            orderStatusIdField.value = statusId; 
+        } else {
+            orderStatusIdField.value = ''; 
+        }
+    });
+});
+
+
+
+
 
 
 function clearOrderItemsTable() {
@@ -575,7 +596,7 @@ function updateOrder() {
 
 
     button.disabled = true;
-    loader.style.display = 'block';
+    $('#loader').show();
 
     // Add `_method` to simulate a PUT request
     formData.append('_method', 'PUT');
@@ -592,7 +613,7 @@ function updateOrder() {
     })
     .then(response => response.json())
     .then(data => {
-        loader.style.display = 'none';
+        $('#loader').hide();
         button.disabled = false;
 
         if (data.success) {
@@ -605,7 +626,7 @@ function updateOrder() {
         }
     })
     .catch(error => {
-        loader.style.display = 'none';
+        $('#loader').hide();
         button.disabled = false;
         console.error("Error:", error);
         showMessage('error', 'There was an error updating the order.');

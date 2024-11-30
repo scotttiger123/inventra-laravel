@@ -41,9 +41,15 @@ function getOrderForEdit() {
 function populateOrderDetails(data) {
 
     const orderDateInput = document.querySelector('input[name="order_date"]');
-    const customerNameInput = document.querySelector('input[name="vendor_name"]');
+    const customerNameInput = document.querySelector('input[name="customer-name"]');
     const salespersonNameInput = document.querySelector('input[name="salesperson-name"]');
+
+    const orderStatusId = document.querySelector('input[name="status_id"]');
     const orderStatusInput = document.querySelector('input[name="order_status"]');
+
+    
+
+
     const customerIdInput = document.querySelector('input[name="customer_id"]');
     const salespersonIdInput = document.querySelector('input[name="salesperson_id"]');
     const paymentStatusInput = document.querySelector('input[name="payment_status"]');
@@ -88,7 +94,9 @@ function populateOrderDetails(data) {
         orderDateInput.value = data.order.order_date || '';
         customerNameInput.value = data.order.customer ? data.order.customer.name : '';
         salespersonNameInput.value = data.order.sales_manager_name || '';
-        orderStatusInput.value = data.order.status || '';
+        orderStatusId.value = data.order.status || '';
+        orderStatusInput.value = data.order.status_name || '';
+        
 
         if (customerIdInput) customerIdInput.value = data.order.customer ? data.order.customer.id : '';
         if (salespersonIdInput) salespersonIdInput.value = data.order.sale_manager_id;

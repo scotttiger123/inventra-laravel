@@ -10,8 +10,7 @@ use App\Models\Product;
 use App\Models\Role;
 use App\Models\Uom;
 use App\Models\Tax;
-
-
+use App\Models\Status;
 use App\Models\User; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -39,17 +38,17 @@ class OrderController extends Controller
             $salespersons = User::where('Role', $salePersonRoleId)->get();
 
     
-        // Fetch products that belong to the current user or their parent
-        $products = Product::where('created_by', $user->id) // Products created by the current user
+        
+        $products = Product::where('created_by', $user->id) 
             ->orWhere('parent_user_id', $user->id)
-            ->orWhere('parent_user_id', $user->parent_id) // Products created by the parent of the current user
+            ->orWhere('parent_user_id', $user->parent_id) 
             ->get();
 
-            $uoms = Uom::all();  // Assuming the model for Uom is correctly defined
-            $taxes = Tax::all(); // Assuming you have a `Tax` model and a table storing tax rates.
-  
+            $uoms = Uom::all();  
+            $taxes = Tax::all(); 
+            $statuses = Status::all();
     
-        return view('orders.create', compact('customers', 'salespersons', 'products', 'uoms','taxes'));
+        return view('orders.create', compact('customers', 'salespersons', 'products', 'statuses','uoms','taxes'));
 
         
     }
@@ -80,8 +79,14 @@ class OrderController extends Controller
 
     public function getInvoice($customOrderId)
     {
-        $order = Order::where('custom_order_id', $customOrderId)->first();
-    
+        $order = Order::where('custom_order_id', $customOrderId)
+        ->leftJoin('statuses', 'statuses.id', '=', 'orders.status') 
+        ->select('orders.*', 'statuses.status_name')
+        ->first();
+        
+        
+
+
         if (!$order) {
             return response()->json(['error' => 'Order not found.'], 404);
         }
@@ -223,7 +228,7 @@ class OrderController extends Controller
             $order->customer_id = $request->customer_id;
             $order->sale_manager_id = $request->salesperson_id;
             $order->total_amount = $request->total_amount;
-            $order->status = $request->order_status;
+            $order->status = $request->status_id ?? 0;
             $order->other_charges = $request->other_charges ?? 0;
             $order->discount_amount = $request->discount_amount ?? 0;
             $order->tax_rate = $request->tax_rate ?? 0;
@@ -511,7 +516,7 @@ public function update(Request $request)
         $existingOrder->customer_id = $request->customer_id;
         $existingOrder->sale_manager_id = $request->salesperson_id;
         $existingOrder->total_amount = $request->total_amount;
-        $existingOrder->status = $request->order_status;
+        $existingOrder->status = $request->status_id;
         $existingOrder->other_charges = $request->other_charges ?? 0;
         $existingOrder->discount_amount = $request->discount_amount ?? 0;
         $existingOrder->payment_method = $request->payment_method;

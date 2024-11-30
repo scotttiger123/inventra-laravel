@@ -129,14 +129,32 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                <input type="text" list="orderStatusList" name="order_status" id="order_status" class="form-control myInput" tabindex = '1' placeholder="Order Status" >
-                                <datalist id="orderStatusList">
-                                    <option value=""></option>
-                                    <option value="Return">Return</option>
-                                    <option value="Hold">Hold</option>
-                                    <option value="Pending">Pending</option>
-                                </datalist>
-                            </div>
+                                                <input 
+                                                    type="text" 
+                                                    list="orderStatusList" 
+                                                    style="width: 100%;" 
+                                                    name="order_status" 
+                                                    class="form-control myInput" 
+                                                    placeholder="Select Status" 
+                                                    tabindex="1" 
+                                                    id="order_status" 
+                                                    value="{{ $defaultStatus->status_name ?? 'Complete' }}"> 
+
+                                                <datalist id="orderStatusList">
+                                                    @foreach($statuses as $status)
+                                                        <option value="{{ $status->status_name }}" data-id="{{ $status->id }}">
+                                                            {{ $status->status_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </datalist>
+
+                                                <input 
+                                                    type="hidden" 
+                                                    name="status_id" 
+                                                    id="status-id" 
+                                                    value="{{ $defaultStatus->id ?? $statuses->firstWhere('status_name', 'Complete')->id }}"> 
+                                            
+                                 </div>
                         </div>
                         <div class="row">
                                                     

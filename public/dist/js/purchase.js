@@ -494,7 +494,7 @@ function getPurchaseForEdit() {
                 } else {
                     
                     
-                    populateOrderDetails(data);
+                    populatePurchaseOrderDetails(data);
                     console.log(data);
                     document.getElementById('divSubmitPurchase').style.display = 'none'; 
                     document.getElementById('updatePurchaseOrder').style.display = 'inline-block'; 
@@ -514,7 +514,7 @@ function getPurchaseForEdit() {
     }
 }
 
-function populateOrderDetails(data) {
+function populatePurchaseOrderDetails(data) {
     
     const orderDateInput = document.querySelector('input[name="purchase_date"]');
     const customerNameInput = document.querySelector('input[name="vendor_name"]');

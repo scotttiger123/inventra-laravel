@@ -250,7 +250,7 @@ async function getPurchaseDataForSharing(customPurchaseId = null, action = 'prin
                         $('#loader').hide(); 
                         shareSectionAsImage('.canva-section-watsapp', {
                             fileName: 'invoice.png',
-                            title: 'Invoice Share',
+                            title: '',
                             text: 'Check out this invoice!',
                         });
                     }
