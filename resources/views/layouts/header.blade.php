@@ -25,6 +25,13 @@
               </a>
             </div>
           @endif
+          @if (Request::is('orders/create-pos'))
+           <div class="navbar-left" style="display: flex; align-items: center; padding-left: 20px;">
+              <a href="#" style="padding-top:14px;font-weight: bold; font-size: 18px; color: #000000; display: inline-block;">
+                 POS 
+              </a>
+            </div>
+          @endif
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
               <li class="dropdown user user-menu">

@@ -88,9 +88,22 @@ class ProductController extends Controller
     public function index()
     {   
         $totalProducts = Product::count();
-        $products = Product::with(['tax', 'uom', 'creator'])->get(); // Eager load tax, uom, and creator relationships
+        $products = Product::with(['tax', 'uom', 'creator'])->get(); 
         return view('products.index', compact('products','totalProducts'));
     }
+
+
+        public function loadProducts()
+        {
+            
+            $products = Product::all();
+            $currencySymbol = \App\Models\Setting::where('name', 'currency-symbol')->value('value');
+            foreach ($products as $product) {
+                $product->currency_symbol = $currencySymbol;
+            }
+            return response()->json($products);
+        }
+
 
 
     public function destroy($id)
@@ -102,7 +115,7 @@ class ProductController extends Controller
                 return response()->json(['success' => true, 'message' => 'Product deleted successfully!']);
             }
 
-    return response()->json(['success' => false, 'message' => 'Product not found.']);
+        return response()->json(['success' => false, 'message' => 'Product not found.']);
     }
 
 

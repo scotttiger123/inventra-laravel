@@ -3,8 +3,8 @@
     <div class="pull-right hidden-xs">
         <b>Version</b> 2.4.0
     </div>
-    <strong>Copyright &copy;  <a href="">Inventra Tech</a>.</strong> All rights
-    reserved.
+    <!-- <strong>Copyright &copy;  <a href="">Inventra Tech</a>.</strong> All rights
+    reserved. -->
 </footer>
 <!-- /.control-sidebar -->
 <!-- Add the sidebar's background. This div must be placed
@@ -61,6 +61,7 @@
 <script src="{{ asset('dist/js/invoice.js') }}"></script>
 <script src="{{ asset('dist/js/purchase.js') }}"></script>
 <script src="{{ asset('dist/js/purchaseInvoice.js') }}"></script>
+<script src="{{ asset('dist/js/pos.js') }}"></script>
 
 <!-- icheck Plugins -->
 <script src="../../plugins/iCheck/icheck.min.js"></script>
@@ -70,6 +71,7 @@
 <script src="../../plugins/input-mask/jquery.inputmask.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
+    
      //iCheck for checkbox and radio inputs
      $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
       checkboxClass: 'icheckbox_minimal-blue',
@@ -85,6 +87,7 @@
       checkboxClass: 'icheckbox_flat-green',
       radioClass   : 'iradio_flat-green'
     })
+
     $(document).ready(function() {
     $('#loader').show(); // Show the loader
     
@@ -92,7 +95,6 @@
         $('#loader').fadeOut(); // Hide the loader after the page is fully loaded
     });
 });
-
 
       setTimeout(function() {
           var successMessage = document.getElementById('successMessage');

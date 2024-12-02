@@ -11,12 +11,14 @@ use App\Models\Role;
 use App\Models\Uom;
 use App\Models\Tax;
 use App\Models\Status;
+use App\Models\Category;
 use App\Models\User; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Exception;
+
 
 
 class OrderController extends Controller
@@ -57,16 +59,32 @@ class OrderController extends Controller
     public function createPOS()
     {
         $user = auth()->user();
-
+        $currencySymbol = \App\Models\Setting::where('name', 'currency-symbol')->value('value');
         // Get customers created by the current user or their parent
         $customers = Customer::where('created_by', $user->id)
-        ->orWhere('created_by', $user->parent_id)
-        ->get();
+            ->orWhere('parent_user_id', $user->id)
+            ->orWhere('parent_user_id', $user->parent_id)
+            ->get();
+    
+            $salePersonRoleId = Role::where('name', 'Sale Person')->value('id');
 
-        // Fetch sale managers for additional dropdown if needed
-        $saleManagers = User::where('role', 'sale_manager')->get();
+            $salespersons = User::where('Role', $salePersonRoleId)->get();
 
-        return view('orders.create-pos', compact('customers', 'saleManagers'));
+    
+        
+        $products = Product::where('created_by', $user->id) 
+            ->orWhere('parent_user_id', $user->id)
+            ->orWhere('parent_user_id', $user->parent_id) 
+            ->get();
+
+            $uoms = Uom::all();  
+            $taxes = Tax::all(); 
+            $statuses = Status::all();
+            $categories = Category::all();
+    
+        return view('orders.create-pos', compact('customers', 'categories', 'salespersons', 'products', 'statuses','uoms','taxes','currencySymbol'));
+
+        
     }
 
 

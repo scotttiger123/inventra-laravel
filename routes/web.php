@@ -79,6 +79,9 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::get('/get-product-details/{code}', [ProductController::class, 'getProductDetails']);
+    Route::get('/load-products', [ProductController::class, 'loadProducts'])->name('products.load');
+
+    
 
 
 

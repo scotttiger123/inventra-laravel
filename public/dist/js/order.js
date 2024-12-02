@@ -87,8 +87,8 @@ document.getElementById('create-customer-form').addEventListener('submit', funct
 
 
 // Custoemr name validation & get id 
-const customerNameInput = document.getElementById('customer-name-input');
-const customerIdField = document.getElementById('customer-id');
+const customerNameInput = document.getElementById('customer-name-input-pos');
+const customerIdField = document.getElementById('customer-id-pos');
 
 
 customerNameInput.addEventListener('input', function() {
