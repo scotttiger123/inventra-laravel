@@ -14,8 +14,7 @@
         
         <div class="container">
         <div class="items">
-        <form id="orderForm" action="{{ route('orders.store') }}" method="POST">
-        <div class="searches">
+          <div class="searches">
             <div class="icon"><i class="bi bi-bounding-box"></i></div>
             
             <div class="inputs">
@@ -36,7 +35,7 @@
                       </datalist>
 
                       <!-- Hidden field for storing category ID -->
-                      <input type="hidden" name="category_id" id="category-id">
+                      <input type="" name="category_id" id="category-id">
                   </div>
               <div class="search-container">
                 <input type="text" id="search" list = "product_name" placeholder="Search Product" />
@@ -48,7 +47,7 @@
                       @endforeach
                   </datalist>
                   
-                  <input type="hidden" name="product_id" id="prodcut-id">
+                  <input type="" name="product_id" id="prodcut-id">
               </div>
             </div>
             <div style="background-color: gold" class="icon">
@@ -78,7 +77,7 @@
                       </datalist>
 
                       <!-- Hidden field for storing customer ID -->
-                      <input type="" name="customer_id" id="customer-id-pos">
+                      <input type="hidden" name="customer_id" id="customer-id-pos">
                   </div>
             <button data-toggle="modal" data-target="#CreateNewCustomerModal"> <i class="bi bi-plus"></i> New Customer</button>
           </div>

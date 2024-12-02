@@ -140,3 +140,49 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch(error => console.error('Error fetching products:', error));
 
 });
+
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    const customerNameInput = document.getElementById('customer-name-input-pos');
+    const customerIdField = document.getElementById('customer-id-pos');
+  
+    customerNameInput.addEventListener('input', function() {
+      const selectedOption = document.querySelector(`#customer-names option[value="${customerNameInput.value}"]`);
+  
+      if (selectedOption) {
+        const customerId = selectedOption.getAttribute('data-id');
+        customerIdField.value = customerId;
+      } else {
+        customerIdField.value = '';
+      }
+    });
+    const categoryNameInput = document.getElementById('category-name-input');
+    const categoryIdField = document.getElementById('category-id');
+    
+    categoryNameInput.addEventListener('input', function() {
+      const selectedOption = document.querySelector(`#category-names option[value="${categoryNameInput.value}"]`);
+  
+      if (selectedOption) {
+        const categoryId = selectedOption.getAttribute('data-id');
+        categoryIdField.value = categoryId;
+      } else {
+        categoryIdField.value = '';
+      }
+    });
+  
+    const productNameInput = document.getElementById('search');
+    const productIdField = document.getElementById('prodcut-id');
+  
+    productNameInput.addEventListener('input', function() {
+      const selectedOption = document.querySelector(`#product_name option[value="${productNameInput.value}"]`);
+  
+      if (selectedOption) {
+        const productId = selectedOption.getAttribute('data-id');
+        productIdField.value = productId;
+      } else {
+        productIdField.value = '';
+      }
+    });
+  });
+  
