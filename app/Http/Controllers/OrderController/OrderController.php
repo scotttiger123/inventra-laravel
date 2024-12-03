@@ -72,10 +72,7 @@ class OrderController extends Controller
 
     
         
-        $products = Product::where('created_by', $user->id) 
-            ->orWhere('parent_user_id', $user->id)
-            ->orWhere('parent_user_id', $user->parent_id) 
-            ->get();
+        $products = Product::all();
 
             $uoms = Uom::all();  
             $taxes = Tax::all(); 

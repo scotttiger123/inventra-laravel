@@ -14,6 +14,8 @@
         
         <div class="container">
         <div class="items">
+        <form id="orderFormPos" action="{{ route('orders.store') }}" method="POST">
+          <meta name="csrf-token" content="{{ csrf_token() }}">
           <div class="searches">
             <div class="icon"><i class="bi bi-bounding-box"></i></div>
             
@@ -35,19 +37,20 @@
                       </datalist>
 
                       <!-- Hidden field for storing category ID -->
-                      <input type="" name="category_id" id="category-id">
+                      <input type="hidden" name="category_id" id="category-id">
                   </div>
               <div class="search-container">
                 <input type="text" id="search" list = "product_name" placeholder="Search Product" />
-                <i class="bi bi-search search-icon"></i>
+                  <i class="bi bi-search search-icon"></i>
                   <datalist id="product_name">
+
                       @foreach($products as $product)
                       <option value="{{ $product->product_code }}" data-id="{{ $product->id }}">{{ $product->product_name }}</option>
 
                       @endforeach
                   </datalist>
                   
-                  <input type="" name="product_id" id="prodcut-id">
+                  <input type="hidden" name="product_id" id="prodcut-id">
               </div>
             </div>
             <div style="background-color: gold" class="icon">

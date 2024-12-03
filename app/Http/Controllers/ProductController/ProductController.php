@@ -201,6 +201,10 @@ class ProductController extends Controller
                 return response()->json([
                     'success' => true,
                     'product' => [
+                        
+                        'id' => $product->id,
+                        'product_name' => $product->product_name,
+                        'product_code' => $product->product_code,
                         'cost' => $product->cost,
                         'price' => $product->price,
                         'uom_abbreviation' => $product->uom->abbreviation ?? '', 
