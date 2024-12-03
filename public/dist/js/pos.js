@@ -4,7 +4,7 @@ let selectedProducts = [];
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Fetch the products data
+  $('#loader').fadeIn();
   fetch('/load-products')
     .then(response => response.json())
     .then(data => {
@@ -25,9 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
           const stock = product.initial_stock || 0;
           const currency = product.currency_symbol || '$'; // Default to $
-
+          
           box.setAttribute("data-product-id", product.id); // Store product_id in a data attribute
-
+          console.log(product.id);
           box.innerHTML = `
             <div class="b-img">
               <img src="${imageUrl}" alt="${productName}" />
@@ -137,7 +137,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
     })
-    .catch(error => console.error('Error fetching products:', error));
+    .catch(error => {
+      console.error('Error fetching products:', error);
+    })
+    .finally(() => {
+      // Hide the loader with fadeOut effect after the data is loaded
+      $('#loader').fadeOut(); // Hide loader with fadeOut effect
+    });
+
 
 
 
@@ -304,6 +311,9 @@ document.getElementById('submitPosOrder').addEventListener('click', function () 
   }
 
   formData.append('orderData', JSON.stringify(orderData));
+  formData.forEach((value, key) => {
+    console.log(`${key}: ${value}`);
+  });
 
   for (let pair of formData.entries()) {
     console.log(pair[0] + ': ' + pair[1]);
@@ -352,9 +362,9 @@ function getOrderData() {
   }
 
   return selectedProducts.map(product => ({
-      product_id: product.productId,
-      quantity: product.quantity,
-      price: product.price
+      product_id: product.product_id,
+      qty: product.quantity,
+      rate: product.price
   }));
 }
 

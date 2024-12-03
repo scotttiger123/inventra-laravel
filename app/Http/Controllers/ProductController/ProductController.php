@@ -195,7 +195,7 @@ class ProductController extends Controller
 
         public function getProductDetails($id)
         {
-            $product = Product::where('id', $id)->first(); // Search by `id`
+            $product = Product::where('id', $id)->first(); 
 
             if ($product) {
                 return response()->json([

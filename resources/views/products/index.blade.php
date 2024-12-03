@@ -36,6 +36,7 @@
         <table id="product-listings" class="table table-bordered table-striped">
             <thead>
                 <tr>
+                    <th>Image</th>
                     <th>Code</th>
                     <th>Name</th>
                     <th>Cost</th>
@@ -44,13 +45,15 @@
                     <th>Category</th>
                     <th>stock alert</th>
                     <th>Uom</th>
-                    <th>Tax(%)</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($products as $product)
                 <tr id="productRow-{{ $product->id }}">
+                    <td>
+                        <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : asset('dist/img/no-product-img.png') }}" alt="{{ $product->name }}" style="width: 50px; height: 50px; object-fit: cover;">
+                    </td>
                     <td>{{ $product->product_code }}</td>
                     <td>{{ strtoupper($product->product_name) }}</td>
                     <td>{{ $product->cost }}</td>
@@ -66,7 +69,7 @@
                     </td>
 
                     <td>{{ $product->uom ? $product->uom->name : 'N/A' }}</td> 
-                    <!-- <td>{{ $product->tax ? $product->tax->rate . '%' : 'N/A' }}</td> -->
+                    
 
      
                     <td>                  

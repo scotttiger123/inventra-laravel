@@ -14,10 +14,10 @@
         
         <div class="container">
         <div class="items">
-        <form id="orderFormPos" action="{{ route('orders.store') }}" method="POST">
+        <form id="orderFormPos" action="{{ route('orders.store-pos') }}" method="POST">
           <meta name="csrf-token" content="{{ csrf_token() }}">
           <div class="searches">
-            <div class="icon"><i class="bi bi-bounding-box"></i></div>
+            <div class="icon-pos"><i class="bi bi-bounding-box"></i></div>
             
             <div class="inputs">
                 <div class="input-group">
@@ -53,14 +53,14 @@
                   <input type="hidden" name="product_id" id="prodcut-id">
               </div>
             </div>
-            <div style="background-color: gold" class="icon">
+            <div style="background-color: gold" class="icon-pos">
               <i class="bi bi-bounding-box"></i>
             </div>
           </div>
           <div class="products">
             <div class="boxes"></div>
           </div>
-        </div>
+        </div>  
         <div class="total">
           <div class="btns">
                   <div class="input-group" style = "width:100%"> 

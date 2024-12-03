@@ -332,6 +332,124 @@ class OrderController extends Controller
         }
     }
 
+
+
+
+
+    public function storePos(Request $request)
+    {
+        \Log::info('Order creation request data:', $request->all());
+    
+        try {
+            // Start a database transaction
+            DB::beginTransaction();
+            $branchId = auth()->user()->branch_id ?? 1;
+            
+            if ($request->has('custom_order_id') && $request->custom_order_id) {
+                $orderNumber = $request->custom_order_id;
+                $existingOrder = Order::where('custom_order_id', $orderNumber)->first();
+                if ($existingOrder) {
+                    return response()->json(['success' => false, 'message' => 'Custom Order ID already exists.']);
+                }
+            } else {
+                $orderNumber = $this->generateOrderNumber($branchId);
+            }
+
+             
+            // Create the order record
+            $order = new Order();
+            $order->customer_id = $request->customer_id;
+            $order->sale_manager_id = $request->salesperson_id;
+            $order->total_amount = $request->total_amount;
+            $order->status = $request->status_id ?? 0;
+            $order->other_charges = $request->other_charges ?? 0;
+            $order->discount_amount = $request->discount_amount ?? 0;
+            $order->tax_rate = $request->tax_rate ?? 0;
+            $order->payment_method = $request->payment_method;
+            $order->order_date = $request->order_date;
+            $order->custom_order_id = $orderNumber;
+            $order->sale_note = $request->sale_note;
+            $order->staff_note = $request->staff_note;
+            
+            
+            if ($request->order_discount_type == 'percentage') {
+                $order->discount_type = $request->order_discount_type . '%';  // Append % for percentage
+            } else {
+                $order->discount_type = '-';  // Use - for flat discount
+            }
+
+            $order->discount_amount = $request->order_discount;
+            $order->other_charges = $request->other_charges;
+            $order->paid = $request->paid_amount;
+            
+            $order->branch_id = auth()->user()->branch_id;
+             
+            
+            $order->created_by = auth()->id(); // Assuming the user is authenticated
+            $order->updated_by = auth()->id();
+            $order->save();
+            if ($request->has('orderData')) {
+                $orderData = json_decode($request->orderData, true); // Decode JSON string to array
+                if (is_array($orderData)) {
+                    \Log::info('Order Data:', $orderData);
+                    foreach ($orderData as $item) {
+
+
+                    // Retrieve the product's cost_price from the products table
+                    $product = \DB::table('products')->where('id', $item['product_id'])->first();
+
+                    if ($product) {
+                        $costPrice = $product->cost;  
+                    } else {
+                        $costPrice = null; 
+                    }
+
+
+
+                        DB::table('order_items')->insert([
+                            'order_id' => $order->id,
+                            'product_id' => $item['product_id'],
+                            
+                            'quantity' => $item['qty'],
+                            'unit_price' => $item['rate'],
+                            
+                            'custom_order_id' => $orderNumber,
+                            'cost_price' => $costPrice, 
+                       
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                } else {
+                    \Log::error('Invalid orderData format');
+                }
+            } else {
+                \Log::error('Missing orderData');
+            }                                            
+            // Commit transaction
+            DB::commit();
+    
+            // Return a response indicating success
+            return response()->json(['success' => true, 'message' => 'Order created successfully.']);
+    
+        } catch (Exception $e) {
+            // Rollback transaction if something goes wrong
+            DB::rollBack();
+    
+            // Log the error with additional context
+            \Log::error('Order creation failed: ' . $e->getMessage(), [
+                'request_data' => $request->all(),
+                'exception' => $e
+            ]);
+    
+            // Return a response indicating failure
+            return response()->json(['success' => false, 'message' => 'There was an error creating the order. Please try again later.']);
+        }
+    }
+
+
+
+
     
     private function generateOrderNumber($branchId)
 {
