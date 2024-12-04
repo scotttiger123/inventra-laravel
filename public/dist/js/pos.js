@@ -148,77 +148,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+        
+
+    function updateDataDiv() {
+      const dataDiv = document.querySelector(".data");
+      dataDiv.innerHTML = ""; // Clear previous data
+      selectedProducts.forEach((product, index) => {
+        const productDiv = document.createElement("div");
+        productDiv.classList.add("product");
+        productDiv.innerHTML = `
+        <p>${product.name} - $${product.price} ${
+          product.quantity > 1 ? "x " + product.quantity : ""
+        }</p>
+        <div class="actions">
+          <button class="decrease">-</button>
+          <span class="quantity">${product.quantity}</span>
+          <button class="increase">+</button>
+          <button class="delete">Delete</button>
+        </div>
+      `;
+        dataDiv.appendChild(productDiv);
+
+        // Handle Decrease Quantity in Data Div
+        const decreaseBtn = productDiv.querySelector(".decrease");
+        decreaseBtn.addEventListener("click", (e) => {
+          e.stopPropagation(); // Prevent box click event
+          if (product.quantity > 1) {
+            product.quantity--;
+            productDiv.querySelector(".quantity").textContent =
+              product.quantity;
+          }
+          updateTotals();
+        });
+
+        // Handle Increase Quantity in Data Div
+        const increaseBtn = productDiv.querySelector(".increase");
+        increaseBtn.addEventListener("click", (e) => {
+          e.stopPropagation(); // Prevent box click event
+          product.quantity++;
+          productDiv.querySelector(".quantity").textContent = product.quantity;
+          updateTotals();
+        });
+
+        // Handle Delete Product from Data Div
+        const deleteBtn = productDiv.querySelector(".delete");
+        deleteBtn.addEventListener("click", (e) => {
+          e.stopPropagation(); // Prevent box click event
+          selectedProducts.splice(index, 1); // Remove the product from selectedProducts array
+          updateDataDiv(); // Re-render the data div
+          updateTotals(); // Update totals
+        });
+      });
+    }
 
 
-function updateDataDiv() {
-  const dataDiv = document.querySelector(".data");
-  dataDiv.innerHTML = ""; // Clear previous data
-  selectedProducts.forEach((product, index) => {
-    const productDiv = document.createElement("div");
-    productDiv.classList.add("product");
-    productDiv.innerHTML = `
-    <p>${product.name} - $${product.price} ${
-      product.quantity > 1 ? "x " + product.quantity : ""
-    }</p>
-    <div class="actions">
-      <button class="decrease">-</button>
-      <span class="quantity">${product.quantity}</span>
-      <button class="increase">+</button>
-      <button class="delete">Delete</button>
-    </div>
-  `;
-    dataDiv.appendChild(productDiv);
-
-    // Handle Decrease Quantity in Data Div
-    const decreaseBtn = productDiv.querySelector(".decrease");
-    decreaseBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevent box click event
-      if (product.quantity > 1) {
-        product.quantity--;
-        productDiv.querySelector(".quantity").textContent =
-          product.quantity;
-      }
-      updateTotals();
-    });
-
-    // Handle Increase Quantity in Data Div
-    const increaseBtn = productDiv.querySelector(".increase");
-    increaseBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevent box click event
-      product.quantity++;
-      productDiv.querySelector(".quantity").textContent = product.quantity;
-      updateTotals();
-    });
-
-    // Handle Delete Product from Data Div
-    const deleteBtn = productDiv.querySelector(".delete");
-    deleteBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevent box click event
-      selectedProducts.splice(index, 1); // Remove the product from selectedProducts array
-      updateDataDiv(); // Re-render the data div
-      updateTotals(); // Update totals
-    });
-  });
-}
-
-// Function to update SubTotal, GrandTotal, and Total Quantity
-function updateTotals() {
-  let subTotal = 0;
-  let totalQuantity = 0;
-  selectedProducts.forEach((product) => {
-    subTotal += product.price * product.quantity;
-    totalQuantity += product.quantity;
-  });
-
-  const subTotalElement = document.getElementById("sub-total");
-  const grandTotalElement = document.getElementById("grand-total");
-  const totalQuantityElement = document.getElementById("total-quantity");
-
-  // Display subtotal and grandtotal as $0 instead of 0
-  subTotalElement.textContent = `$${subTotal}`;
-  grandTotalElement.textContent = `$${subTotal}`; // For now, GrandTotal = SubTotal
-  totalQuantityElement.textContent = totalQuantity; // Update the total quantity
-}
 
 
 
@@ -284,6 +267,59 @@ function updateTotals() {
 
 
 
+function updateTotals() {
+  let grossAmount = 0;
+  let totalQuantity = 0;
+  
+    var orderDiscount = parseFloat(document.getElementById('order_discount_id').value) || 0; // Get order discount
+    var otherCharges = parseFloat(document.getElementById('other_charges_id').value) || 0; // Get other charges
+    var netAmount = 0;
+  
+    selectedProducts.forEach((product) => {
+    grossAmount += product.price * product.quantity;
+    totalQuantity += product.quantity;
+  });
+
+  const subTotalElement = document.getElementById("sub-total");
+  const grandTotalElement = document.getElementById("grand-total");
+  const totalQuantityElement = document.getElementById("total-quantity");
+
+  // Display subtotal and grandtotal as $0 instead of 0
+  subTotalElement.textContent = `$${grossAmount}`;
+  grandTotalElement.textContent = `$${grossAmount}`; // For now, GrandTotal = SubTotal
+  totalQuantityElement.textContent = totalQuantity; // Update the total quantity
+  
+  // Apply discount (flat or percentage)
+  var discountType = document.querySelector('input[name="order_discount_type"]:checked').value;
+  if (discountType === 'percentage') {
+      netAmount = grossAmount - (grossAmount * (orderDiscount / 100));  // Apply discount percentage
+  } else {
+      netAmount = grossAmount - orderDiscount;  // Apply flat discount
+  }
+  
+  // Get selected tax rate
+  var taxRate = parseFloat(document.getElementById('tax_rate').value) || 0;
+  var taxAmount = (netAmount * taxRate) / 100;
+  netAmount += taxAmount;
+
+
+  // Add other charges to the net amount
+  netAmount += otherCharges;  // Add other charges
+
+  // Update the total fields
+  document.getElementById('gross_amount_id').value = grossAmount.toFixed(2);
+  document.getElementById('gross_amount_label').textContent = grossAmount.toFixed(2); 
+  
+  
+  
+  document.getElementById('net_amount_id').value = netAmount.toFixed(2);
+  document.getElementById('net_amount_label').textContent = netAmount.toFixed(2);
+  
+  document.getElementById('balance_id').value = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); 
+  document.getElementById('balance_label').textContent = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); 
+}
+
+
 // SUBMIT ORDER 
 
 document.getElementById('submitPosOrder').addEventListener('click', function () {
@@ -303,12 +339,11 @@ document.getElementById('submitPosOrder').addEventListener('click', function () 
   
   $('#loader').show();
 
-  var orderData = getOrderData();
-  if (!orderData || Object.keys(orderData).length === 0) {
-      $('#loader').fadeOut();
-      
-      return;
-  }
+    var orderData = getOrderData();
+    if (!orderData || Object.keys(orderData).length === 0) {
+        $('#loader').fadeOut();
+            return;
+    }
 
   formData.append('orderData', JSON.stringify(orderData));
   formData.forEach((value, key) => {
@@ -340,7 +375,7 @@ document.getElementById('submitPosOrder').addEventListener('click', function () 
           if (data.success) {
               showMessage('success', data.message);
               form.reset();
-              clearOrderItemsTable();
+              clearGridAndSelections();
               document.getElementById('datetimepicker_dark1').focus();
               $('#loader').fadeOut();
           } else {
@@ -372,6 +407,7 @@ function getOrderData() {
 
 
 document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('clearItems').addEventListener('click', clearGridAndSelections);
 
   const customerNameInput = document.getElementById('customer-name-input-pos');
   const customerIdField = document.getElementById('customer-id-pos');
@@ -432,6 +468,31 @@ if (window.location.pathname.includes('pos')) {
 }
 });
 
+
+
+function clearGridAndSelections() {
+  
+  selectedProducts = [];
+  const dataDiv = document.querySelector(".data");
+  dataDiv.innerHTML = ""; 
+  updateTotals();
+
+  // Reset other form inputs if needed
+  const customerNameInput = document.getElementById('customer-name-input-pos');
+  const customerIdField = document.getElementById('customer-id-pos');
+  if (customerNameInput) customerNameInput.value = '';
+  if (customerIdField) customerIdField.value = '';
+
+  // Reset any category or product search fields
+  const categoryNameInput = document.getElementById('category-name-input');
+  const categoryIdField = document.getElementById('category-id');
+  const productNameInput = document.getElementById('search');
+  if (categoryNameInput) categoryNameInput.value = '';
+  if (categoryIdField) categoryIdField.value = '';
+  if (productNameInput) productNameInput.value = '';
+
+  
+}
 
 
 
