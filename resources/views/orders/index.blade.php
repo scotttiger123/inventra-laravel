@@ -228,7 +228,7 @@
                         <div class="col-sm-4 invoice-col">
                             <!-- <b>Invoice #<span id="invoiceNumber">N/A</span></b><br> -->
                             <br>
-                            <b>Order Id:</b> <span id="orderId">N/A</span><br>
+                            <b>Inv #:</b> <span id="orderId">N/A</span><br>
                         </div>
                     </div>
 

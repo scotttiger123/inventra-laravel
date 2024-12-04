@@ -4,6 +4,48 @@ let selectedProducts = [];
 
 document.addEventListener('DOMContentLoaded', () => {
 
+
+
+
+  document.addEventListener('keydown', (event) => {
+    if (event.ctrlKey || event.metaKey) { // Use Ctrl or Cmd for shortcuts
+      switch (event.key.toLowerCase()) {
+        case 'o': // Ctrl+O to Submit Order
+          event.preventDefault(); // Prevent default browser action
+          submitPosOrder();
+          break;
+        case 'f': // Ctrl+F to Open Financial Modal
+          event.preventDefault();
+          openFinancialModal();
+          break;
+        case 'l': // Ctrl+L to Show Loader
+          event.preventDefault();
+          $('#loader').fadeIn();
+          break;
+        case 'h': // Ctrl+H to Hide Loader
+          event.preventDefault();
+          $('#loader').fadeOut();
+          break;
+        case 'r': // Ctrl+R to Reset Form
+          event.preventDefault();
+          document.getElementById('orderFormPos').reset();
+          clearGridAndSelections();
+          clearFinancialFields();
+          break;
+        default:
+          break;
+      }
+    }
+  });
+
+  function openFinancialModal() {
+    
+              var modal = $('#othersModalLabel');
+              modal.modal('show');
+  }
+
+
+
   $('#loader').fadeIn();
   fetch('/load-products')
     .then(response => response.json())
@@ -314,6 +356,9 @@ function updateTotals() {
   
   document.getElementById('net_amount_id').value = netAmount.toFixed(2);
   document.getElementById('net_amount_label').textContent = netAmount.toFixed(2);
+
+  document.getElementById('paid_amount_label').textContent = (parseFloat(document.getElementById('paid_amount_id').value) || 0).toFixed(2);
+
   
   document.getElementById('balance_id').value = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); 
   document.getElementById('balance_label').textContent = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); 
@@ -322,8 +367,10 @@ function updateTotals() {
 
 // SUBMIT ORDER 
 
-document.getElementById('submitPosOrder').addEventListener('click', function () {
+function submitPosOrder() {
   
+  event.preventDefault()
+
   const form = document.getElementById('orderFormPos');
   const formData = new FormData(form);
   
@@ -373,11 +420,15 @@ document.getElementById('submitPosOrder').addEventListener('click', function () 
       })
       .then(data => {
           if (data.success) {
+              console.log(data.success);
               showMessage('success', data.message);
               form.reset();
               clearGridAndSelections();
-              document.getElementById('datetimepicker_dark1').focus();
+              clearFinancialFields();
+              var modal = $('#othersModalLabel');
+              modal.modal('hide');
               $('#loader').fadeOut();
+
           } else {
               showMessage('error', data.message);
           }
@@ -387,7 +438,26 @@ document.getElementById('submitPosOrder').addEventListener('click', function () 
           
           showMessage('error', error.message || 'An error occurred while submitting the order.');
       });
-});
+}
+
+function showMessage(type, message) {
+  var messageDiv;
+  
+  // Determine the div based on message type
+  if (type === 'success') {
+      messageDiv = $('#success-message');
+  } else {
+      messageDiv = $('#error-message');
+  }
+
+  // Set the message and show the div
+  messageDiv.text(message).fadeIn();
+
+  // Hide the message after 10 seconds with a fade-out effect
+  setTimeout(function() {
+      messageDiv.fadeOut();
+  }, 5000); // 10000 milliseconds = 10 seconds
+}  
 
 
 function getOrderData() {
@@ -407,7 +477,15 @@ function getOrderData() {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('clearItems').addEventListener('click', clearGridAndSelections);
+
+    document.getElementById('order_discount_id').addEventListener('input', updateTotals);
+    document.querySelector('input[name="order_discount_type"]').addEventListener('change', updateTotals);
+
+    document.getElementById('other_charges_id').addEventListener('input', updateTotals);
+    document.getElementById('tax_rate').addEventListener('change', updateTotals);
+    
+    document.getElementById('paid_amount_id').addEventListener('input', updateTotals);
+    document.getElementById('clearItems').addEventListener('click', clearGridAndSelections);
 
   const customerNameInput = document.getElementById('customer-name-input-pos');
   const customerIdField = document.getElementById('customer-id-pos');
@@ -492,6 +570,27 @@ function clearGridAndSelections() {
   if (productNameInput) productNameInput.value = '';
 
   
+}
+
+function clearFinancialFields() {
+
+    
+
+  document.getElementById('tax_rate').value = "";
+  document.getElementById('order_discount_id').value = "";
+  document.getElementById('flat_discount_radio').checked = true;
+  document.getElementById('percentage_discount_radio').checked = false;
+  document.getElementById('gross_amount_id').value = "0";
+  document.getElementById('net_amount_id').value = "";
+  document.getElementById('other_charges_id').value = "";
+  document.getElementById('paid_amount_id').value = "";
+  document.getElementById('balance_id').value = "";
+  document.getElementById('sale_note').value = "";
+  document.getElementById('staff_note').value = "";
+  document.getElementById('gross_amount_label').textContent = "0.00";
+  document.getElementById('net_amount_label').textContent = "0.00";
+  document.getElementById('paid_amount_label').textContent = "0.00";
+  document.getElementById('balance_label').textContent = "0.00";
 }
 
 

@@ -33,7 +33,7 @@
                         <span class="info-box-icon" style="border-radius: 5px;!important" ><i class="fa fa-usd"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Paid Amount</span>
-                            <span class="info-box-number">0.00</span>
+                            <span class="info-box-number" id = 'paid_amount_label'>0.00</span>
                         </div>
                     </div>
                 </div>

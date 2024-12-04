@@ -17,8 +17,9 @@
         <form id="orderFormPos" action="{{ route('orders.store-pos') }}" method="POST">
           <meta name="csrf-token" content="{{ csrf_token() }}">
           <div class="searches">
-            <div class="icon-pos"><i class="bi bi-bounding-box"></i></div>
             
+            <div class="icon-pos" data-toggle="modal" data-target="#shortcutModal">   <i class="bi bi-keyboard"></i></div>
+
             <div class="inputs">
                 <div class="input-group">
                       <input type="text" 
@@ -105,10 +106,160 @@
               <div class="gprice" id="grand-total">0</div>
             </div>
           </div>
+                                                          
+
+              <!-- Modal for Invoice View -->
+              <div id="othersModalLabel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="othersModalLabel" aria-hidden="true">
+                  <div class="modal-dialog custom-modal-width" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="otherModalLabel">Financials Section (Gross Amount, Discount, etc.)</h5>
+                              <button type="button" id = 'pos-mdl-close' class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                          </div>
+                          <div class="modal-body" id="">
+                              <section class="">
+
+                                  <div class="table-container">
+                                      <div class="row">
+                                          <div class="col-md-3 col-sm-6 col-xs-12">
+                                              <div class="info-box custom">
+                                                  <span class="info-box-icon" style="border-radius: 5px; background-color: gold"><i class="fa fa-percent"></i></span>
+                                                  <div class="info-box-content">
+                                                      <select name="tax_rate" id="tax_rate" class="form-control" tabindex="1">
+                                                          <option value="" selected>Order Tax</option>
+                                                          @foreach($taxes as $tax)
+                                                              <option value="{{ $tax->rate }}">{{ $tax->name }} ({{ $tax->rate }}%)</option>
+                                                          @endforeach
+                                                      </select>
+                                                      <span class="info-box-number"> TAX(%)</span>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                          <div class="col-md-3 col-sm-6 col-xs-12">
+                                              <div class="info-box custom">
+                                                  <span class="info-box-icon" style="border-radius: 5px; background-color: gold"><i class="fa fa-tag"></i></span>
+                                                  <div class="info-box-content">
+                                                      <input type="number" name="order_discount" id="order_discount_id" value="" class="form-control" tabindex="2" placeholder="Order Discount ">
+                                                      <span class="info-box-number">
+                                                          <label>
+                                                              <input type="radio" name="order_discount_type" id="flat_discount_radio" class="flat-red" value='flat' checked> Flat 
+                                                          </label> &nbsp;&nbsp;&nbsp;&nbsp;
+                                                          <label>
+                                                              <input type="radio" name="order_discount_type" id="percentage_discount_radio" class="flat-red" value="percentage"> Percentage 
+                                                          </label>
+                                                      </span>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                          <div class="col-md-3 col-sm-6 col-xs-12">
+                                              <div class="info-box compact-info-box">
+                                                  <span class="info-box-icon bg-grey" style="border-radius: 5px;"><i class="ion ion-pricetag"></i></span>
+                                                  <div class="info-box-content">
+                                                      <span class="info-box-text">Gross Amount</span>
+                                                      <span class="info-box-number" id="gross_amount_label">0.00</span>
+                                                      <input type="hidden" name="gross_amount" id="gross_amount_id" value="0" class="form-control" readonly>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                          <div class="col-md-3 col-sm-6 col-xs-12">
+                                              <div class="info-box compact-info-box">
+                                                  <span class="info-box-icon bg-grey" style="border-radius: 5px;"><i class="fa fa-credit-card"></i></span>
+                                                  <div class="info-box-content">
+                                                      <span class="info-box-text">Net Amount</span>
+                                                      <span class="info-box-number" id="net_amount_label">0.00</span>
+                                                      <input type="hidden" name="net_amount" id="net_amount_id" class="form-control" readonly>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+
+                                      <div class="row">
+                                          <div class="col-md-3 col-sm-6 col-xs-12">
+                                              <div class="info-box custom">
+                                                  <span class="info-box-icon" style="border-radius: 5px; background-color: gold"><i class="fa fa-money"></i></span>
+                                                  <div class="info-box-content">
+                                                      <input type="number" name="other_charges" id="other_charges_id" class="form-control" tabindex="3">
+                                                      <span class="info-box-number"> OTHER CHARGES</span>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                          <div class="col-md-3 col-sm-6 col-xs-12">
+                                              <div class="info-box custom">
+                                                  <span class="info-box-icon" style="border-radius: 5px; background-color: gold"><i class="fa fa-dollar"></i></span>
+                                                  <div class="info-box-content">
+                                                      <input name="paid_amount" id="paid_amount_id" type="number" class="form-control" tabindex="4">
+                                                      <span class="info-box-number"> PAID AMOUNT</span>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                          <div class="col-md-3 col-sm-6 col-xs-12">
+                                              <div class="info-box compact-info-box">
+                                                  <span class="info-box-icon" style="border-radius: 5px;"><i class="fa fa-usd"></i></span>
+                                                  <div class="info-box-content">
+                                                      <span class="info-box-text">Paid Amount</span>
+                                                      <span class="info-box-number" id="paid_amount_label">0.00</span>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                          <div class="col-md-3 col-sm-6 col-xs-12">
+                                              <div class="info-box compact-info-box">
+                                                  <span class="info-box-icon bg-grey" style="border-radius: 5px;"><i class="fa fa-money"></i></span>
+                                                  <div class="info-box-content">
+                                                      <span class="info-box-text">Amount Due</span>
+                                                      <span class="info-box-number" id="balance_label">0.00</span>
+                                                      <input type="hidden" name="balance" id="balance_id" class="form-control" readonly>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+
+                                      <div class="row">
+                                          <!-- Sale Note Field -->
+                                          <div class="col-md-6">
+                                              <div class="form-group">
+                                                  <label for="sale_note">Sale Note</label>
+                                                  <textarea name="sale_note" id="sale_note" class="form-control" rows="3" placeholder="Enter sale note" tabindex="5"></textarea>
+                                              </div>
+                                          </div>
+
+                                          <!-- Staff Note Field -->
+                                          <div class="col-md-6">
+                                              <div class="form-group">
+                                                  <label for="staff_note">Staff Note</label>
+                                                  <textarea name="staff_note" id="staff_note" class="form-control" rows="3" placeholder="Enter staff note" tabindex="6"></textarea>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                              </section>
+                          </div>
+
+                          <div class="modal-footer">
+                            <div class="order">
+                                <div class="p-btns">
+                                  <button onclick = 'submitPosOrder()' >PLACE ORDER</button>
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal" tabindex="7">Save</button>
+                                  <button onclick = 'clearFinancialFields()'></i>Clear</button>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- end modal  -->
           </form> 
           <div class="order">
             <div class="p-btns">
-              <button id = 'submitPosOrder' >PLACE ORDER</button>
+              <button onclick = 'submitPosOrder()' >PLACE ORDER</button>
               <button><i class="bi bi-arrow-up-left"></i></button>
               <button id = 'clearItems'><i class="bi bi-x"></i></button>
             </div>
@@ -118,146 +269,55 @@
     </div>
      
   </div>
+  
 </div>
 
 
-
-<!-- Modal for Invoice View -->
-<div id="othersModalLabel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="othersModalLabel" aria-hidden="true">
-    <div class="modal-dialog custom-modal-width " role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="otherModalLabel">Financials Section (Gross Amount, Discount, etc.)</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="">
-                <section class="">
-                                  
-                                                 
-                        <div class="table-container" >
-                            <div class="row">
-                                <div class="col-md-3 col-sm-6 col-xs-12">
-                                    <div class="info-box custom">
-                                        <span class="info-box-icon" style="border-radius: 5px;!important;background-color: gold"><i class="fa fa-percent"></i></span>
-                                        <div class="info-box-content" >
-                                            <select name="tax_rate" id="tax_rate" class="form-control">
-                                                <option value="" selected>Order Tax</option>
-                                                    @foreach($taxes as $tax)
-                                                        <option value="{{ $tax->rate }}">{{ $tax->name }} ({{ $tax->rate }}%)</option>
-                                                    @endforeach
-                                            </select>
-                                            <span class="info-box-number"> TAX(%)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 col-xs-12">
-                                    <div class="info-box custom">
-                                        <span class="info-box-icon" style="border-radius: 5px;!important;background-color: gold"><i class="fa fa-tag"></i></span>
-                                        <div class="info-box-content">
-                                            <input type="number"  name = 'order_discount' id="order_discount_id" value="" class="form-control" tabindex="9" placeholder="Order Discount ">
-                                            <span class="info-box-number"> 
-                                            <label >
-                                                <input type="radio" name="order_discount_type" id = "flat_discount_radio" class="flat-red" value='flat' checked> Flat 
-                                            </label> &nbsp;&nbsp;&nbsp;&nbsp;
-                                            <label>
-                                                <input type="radio" name="order_discount_type" id="percentage_discount_radio" class="flat-red" value="percentage"> Percentage 
-                                            </label>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 col-xs-12">
-                                    <div class="info-box compact-info-box" >
-                                        <span class="info-box-icon bg-grey"  style="border-radius: 5px;!important"><i class="ion ion-pricetag"></i></span>
-                                        <div class="info-box-content">
-                                            <span class="info-box-text">Gross Amount</span>
-                                            <span class="info-box-number" id ="gross_amount_label" >0.00</span>
-                                            <input type = 'hidden' name = 'gross_amount' id="gross_amount_id" type="number" value="0" class="form-control"  placeholder="0" readonly></h3>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 col-xs-12">
-                                      <div class="info-box compact-info-box" >
-                                          <span class="info-box-icon bg-grey"  style="border-radius: 5px;!important"><i class="fa fa-credit-card"></i></span>
-                                          <div class="info-box-content">
-                                              <span class="info-box-text">Net  Amount</span>
-                                              <span class="info-box-number" id ="net_amount_label" >0.00</span>
-                                              <input type = 'hidden' name="net_amount" id="net_amount_id" type="number"  class="form-control"  readonly></h3>
-                                          </div>
-                                      </div>
-                                  </div>
-
-                            </div>
-                            <div class="row">      
-                                <div class="col-md-3 col-sm-6 col-xs-12">
-                                    <div class="info-box custom" >
-                                        <span class="info-box-icon" style="border-radius: 5px;!important;background-color: gold"><i class="fa fa-money"></i></span>
-                                        <div class="info-box-content">
-                                            <input type = 'number' name="other_charges" value="" id = 'other_charges_id' class="form-control" tabindex="9" >
-                                            <span class="info-box-number"> OTHER CHARGES</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 col-xs-12">
-                                    <div class="info-box custom">
-                                        <span class="info-box-icon" style="border-radius: 5px;!important;background-color: gold"><i class="fa fa-dollar"></i></span>
-                                        <div class="info-box-content">
-                                            <input name="paid_amount" id="paid_amount_id" type="number" class="form-control" tabindex="10" >
-                                            <span class="info-box-number"> PAID AMOUNT</span>
-                                        </div>
-                                    </div>
-                                </div>                                              
-                                <div class="col-md-3 col-sm-6 col-xs-12">
-                                      <div class="info-box compact-info-box">
-                                          <span class="info-box-icon" style="border-radius: 5px;!important" ><i class="fa fa-usd"></i></span>
-                                          <div class="info-box-content">
-                                              <span class="info-box-text">Paid Amount</span>
-                                              <span class="info-box-number">0.00</span>
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <div class="col-md-3 col-sm-6 col-xs-12">
-                                      <div class="info-box compact-info-box" >
-                                          <span class="info-box-icon bg-grey"  style="border-radius: 5px;!important"><i class="fa fa-money"></i></span>
-                                          <div class="info-box-content">
-                                              <span class="info-box-text">Amount Due</span>
-                                              <span class="info-box-number" id ="balance_label" >0.00</span>
-                                              <input type = 'hidden' name="balance" id="balance_id" type="number" class="form-control" readonly></h3>
-                                          </div>
-                                      </div>
-                                  </div>
-                                
-                            
-                            </div>     
-                            <div class="row">
-                            <!-- Sale Note Field -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="sale_note">Sale Note</label>
-                                    <textarea name="sale_note" id="sale_note" class="form-control" rows="3" placeholder="Enter sale note"></textarea>
-                                </div>
-                            </div>
-                            <!-- Staff Note Field -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="staff_note">Staff Note</label>
-                                    <textarea name="staff_note" id="staff_note" class="form-control" rows="3" placeholder="Enter staff note"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                </section>
-                
-            </div>
-          
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="printInvoice()"><i class="fa fa print"></i> Save</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
+<div class="modal fade" id="shortcutModal" tabindex="-1" aria-labelledby="shortcutModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Keyboard Shortcuts</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Shortcut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Submit Order</td>
+              <td><kbd>Ctrl</kbd> + <kbd>O</kbd></td>
+            </tr>
+            <tr>
+              <td>Open Financial Modal</td>
+              <td><kbd>Ctrl</kbd> + <kbd>F</kbd></td>
+            </tr>
+            <tr>
+              <td>Reset Form</td>
+              <td><kbd>Ctrl</kbd> + <kbd>R</kbd></td>
+            </tr>
+            <tr>
+              <td>Close Modal</td>
+              <td><kbd>Esc</kbd></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
     </div>
+  </div>
 </div>
+
+
 <style>
       .custom-modal-width {
         max-width: 90%; 
