@@ -21,7 +21,7 @@
             <div class="icon-pos" data-toggle="modal" data-target="#shortcutModal">   <i class="bi bi-keyboard"></i></div>
 
             <div class="inputs">
-                <div class="input-group">
+                <div class="col-md-3">
                       <input type="text" 
                             list="category-names" 
                             style="width: 100%;" 
@@ -40,6 +40,15 @@
                       <!-- Hidden field for storing category ID -->
                       <input type="hidden" name="category_id" id="category-id">
                   </div>
+                  <div class="col-md-3">       
+                        <input type="text" list="warehouse-names" style="width: 100%;" name="warehouse_name" class="form-control myInput" placeholder="Select Warehouse" tabindex="1" id="warehouse-name-input">
+                            <datalist id="warehouse-names">
+                                @foreach($warehouses as $warehouse)
+                                    <option value="{{ $warehouse->name }}" data-id="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                @endforeach
+                            </datalist>
+                        <input type="hidden" name="warehouse_id" id="warehouse-id">
+                    </div>      
               <div class="search-container">
                 <input type="text" id="search" list = "product_name" placeholder="Search Product" />
                   <i class="bi bi-search search-icon"></i>

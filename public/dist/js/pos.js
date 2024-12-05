@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Function to display products
       function displayProducts(products) {
+
         boxesContainer.innerHTML = ''; // Clear existing products
         products.forEach((product) => {
           // Create a new box element for each product
@@ -92,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const actionsDiv = document.createElement("div");
             actionsDiv.classList.add("actions");
             const productId = box.getAttribute("data-product-id");
+            
 
             actionsDiv.innerHTML = `
               <button class="decrease">-</button>
@@ -194,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateDataDiv() {
       const dataDiv = document.querySelector(".data");
-      dataDiv.innerHTML = ""; // Clear previous data
+      dataDiv.innerHTML = ""; 
       selectedProducts.forEach((product, index) => {
         const productDiv = document.createElement("div");
         productDiv.classList.add("product");
@@ -248,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-// Fetch Product Selected 
+
 
 
 
@@ -278,11 +280,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
       
       if (data.success) {
+        const warehouseId = document.getElementById('warehouse-id').value; 
+
         const product = {
           product_id: data.product.id,
           name: data.product.product_name,
           price: data.product.price,
           quantity: 1,
+          warehouse_id: warehouseId, 
         };
         
         addProduct(product);
@@ -469,7 +474,8 @@ function getOrderData() {
   return selectedProducts.map(product => ({
       product_id: product.product_id,
       qty: product.quantity,
-      rate: product.price
+      rate: product.price,
+      warehouse_id: product.warehouse_id
   }));
 }
 
@@ -491,6 +497,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const customerIdField = document.getElementById('customer-id-pos');
 
   customerNameInput.addEventListener('input', function() {
+
+    
+
+
     const selectedOption = document.querySelector(`#customer-names option[value="${customerNameInput.value}"]`);
 
     if (selectedOption) {
@@ -500,6 +510,23 @@ document.addEventListener('DOMContentLoaded', function() {
       customerIdField.value = '';
     }
   });
+
+
+
+
+  const warehouseNameInput = document.getElementById('warehouse-name-input');
+  const warehouseIdField = document.getElementById('warehouse-id');
+
+  warehouseNameInput.addEventListener('input', function() {
+      const selectedOption = document.querySelector(`#warehouse-names option[value="${warehouseNameInput.value}"]`);
+      if (selectedOption) {
+          const warehouseId = selectedOption.getAttribute('data-id');
+          warehouseIdField.value = warehouseId;
+      } else {
+          warehouseIdField.value = ''; 
+      }
+  });
+
   const categoryNameInput = document.getElementById('category-name-input');
   const categoryIdField = document.getElementById('category-id');
   

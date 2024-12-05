@@ -12,6 +12,7 @@ use App\Models\Uom;
 use App\Models\Tax;
 use App\Models\Status;
 use App\Models\Category;
+use App\Models\Warehouse;
 use App\Models\User; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -55,34 +56,40 @@ class OrderController extends Controller
         
     }
     
-
     public function createPOS()
     {
         $user = auth()->user();
         $currencySymbol = \App\Models\Setting::where('name', 'currency-symbol')->value('value');
+    
         // Get customers created by the current user or their parent
         $customers = Customer::where('created_by', $user->id)
             ->orWhere('parent_user_id', $user->id)
             ->orWhere('parent_user_id', $user->parent_id)
             ->get();
     
-            $salePersonRoleId = Role::where('name', 'Sale Person')->value('id');
-
-            $salespersons = User::where('Role', $salePersonRoleId)->get();
-
+        $salePersonRoleId = Role::where('name', 'Sale Person')->value('id');
+        $salespersons = User::where('Role', $salePersonRoleId)->get();
     
-        
         $products = Product::all();
-
-            $uoms = Uom::all();  
-            $taxes = Tax::all(); 
-            $statuses = Status::all();
-            $categories = Category::all();
+        $uoms = Uom::all();  
+        $taxes = Tax::all(); 
+        $statuses = Status::all();
+        $categories = Category::all();
+        $warehouses = Warehouse::all();
     
-        return view('orders.create-pos', compact('customers', 'categories', 'salespersons', 'products', 'statuses','uoms','taxes','currencySymbol'));
-
-        
+        return view('orders.create-pos', compact(
+            'customers', 
+            'categories', 
+            'salespersons', 
+            'products', 
+            'statuses', 
+            'uoms', 
+            'taxes', 
+            'currencySymbol', 
+            'warehouses'
+        ));
     }
+    
 
 
 
@@ -366,7 +373,7 @@ class OrderController extends Controller
             $order->discount_amount = $request->discount_amount ?? 0;
             $order->tax_rate = $request->tax_rate ?? 0;
             $order->payment_method = $request->payment_method;
-            $order->order_date = $request->order_date;
+            $order->order_date = $request->order_date ?? now();
             $order->custom_order_id = $orderNumber;
             $order->sale_note = $request->sale_note;
             $order->staff_note = $request->staff_note;
@@ -415,7 +422,7 @@ class OrderController extends Controller
                             
                             'custom_order_id' => $orderNumber,
                             'cost_price' => $costPrice, 
-                       
+                            'exit_warehouse' => $item['warehouse_id'],
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
