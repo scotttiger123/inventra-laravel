@@ -88,7 +88,7 @@ document.getElementById('create-customer-form').addEventListener('submit', funct
 
 // Custoemr name validation & get id 
 const customerNameInput = document.getElementById('customer-name-input');
-const customerIdField = document.getElementById('customer-id-pos');
+const customerIdField = document.getElementById('customer-id');
 
 
 customerNameInput.addEventListener('input', function() {
@@ -275,7 +275,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
             var discountValue = parseFloat(row.cells[4].innerText) || 0;  // Discount value
             var netRate = parseFloat(row.cells[6].innerText);  // Net rate after discount
             var amount = parseFloat(row.cells[6].innerText);  // Amount after discount
-            var exitWarehouse = row.cells[7].innerHTML === 'Yes' ? 1 : 0;
+            var exitWarehouse = row.cells[7].innerHTML ;
             
             
     
@@ -329,7 +329,8 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         var rate = parseFloat(document.getElementById('price_id').value);
         var discountType = document.getElementById('discount_type').value; // Discount type (flat or percentage)
         var discountValue = parseFloat(document.getElementById('discount_value').value);
-        var exitWarehouse = document.getElementById('exit_warehouse').checked ? 1 : 0;
+        // var exitWarehouse = document.getElementById('exit_warehouse').checked ? 1 : 0;
+        var exitWarehouse = document.getElementById('warehouse-id').value;
         
         // Get the selected UOM value and UOM id (from data-id)
         var uomInput = document.getElementById('uom_id');
@@ -404,8 +405,8 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         var amount = (qty * netRate).toFixed(2);  // Amount based on netRate, not rate
         cell7.innerHTML = amount;
         
-        // Display exit warehouse status (Yes or No)
-        cell8.innerHTML = exitWarehouse ? 'Yes' : 'No';
+        
+        cell8.innerHTML = exitWarehouse ;
         
         // Create delete button
         var deleteButton = document.createElement("button");
@@ -739,4 +740,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
     }
+  });
+
+
+
+  const warehouseNameInput = document.getElementById('warehouse-name-input');
+  const warehouseIdField = document.getElementById('warehouse-id');
+
+  warehouseNameInput.addEventListener('input', function() {
+      const selectedOption = document.querySelector(`#warehouse-names option[value="${warehouseNameInput.value}"]`);
+      if (selectedOption) {
+          const warehouseId = selectedOption.getAttribute('data-id');
+          warehouseIdField.value = warehouseId;
+      } else {
+          warehouseIdField.value = ''; 
+      }
   });

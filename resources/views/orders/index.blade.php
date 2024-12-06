@@ -84,8 +84,9 @@
         <table id="order-listings" class="table table-bordered table-striped">
             <thead>
             <tr>
-                <th>Sale Id.</th> <!-- Add Order ID header -->
-                <th>Order Date</th>
+                <th>Sale Status</th>
+                <th>Reference</th> 
+                <th>Date</th>
                 <th>Customer</th>
                 <th>Gross Amount</th>
                 <th>Order Discount</th>
@@ -101,7 +102,7 @@
             <tbody>
     @foreach($orders as $order)
         <tr>
-            
+            <td></td>
             <td><a href="javascript:void(0);" onclick="getInvoiceDetails('{{ $order->custom_order_id }}')">{{ $order->custom_order_id }}</a></td> <!-- Display Custom Order ID -->
   
             <td>{{ $order->order_date }}</td>

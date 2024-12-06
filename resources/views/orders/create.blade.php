@@ -84,12 +84,12 @@
                                             <datalist id="customer-names">
                                                 
                                                 @foreach($customers as $customer)
-                                                    <option value="{{ $customer->name }}" data-id="{{ $customer->id }}">{{ $customer->name }}</option>
+                                                    <option value="{{ $customer->name }}" data-id="{{ $customer->id }}">{{ $customer->id }}</option>
                                                 @endforeach
                                             </datalist>
 
                                             <!-- Hidden field for storing customer ID -->
-                                            <input type="hidden" name="customer_id" id="customer-id">
+                                            <input type="text" name="customer_id" id="customer-id">
                                         </div>
                             </div>
                            
@@ -229,7 +229,16 @@
                                             
                                             <span>Check this if the product is exiting from the warehouse.</span>
                                         </div>
-                                </div>        
+                                </div>
+                                <div class="col-md-2">       
+                                    <input type="text" list="warehouse-names" style="width: 100%;" name="warehouse_name" class="form-control myInput" placeholder="Select Warehouse" tabindex="1" id="warehouse-name-input">
+                                        <datalist id="warehouse-names">
+                                            @foreach($warehouses as $warehouse)
+                                                <option value="{{ $warehouse->name }}" data-id="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                            @endforeach
+                                        </datalist>
+                                    <input type="text" name="warehouse_id" id="warehouse-id">
+                                </div>           
                                 
                                     <!-- Add Product Button -->
                                 <button type="button" class="btn btn-info" onclick="addItemToOrder()">Add Product</button>

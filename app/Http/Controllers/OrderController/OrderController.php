@@ -50,8 +50,9 @@ class OrderController extends Controller
             $uoms = Uom::all();  
             $taxes = Tax::all(); 
             $statuses = Status::all();
+            $warehouses = Warehouse::all();
     
-        return view('orders.create', compact('customers', 'salespersons', 'products', 'statuses','uoms','taxes'));
+        return view('orders.create', compact('customers', 'salespersons', 'products', 'statuses','uoms','taxes','warehouses'));
 
         
     }
@@ -411,15 +412,11 @@ class OrderController extends Controller
                         $costPrice = null; 
                     }
 
-
-
                         DB::table('order_items')->insert([
                             'order_id' => $order->id,
                             'product_id' => $item['product_id'],
-                            
                             'quantity' => $item['qty'],
                             'unit_price' => $item['rate'],
-                            
                             'custom_order_id' => $orderNumber,
                             'cost_price' => $costPrice, 
                             'exit_warehouse' => $item['warehouse_id'],

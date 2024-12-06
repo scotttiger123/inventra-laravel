@@ -391,7 +391,7 @@ function submitPosOrder() {
   
   $('#loader').show();
 
-    var orderData = getOrderData();
+    var orderData = getPosOrderData();
     if (!orderData || Object.keys(orderData).length === 0) {
         $('#loader').fadeOut();
             return;
@@ -465,7 +465,7 @@ function showMessage(type, message) {
 }  
 
 
-function getOrderData() {
+function getPosOrderData() {
   if (!Array.isArray(selectedProducts) || selectedProducts.length === 0) {
       alert('No products selected for the order.');
       return {};
