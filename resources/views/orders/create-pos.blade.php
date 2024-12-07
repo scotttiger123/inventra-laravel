@@ -99,10 +99,44 @@
             <button><i class="bi bi-bag"></i> Shipping</button>
           </div>
           <div class="data"></div>
-          <div class="subtotal">
-            <div class="stotal">
-              <div class="scon"><h4>SubTotal</h4></div>
-              <div class="sprice"><p id="sub-total">0</p></div>
+          <div class="center">
+            <div class="su-container">
+              <div class="t-container" style="top: 0">
+                <div class="t-btn">
+                  <button id="toggle-btn">
+                    <i
+                      class="bi bi-chevron-up"
+                      id="chevron-up"
+                      style="display: block; opacity: 1"
+                    ></i>
+                    <i
+                      class="bi bi-chevron-down"
+                      id="chevron-down"
+                      style="display: none; opacity: 0"
+                    ></i>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="stotal-content"
+                style="overflow: hidden; height: auto"
+              >
+                <div id="content" class="hidden"></div>
+                <div class="subtotal">
+                  <div class="stotal">
+                    <div class="scon"><h4>SubTotal</h4></div>
+                    <div class="sprice"><p id="sub-total">0</p></div>
+                  </div>
+                  <div class="tax">
+                    <div class="tcon"><h4>Tax</h4></div>
+                    <div class="tprice"><p>0</p></div>
+                  </div>
+                  <div class="charge">
+                    <div class="tcon"><h4>Shipping Charge</h4></div>
+                    <div class="tprice"><p>0</p></div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="grandtotal">

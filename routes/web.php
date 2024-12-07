@@ -23,6 +23,7 @@ use App\Http\Controllers\TaxController\TaxController;
 use App\Http\Controllers\SettingController\SettingController;
 use App\Http\Controllers\BrandController\BrandController;
 use App\Http\Controllers\CategoryController\CategoryController;
+use App\Http\Controllers\AccountController\AccountController;
 
 
 // Route::get('welcome', function () {
@@ -228,6 +229,8 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
 
     Route::resource('brand', BrandController::class);
     Route::resource('category', CategoryController::class);
+    Route::resource('accounts', AccountController::class);
+    
 
     
 });

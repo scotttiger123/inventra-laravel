@@ -71,7 +71,7 @@
                                             <div class="input-group-addon" data-toggle="modal" data-target="#CreateNewCustomerModal">
                                                 <i class="fa fa-plus"></i>
                                             </div>
-                                            <!-- Input for selecting customer name -->
+                                            
                                             <input type="text" 
                                                 list="customer-names" 
                                                 style="width: 100%;" 
@@ -87,9 +87,8 @@
                                                     <option value="{{ $customer->name }}" data-id="{{ $customer->id }}">{{ $customer->id }}</option>
                                                 @endforeach
                                             </datalist>
-
-                                            <!-- Hidden field for storing customer ID -->
-                                            <input type="text" name="customer_id" id="customer-id">
+ 
+                                            <input type="hidden" name="customer_id" id="customer-id">
                                         </div>
                             </div>
                            
@@ -222,22 +221,14 @@
                                         <input type="text" id="staff_note" name="sale_note" tabindex="8"  placeholder="Staff Note / Remarks"  class="form-control myInput">
                                     </div>
                                 </div>
-                                <div class="col-xs-2">
-                                        <div class="form-group">
-                                            <input type="checkbox" id="exit_warehouse" name="exit_warehouse" value="1" class="flat-red" checked>
-                                            <label for="exit_warehouse">Exit Warehouse</label>
-                                            
-                                            <span>Check this if the product is exiting from the warehouse.</span>
-                                        </div>
-                                </div>
                                 <div class="col-md-2">       
-                                    <input type="text" list="warehouse-names" style="width: 100%;" name="warehouse_name" class="form-control myInput" placeholder="Select Warehouse" tabindex="1" id="warehouse-name-input">
+                                    <input type="text" list="warehouse-names" style="width: 100%;" name="warehouse_name" class="form-control myInput" placeholder="Select Warehouse" tabindex="5" id="warehouse-name-input">
                                         <datalist id="warehouse-names">
                                             @foreach($warehouses as $warehouse)
                                                 <option value="{{ $warehouse->name }}" data-id="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                                             @endforeach
                                         </datalist>
-                                    <input type="text" name="warehouse_id" id="warehouse-id">
+                                    <input type="hidden" name="warehouse_id" id="warehouse-id">
                                 </div>           
                                 
                                     <!-- Add Product Button -->
@@ -293,7 +284,7 @@
                                     <div class="info-box custom">
                                         <span class="info-box-icon" style="border-radius: 5px;!important"><i class="fa fa-percent"></i></span>
                                         <div class="info-box-content">
-                                            <select name="tax_rate" id="tax_rate" class="form-control">
+                                            <select name="tax_rate" id="tax_rate" class="form-control" tabindex="8">
                                                 <option value="" selected>Order Tax</option>
                                                     @foreach($taxes as $tax)
                                                         <option value="{{ $tax->rate }}">{{ $tax->name }} ({{ $tax->rate }}%)</option>

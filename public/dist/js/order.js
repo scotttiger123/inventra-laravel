@@ -173,6 +173,8 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         
         const timeField = document.getElementById('datetimepicker_dark1');
         const customerField = document.getElementById('customer-id');
+
+
         
         // Validate existence of required fields
         if (!timeField) {
@@ -275,7 +277,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
             var discountValue = parseFloat(row.cells[4].innerText) || 0;  // Discount value
             var netRate = parseFloat(row.cells[6].innerText);  // Net rate after discount
             var amount = parseFloat(row.cells[6].innerText);  // Amount after discount
-            var exitWarehouse = row.cells[7].innerHTML ;
+            var exitWarehouse = row.getAttribute('data-warehouse-id');
             
             
     
@@ -290,7 +292,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
                 discountValue: discountValue,
                 netRate: netRate,
                 amount: amount,
-                exit_warehouse: exitWarehouse
+                exit_warehouse_id: exitWarehouse
             });
         }
     
@@ -320,6 +322,17 @@ document.getElementById('submitOrder').addEventListener('click', function () {
             alert("Product not found. Please select a valid product.");
             return;
         }
+
+
+
+         // var exitWarehouse = document.getElementById('exit_warehouse').checked ? 1 : 0;
+         var exitWarehouseValue = document.getElementById('warehouse-id').value;
+         var exitWarehouseId = document.getElementById('warehouse-name-input').value;
+
+        if (!exitWarehouseId) {
+            alert("Please select a warehouse.");
+            return;
+        }
         
         var productId = selectedOption.getAttribute('data-id');
         var productName = selectedOption.textContent;
@@ -329,8 +342,8 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         var rate = parseFloat(document.getElementById('price_id').value);
         var discountType = document.getElementById('discount_type').value; // Discount type (flat or percentage)
         var discountValue = parseFloat(document.getElementById('discount_value').value);
-        // var exitWarehouse = document.getElementById('exit_warehouse').checked ? 1 : 0;
-        var exitWarehouse = document.getElementById('warehouse-id').value;
+       
+        
         
         // Get the selected UOM value and UOM id (from data-id)
         var uomInput = document.getElementById('uom_id');
@@ -366,6 +379,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         newRow.setAttribute('data-product-code', productCode);
         newRow.setAttribute('data-product-id', productId);
         newRow.setAttribute('data-uom-id', uomId);
+        newRow.setAttribute('data-warehouse-id', exitWarehouseValue);
         
         // Create the table cells
         var cell1 = newRow.insertCell(0); // Product Name
@@ -406,7 +420,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         cell7.innerHTML = amount;
         
         
-        cell8.innerHTML = exitWarehouse ;
+        cell8.innerHTML = exitWarehouseId ;
         
         // Create delete button
         var deleteButton = document.createElement("button");

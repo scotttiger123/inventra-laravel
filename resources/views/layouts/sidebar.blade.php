@@ -124,7 +124,38 @@
           <li style="padding-left: 20px;"><a href="/expenses-head"><i class="fa fa-dot-circle-o"></i> Expense Categories</a></li>
         </ul>
       </li>
-    
+      <li class="treeview">
+              <a href="#">
+                  <i class="fa fa-book"></i>
+                  <span>Accounts</span>
+                  <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                  </span>
+              </a>
+              <ul class="treeview-menu">
+                  <!-- Account List -->
+                  <li style="padding-left: 20px;">
+                      <a href="/accounts">
+                          <i class="fa fa-dot-circle-o"></i> Account Lists
+                      </a>
+                  </li>
+                  
+                  <!-- Add New Account -->
+                  <li style="padding-left: 20px;">
+                      <a href="/accounts/create">
+                          <i class="fa fa-dot-circle-o"></i> Add Account
+                      </a>
+                  </li>
+                  
+                  <!-- Account Summary -->
+                  <li style="padding-left: 20px;">
+                      <a href="/accounts/summary">
+                          <i class="fa fa-dot-circle-o"></i> Account Summary
+                      </a>
+                  </li>
+              </ul>
+          </li>
+
       <li class="treeview">
         <a href="#">
           <i class="fa fa-exchange"></i>

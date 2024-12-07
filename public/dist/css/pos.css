@@ -71,6 +71,27 @@ body {
     font-size: 14px; 
     outline: none; 
   }
+
+  #customer-name-input-pos {
+    width: 100%;
+    padding: 22px 10px; 
+    border-radius: 6px;
+    background-color: rgb(249, 245, 245);
+    border: 1px solid lightgrey;
+    font-size: 14px; 
+    outline: none; 
+  }
+
+  #warehouse-name-input{
+    
+    width: 100%;
+    padding: 22px 10px; 
+    border-radius: 6px;
+    background-color: rgb(249, 245, 245);
+    border: 1px solid lightgrey;
+    font-size: 14px; 
+    outline: none; 
+  }
   
   
   #choices1{
@@ -369,3 +390,81 @@ body {
     font-size: 12px;
   }
   
+  .su-container{
+    position: relative;
+    transition: all 0.3s;
+  height: 10rem;
+  padding: 10px 0px;
+  width: 100%;
+  }
+  
+  .subtotal {
+    background-color: rgb(249, 245, 245);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: height 0.5s ease; 
+    height: auto;
+  }
+  .stotal-content {
+    overflow: hidden; 
+    /* transition: height 0.5s ease;  */
+    position: relative;
+  }
+  .stotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 6px;
+  }
+  .tax{
+      display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 6px;
+  }
+  .charge{
+      display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 6px;
+  }
+  .t-container {
+   position: absolute;
+    bottom: 0; 
+    width: 100%;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  .center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .stotal-content {
+     transition: height 0.3s ease;
+  }
+  .t-btn button{
+    border: none;
+    background-color: gold;
+    padding: 5px 6px;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 999999;
+      position: relative;
+  }
+  .grandtotal {
+    background-color: black;
+    color: white;
+    border-radius: 6px;
+    margin-top: -2rem;
+  }
+  .gtotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 10px;
+    border-radius: 6px;
+  }

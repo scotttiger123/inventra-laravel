@@ -305,7 +305,7 @@ class OrderController extends Controller
                             'unit_price' => $item['rate'],
                             'discount_type' => (strpos($item['discountType'], '%') !== false) ? '%' : '-',
                             'discount_amount' => $item['discountValue'],
-                            'exit_warehouse' => $item['exit_warehouse'],
+                            'exit_warehouse' => $item['exit_warehouse_id'] === null ?? 0 ,
                             'custom_order_id' => $orderNumber,
                             'cost_price' => $costPrice, 
                        
