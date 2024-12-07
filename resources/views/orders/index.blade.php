@@ -153,6 +153,14 @@
                                         >
                                             <i class="fa fa-eye"></i> View Invoice
                                         </button>
+                                        <button 
+                                                class="custom-dropdown-item" 
+                                                type="button" 
+                                                data-toggle="modal"
+                                                data-target="#paymentModal"
+                                                onclick="preparePayment('{{ $order->custom_order_id }}')">
+                                                <i class="fa fa-plus"></i> Add Payment
+                                        </button>
 
                                         <button 
                                             class="custom-dropdown-item" 
@@ -390,5 +398,119 @@
 </div>
 
 
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel">Add Payment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Proceed with your payment for Reference ID: <span id="orderIdModal"></span></p>
+                <div class="form-group">
+                    <label for="payment_date">Payment Date</label>
+                    <input type="date" class="form-control" id="payment_date" placeholder="Select payment date">
+                </div>    
+                <!-- Payment Fields -->
+                <div class="form-group">
+                    <label for="receivedAmount">Received Amount</label>
+                    <input type="number" class="form-control" id="receivedAmount" placeholder="Enter received amount">
+                </div>
+ 
+                    <div class="form-group">
+                        <label for="bankAccountList">Account</label>
+                        <select class="form-control" id="bankAccountList">
+                            @foreach ($accounts as $id => $name)
+                                <option value="{{ $id }}">{{ $name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
+                <div class="form-group">
+                    <label for="remarks">Remarks</label>
+                    <textarea class="form-control" id="remarks" rows="3" placeholder="Enter any remarks"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button onclick = 'savePayment()' id="savePaymentButton" type="button" class="btn btn-primary">Save Payment</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script> 
+
+function savePayment() {
+    // Get the orderId from the modal
+    const orderId = $('#orderIdModal').text();  // Assuming the order ID is displayed within the span with id 'orderId'
+
+    // Get values from the input fields
+    var receivedAmount = document.getElementById('receivedAmount').value;
+    var accountId = document.getElementById('bankAccountList').value;
+    var remarks = document.getElementById('remarks').value;
+    var paymentDate = document.getElementById('payment_date').value;
+    
+    // Check if required fields are filled
+    if (receivedAmount && accountId && paymentDate) {
+        // Create FormData object to send data
+        var formData = new FormData();
+        
+        formData.append('payment_head', 'customer'); 
+        formData.append('payable_type', 'customer'); 
+        formData.append('payment_type', 'credit'); 
+        formData.append('payable_id', orderId); 
+        formData.append('invoice_id', orderId); 
+        formData.append('payment_date', paymentDate); 
+        formData.append('amount', receivedAmount); 
+        formData.append('payment_method', accountId);
+        formData.append('note', remarks); 
+        formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // CSRF token
+
+        // Send the payment data using fetch API
+        fetch('{{ route('payments.storeUsingSale') }}', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest', // Identifies the request as an AJAX request
+            },
+            body: formData
+        })
+        .then(response => {
+            console.log('Response:', response); // Log the response object
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // Parse response as JSON
+        })
+        .then(data => {
+            console.log('Parsed Data:', data); // Log parsed data
+            if (data.success) {
+                alert('Payment saved successfully!');
+                $('#paymentModal').modal('hide'); // Hide the modal
+                location.reload(); // Reload the page to see the updated data
+            } else {
+                alert('Failed to save payment. ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while saving the payment. Please try again.');
+        });
+    } else {
+        alert('Please fill in all required fields.');
+    }
+}
+
+
+
+
+
+    function preparePayment(orderId) {
+        alert(orderId);
+        $('#orderIdModal').text(orderId);
+    }
+</script>
 @endsection

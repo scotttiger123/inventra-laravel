@@ -121,6 +121,7 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
     Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create');
     Route::post('/payments/store', [PaymentController::class, 'store'])->name('payments.store');
+    Route::post('/payments/store-using-sale', [PaymentController::class, 'storeUsingSale'])->name('payments.storeUsingSale');
     Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
     Route::get('/payments/{payment}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
     Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');

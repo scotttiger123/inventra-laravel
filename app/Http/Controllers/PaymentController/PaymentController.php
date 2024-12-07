@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\PaymentHead;
 use App\Models\Customer;
 use App\Models\Supplier;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -104,7 +105,6 @@ class PaymentController extends Controller
         {
             $request->validate([
                 'amount' => 'required|numeric',
-                'status' => 'required|in:pending,completed,cancelled',
                 'payment_type' => 'required|in:credit,debit',
                 'payable_id' => 'required|integer',
                 'payable_type' => 'required|string',
@@ -146,6 +146,73 @@ class PaymentController extends Controller
             return redirect()->route('payments.create')->with('success', 'Payment created successfully!');
         }
         
+
+
+
+               
+        public function storeUsingSale(Request $request)
+        {
+            $request->validate([
+                'amount' => 'required|numeric',
+                'payment_type' => 'required|in:credit,debit',
+                'payable_id' => 'required|integer',
+                'payable_type' => 'required|string',
+                'payment_method' => 'required|string',
+                'payment_date' => 'required|date',
+                'note' => 'nullable|string',
+                
+            ]);
+        
+            // Determine the payment_head ID
+            $paymentHeadId = null;
+        
+            if ($request->input('payment_head') == 'customer') {
+                $paymentHead = PaymentHead::where('type', 'customer')->first();
+                if ($paymentHead) {
+                    $paymentHeadId = $paymentHead->id;
+                }
+            } elseif ($request->input('payment_head') == 'supplier') {
+                $paymentHead = PaymentHead::where('type', 'supplier')->first();
+                if ($paymentHead) {
+                    $paymentHeadId = $paymentHead->id;
+                }
+            }
+
+            $order = Order::where('custom_order_id', $request->payable_id)->first();
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Order not found.'
+                ], 404);
+            }
+        
+            $customerId = $order->customer_id; 
+            
+        
+            // Create the payment record
+            Payment::create([
+                'amount' => $request->amount,
+                'status' => $request->status,
+                'payment_type' => $request->payment_type,
+                'payable_id' => 12,
+                'invoice_id' => $request->payable_id,
+
+                'payable_type' => $request->payable_type,
+                'payment_method' => $request->payment_method,
+                'payment_date' => $request->payment_date,
+                'note' => $request->note,
+                'payment_head' => $paymentHeadId, 
+                'created_by' => auth()->id(),
+            ]);
+        
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment saved successfully!',
+                 
+            ]);
+        }
+
+
 
     public function show(Payment $payment)
     {

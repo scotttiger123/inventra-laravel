@@ -9,11 +9,11 @@ use App\Models\Account;
 
 class AccountController extends Controller
 {
-    // Display a listing of accounts
+    
     public function index()
     {
-        $accounts = Account::all(); // Fetch all accounts
-        $totalAccounts = $accounts->count(); // Count total accounts
+        $accounts = Account::all(); 
+        $totalAccounts = $accounts->count(); 
 
         return view('accounts.index', compact('accounts', 'totalAccounts'));
     }

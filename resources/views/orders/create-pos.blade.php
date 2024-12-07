@@ -95,9 +95,7 @@
                   </div>
             <button data-toggle="modal" data-target="#CreateNewCustomerModal"> <i class="bi bi-plus"></i> New Customer</button>
           </div>
-          <div class="shipping">
-            <button><i class="bi bi-bag"></i> Shipping</button>
-          </div>
+         
           <div class="data"></div>
           <div class="center">
             <div class="su-container">
@@ -119,7 +117,7 @@
               </div>
               <div
                 class="stotal-content"
-                style="overflow: hidden; height: auto"
+                style="overflow: hidden; height: auto; margin-top:-1rem; width:109%"
               >
                 <div id="content" class="hidden"></div>
                 <div class="subtotal">
@@ -135,10 +133,11 @@
                     <div class="tcon"><h4>Shipping Charge</h4></div>
                     <div class="tprice"><p>0</p></div>
                   </div>
+                 
                 </div>
               </div>
             </div>
-          </div>
+          </div>
           <div class="grandtotal">
             <div class="gtotal">
               <div class="gcon"><h4>Total</h4></div>

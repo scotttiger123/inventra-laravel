@@ -624,45 +624,44 @@ function clearFinancialFields() {
 }
 
 const toggleBtn = document.getElementById("toggle-btn");
-const chevronUp = document.getElementById("chevron-up");
-const chevronDown = document.getElementById("chevron-down");
-const content = document.getElementById("content");
-const tContainer = document.querySelector(".t-container");
+    const chevronUp = document.getElementById("chevron-up");
+    const chevronDown = document.getElementById("chevron-down");
+    const content = document.getElementById("content");
+    const tContainer = document.querySelector(".t-container");
 
-// Initially set content height
-content.style.height = content.scrollHeight + "px";
+    // Initially set content height
+    content.style.height = content.scrollHeight + "px";
 
-toggleBtn.addEventListener("click", () => {
-  if (content.style.height === "0px") {
-    // Expand content
-    content.style.height = "117px";
+    toggleBtn.addEventListener("click", () => {
+      if (content.style.height === "0px") {
+        // Expand content
+        content.style.height = "117px";
 
-    // Move button to the top
-    tContainer.style.top = "100px";
+        // Move button to the top
+        tContainer.style.top = "100px";
 
-    // Toggle arrows
-    chevronUp.style.display = "block";
-    chevronDown.style.display = "none";
-    setTimeout(() => {
-      chevronUp.style.opacity = "1";
-      chevronDown.style.opacity = "0";
-    }, 50);
-  } else {
-    // Collapse content
-    content.style.height = "0px";
+        // Toggle arrows
+        chevronUp.style.display = "block";
+        chevronDown.style.display = "none";
+        setTimeout(() => {
+          chevronUp.style.opacity = "1";
+          chevronDown.style.opacity = "0";
+        }, 50);
+      } else {
+        // Collapse content
+        content.style.height = "0px";
 
-    // Move button below the content
-    tContainer.style.top = "0px";
+        // Move button below the content
+        tContainer.style.top = "0px";
 
-    // Toggle arrows
-    chevronUp.style.opacity = "0"; // Fade out up arrow
-    chevronDown.style.opacity = "1"; // Fade in down arrow
+        // Toggle arrows
+        chevronUp.style.opacity = "0"; // Fade out up arrow
+        chevronDown.style.opacity = "1"; // Fade in down arrow
 
-    setTimeout(() => {
-      chevronUp.style.display = "none"; // Hide up arrow after fade out
-      chevronDown.style.display = "block"; // Show down arrow after fade in
-    }, 300);
-  }
-});
-
+        setTimeout(() => {
+          chevronUp.style.display = "none"; // Hide up arrow after fade out
+          chevronDown.style.display = "block"; // Show down arrow after fade in
+        }, 300);
+      }
+    });
 

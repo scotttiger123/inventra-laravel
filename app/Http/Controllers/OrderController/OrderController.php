@@ -14,10 +14,12 @@ use App\Models\Status;
 use App\Models\Category;
 use App\Models\Warehouse;
 use App\Models\User; 
+use App\Models\Account; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+
 use Exception;
 
 
@@ -596,6 +598,9 @@ class OrderController extends Controller
                         $totalPaid += $order->paid;
                     }
 
+                    $accounts = \DB::table('accounts')
+                    ->whereNull('deleted_at') 
+                    ->pluck('name', 'id'); 
                     // Pass totals to the view
                     return view('orders.index', compact(
                         'orders',
@@ -604,7 +609,9 @@ class OrderController extends Controller
                         'totalNetAmount',
                         'totalPaid',
                         'totalAmountDue',
-                        'currencySymbol' 
+                        'currencySymbol',
+                        'accounts'
+                        
                     ));
                 } catch (Exception $e) {
                     \Log::error('Failed to fetch orders: ' . $e->getMessage());
