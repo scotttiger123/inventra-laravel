@@ -14,6 +14,7 @@ use App\Models\Status;
 use App\Models\Category;
 use App\Models\Warehouse;
 use App\Models\User; 
+use App\Models\Payment; 
 use App\Models\Account; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -201,10 +202,12 @@ class OrderController extends Controller
         $netTotalWithTax = $netTotal + $taxAmount;
     
 
+        $payments = Payment::where('invoice_id', $customOrderId) 
+                        ->sum('amount');
 
 
         // Calculate remaining amount
-        $paidAmount = (float)$order->paid;
+        $paidAmount = (float)$payments;
         $remainingAmount = $netTotalWithTax  - $paidAmount;
         
 
@@ -320,7 +323,28 @@ class OrderController extends Controller
                 }
             } else {
                 \Log::error('Missing orderData');
-            }                                            
+            }                    
+            
+            
+
+
+            if ($request->paid_amount > 0) {
+                DB::table('payments')->insert([
+                    'payable_type' => 'customer', 
+                    'payment_head' => 1, 
+                    'payable_id' => $request->customer_id, 
+                    'payment_date' => $request->order_date, 
+                    'invoice_id' => $orderNumber, 
+                    'amount' => $request->paid_amount, 
+                    'payment_method' => $request->payment_method, 
+                    'account_id' => 1, 
+                    'payment_type' => "credit", 
+                    'note' => 'Payment made at the time of order creation', 
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
             // Commit transaction
             DB::commit();
     
@@ -421,7 +445,7 @@ class OrderController extends Controller
                             'unit_price' => $item['rate'],
                             'custom_order_id' => $orderNumber,
                             'cost_price' => $costPrice, 
-                            'exit_warehouse' => $item['warehouse_id'],
+                            'exit_warehouse' => $item['warehouse_id'] === null ?? 0 ,
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
@@ -431,7 +455,25 @@ class OrderController extends Controller
                 }
             } else {
                 \Log::error('Missing orderData');
-            }                                            
+            }      
+            
+            
+            if ($request->paid_amount > 0) {
+                DB::table('payments')->insert([
+                    'payable_type' => 'customer', 
+                    'payment_head' => 1, 
+                    'payable_id' => $request->customer_id, 
+                    'payment_date' => $request->order_date ?? now(),
+                    'invoice_id' => $orderNumber, 
+                    'amount' => $request->paid_amount, 
+                    'payment_method' => $request->payment_method, 
+                    'account_id' => 1, 
+                    'payment_type' => "credit", 
+                    'note' => 'Payment made at the time of order creation', 
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
             // Commit transaction
             DB::commit();
     
@@ -539,11 +581,13 @@ class OrderController extends Controller
 
                     $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
 
-                    $orders = Order::whereIn('created_by', [$userId, $parentUserId])
-                                ->with('customer')
-                                ->orderBy('created_at', 'desc')
+                   
+                                $orders = Order::select('orders.*', 'statuses.status_name') 
+                                ->leftJoin('statuses', 'orders.status', '=', 'statuses.id') 
+                                ->whereIn('orders.created_by', [$userId, $parentUserId]) 
+                                ->with('customer') 
+                                ->orderBy('orders.created_at', 'desc') 
                                 ->get();
-
                     foreach ($orders as $order) {
                         $grossAmount = 0;
                         $orderItems = OrderItem::where('custom_order_id', $order->custom_order_id)->get();
@@ -578,24 +622,28 @@ class OrderController extends Controller
                             $taxAmount = ($netTotal * $taxRate) / 100;
                         }
                         $netTotalWithTax = $netTotal + $taxAmount;
+                        
+                         
+                        $payments = Payment::where('invoice_id', $order->custom_order_id) // Match custom_order_id with invoice_id
+                        ->sum('amount');
 
-                        $remainingAmount = $netTotalWithTax - $order->paid;
-                        
-                        
-                        // Add remaining amount to totalAmountDue
+                        $remainingAmount = $netTotalWithTax - $payments;
+
+                      
                         $totalAmountDue += $remainingAmount;
-
-                        // Add other totals
+                        
+                        
                         $order->grossAmount = $grossAmount;
                         $order->orderDiscount = $orderDiscount;
                         $order->grossAmountAfterOrderDiscount = $grossAmountAfterOrderDiscount;
                         $order->netTotal = $netTotalWithTax;
                         $order->remainingAmount = $remainingAmount;
+                        $order->ordersPaidAmount = $payments;
 
                         $totalGrossAmount += $grossAmount;
                         $totalOrderDiscount += $orderDiscount;
                         $totalNetAmount += $netTotal;
-                        $totalPaid += $order->paid;
+                        $totalPaid += $payments;
                     }
 
                     $accounts = \DB::table('accounts')

@@ -84,7 +84,7 @@
         <table id="order-listings" class="table table-bordered table-striped">
             <thead>
             <tr>
-                <th>Sale Status</th>
+                <th>Status</th>
                 <th>Reference</th> 
                 <th>Date</th>
                 <th>Customer</th>
@@ -102,7 +102,7 @@
             <tbody>
     @foreach($orders as $order)
         <tr>
-            <td></td>
+            <td>{{ $order->status_name }}</td>
             <td><a href="javascript:void(0);" onclick="getInvoiceDetails('{{ $order->custom_order_id }}')">{{ $order->custom_order_id }}</a></td> <!-- Display Custom Order ID -->
   
             <td>{{ $order->order_date }}</td>
@@ -118,7 +118,7 @@
             <td>{{ $order->tax_rate ? $order->tax_rate : '' }}</td>
             <td>{{ $order->other_charges }}</td>
             <td>{{ $order->netTotal }}</td>
-            <td>{{ $order->paid }}</td>
+            <td>{{ $order->ordersPaidAmount }}</td>
             <td class="text-center">
         <span class="badge 
             @if($order->remainingAmount > 0) 
@@ -160,6 +160,14 @@
                                                 data-target="#paymentModal"
                                                 onclick="preparePayment('{{ $order->custom_order_id }}')">
                                                 <i class="fa fa-plus"></i> Add Payment
+                                        </button>
+                                        <button 
+                                                class="custom-dropdown-item" 
+                                                type="button" 
+                                                data-toggle="modal"
+                                                data-target="#viewPaymentsModal"
+                                                onclick="prepareViewPayments('{{ $order->custom_order_id }}')">
+                                                <i class="fa fa-eye"></i> View Payment
                                         </button>
 
                                         <button 
@@ -442,6 +450,30 @@
         </div>
     </div>
 </div>
+
+<!-- View Payments Modal -->
+<div class="modal fade" id="viewPaymentsModal" tabindex="-1" role="dialog" aria-labelledby="viewPaymentsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewPaymentsModalLabel">View Payments</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Payments for Reference ID: <span id="viewOrderIdModal"></span></p>
+                <div id="paymentDetails">
+                    <p>Loading payments...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script> 
 
 function savePayment() {
@@ -466,7 +498,7 @@ function savePayment() {
         formData.append('invoice_id', orderId); 
         formData.append('payment_date', paymentDate); 
         formData.append('amount', receivedAmount); 
-        formData.append('payment_method', accountId);
+        formData.append('account_id', accountId);
         formData.append('note', remarks); 
         formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // CSRF token
 
@@ -488,7 +520,6 @@ function savePayment() {
         .then(data => {
             console.log('Parsed Data:', data); // Log parsed data
             if (data.success) {
-                alert('Payment saved successfully!');
                 $('#paymentModal').modal('hide'); // Hide the modal
                 location.reload(); // Reload the page to see the updated data
             } else {
@@ -506,6 +537,60 @@ function savePayment() {
 
 
 
+function prepareViewPayments(orderId) {
+    // Set the Order ID in the modal
+    $('#viewOrderIdModal').text(orderId);
+
+    // Clear and show a loading message in the payment details section
+    const paymentDetailsContainer = $('#paymentDetails');
+    paymentDetailsContainer.html('<p>Loading payments...</p>');
+
+    // Fetch payments associated with the order
+    fetch(`/payments/view/${orderId}`, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest', // Indicate an AJAX request
+        },
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch payment details.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Build the payment details content
+                let content = `<table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Payment Date</th>
+                            <th>Amount</th>
+                            <th>Account</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                data.payments.forEach(payment => {
+                    content += `
+                        <tr>
+                            <td>${payment.payment_date}</td>
+                            <td>${payment.amount}</td>
+                            <td>${payment.account_name || 'N/A'}</td>
+                            <td>${payment.note || 'N/A'}</td>
+                        </tr>`;
+                });
+                content += `</tbody></table>`;
+                paymentDetailsContainer.html(content);
+            } else {
+                paymentDetailsContainer.html('<p>No payments found for this order.</p>');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            paymentDetailsContainer.html('<p>An error occurred while fetching payment details.</p>');
+        });
+}
 
 
     function preparePayment(orderId) {

@@ -126,12 +126,12 @@
                     <div class="sprice"><p id="sub-total">0</p></div>
                   </div>
                   <div class="tax">
-                    <div class="tcon"><h4>Tax</h4></div>
-                    <div class="tprice"><p>0</p></div>
+                    <div class="tcon"><h4>Tax(%)</h4></div>
+                    <div class="tprice"><p id = 'bottom-tax-value-label' >0</p></div>
                   </div>
                   <div class="charge">
-                    <div class="tcon"><h4>Shipping Charge</h4></div>
-                    <div class="tprice"><p>0</p></div>
+                    <div class="tcon"><h4>Other Charges</h4></div>
+                    <div class="tprice"><p id = 'bottom-other-charges-label'>0</p></div>
                   </div>
                  
                 </div>

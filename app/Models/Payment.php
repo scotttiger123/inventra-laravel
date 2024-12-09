@@ -19,6 +19,7 @@ class Payment extends Model
         'invoice_id', // ID of related invoice (if applicable)
         'payment_head', // Payment head (customer or supplier)
         'payment_method',
+        'account_id',
         'payment_date',
         'note',
         'updated_by', // User who last updated the payment

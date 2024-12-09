@@ -96,7 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const actionsDiv = document.createElement("div");
             actionsDiv.classList.add("actions");
             const productId = box.getAttribute("data-product-id");
-            
+            const warehouseId = document.getElementById('warehouse-id').value; 
+            document.getElementById('warehouse-name-input').focus();
+           
+            if (!warehouseId) {
+                alert("Please select a warehouse.");
+                return; 
+            }
+
 
             actionsDiv.innerHTML = `
               <button class="decrease">-</button>
@@ -111,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
               name: productName,
               price: productPrice,
               quantity,
+              warehouse_id:warehouseId,
             });
 
             // Handle Decrease Quantity
@@ -283,8 +291,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
       
       if (data.success) {
-        const warehouseId = document.getElementById('warehouse-id').value; 
-
+    
+        const warehouseId = document.getElementById('warehouse-id').value;
+        if (!warehouseId) {
+            alert("Please select a warehouse.");
+            return; 
+        }
+         
         const product = {
           product_id: data.product.id,
           name: data.product.product_name,
@@ -323,6 +336,7 @@ function updateTotals() {
   
     var orderDiscount = parseFloat(document.getElementById('order_discount_id').value) || 0; // Get order discount
     var otherCharges = parseFloat(document.getElementById('other_charges_id').value) || 0; // Get other charges
+    document.getElementById('bottom-other-charges-label').textContent = otherCharges;
     var netAmount = 0;
   
     selectedProducts.forEach((product) => {
@@ -349,6 +363,7 @@ function updateTotals() {
   
   // Get selected tax rate
   var taxRate = parseFloat(document.getElementById('tax_rate').value) || 0;
+  document.getElementById('bottom-tax-value-label').textContent = taxRate;
   var taxAmount = (netAmount * taxRate) / 100;
   netAmount += taxAmount;
 
@@ -621,6 +636,10 @@ function clearFinancialFields() {
   document.getElementById('net_amount_label').textContent = "0.00";
   document.getElementById('paid_amount_label').textContent = "0.00";
   document.getElementById('balance_label').textContent = "0.00";
+  document.getElementById('bottom-tax-value-label').textContent = "0.00";
+  document.getElementById('bottom-other-charges-label').textContent = "0.00";
+  
+  
 }
 
 const toggleBtn = document.getElementById("toggle-btn");

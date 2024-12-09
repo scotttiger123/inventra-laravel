@@ -128,7 +128,7 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
     Route::get('/payments/get-payable-options/{head}', [PaymentController::class, 'getPayableOptions'])->name('payments.getPayableOptions');
     Route::get('/get-payment-details/{voucherId}', [PaymentController::class, 'getPaymentDetails']);
-
+    Route::get('/payments/view/{orderId}', [PaymentController::class, 'viewPayments']);
 
     // Role routes
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');  // Display a listing of roles

@@ -157,7 +157,6 @@ class PaymentController extends Controller
                 'payment_type' => 'required|in:credit,debit',
                 'payable_id' => 'required|integer',
                 'payable_type' => 'required|string',
-                'payment_method' => 'required|string',
                 'payment_date' => 'required|date',
                 'note' => 'nullable|string',
                 
@@ -198,7 +197,7 @@ class PaymentController extends Controller
                 'invoice_id' => $request->payable_id,
 
                 'payable_type' => $request->payable_type,
-                'payment_method' => $request->payment_method,
+                'account_id' => $request->account_id,
                 'payment_date' => $request->payment_date,
                 'note' => $request->note,
                 'payment_head' => $paymentHeadId, 
@@ -314,5 +313,29 @@ class PaymentController extends Controller
         }
     }
     
+
+
+    public function viewPayments($orderId)
+        {
+            try {
+                // Use left join to include payments even if no matching account exists
+                $payments = Payment::where('invoice_id', $orderId)
+                    ->leftJoin('accounts', 'payments.account_id', '=', 'accounts.id') 
+                    ->select('payments.*', 'accounts.name as account_name')
+                    ->get();
+
+                return response()->json([
+                    'success' => true,
+                    'payments' => $payments,
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Error fetching payments: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to fetch payment details.',
+                ]);
+            }
+        }
+
 
 }
