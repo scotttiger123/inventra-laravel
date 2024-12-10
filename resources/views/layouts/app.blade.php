@@ -27,14 +27,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"      rel="stylesheet">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   
-<!-- CSS -->
-<link rel="stylesheet" href="{{ asset('bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
-
-<!-- JS -->
-<script src="{{ asset('bower_components/moment/min/moment.min.js') }}"></script>
-<script src="{{ asset('bower_components/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
-<script src="{{ asset('bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-<script src="{{ asset('bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js') }}"></script>
 
 
   <!-- Custom Styles -->

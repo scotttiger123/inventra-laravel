@@ -73,32 +73,40 @@
                 </div>
             @endif
         </div>
-        <div class="form-group">
-                <label>Date range button:</label>
 
-                <form method="GET" action="{{ route('orders.index') }}">
-    <div class="form-group">
-        <label>Date range button:</label>
 
-        <div class="input-group">
-            <button type="button" class="btn btn-default pull-right" id="daterange-btn">
-                <span>
-                    <i class="fa fa-calendar"></i> Date range picker
-                </span>
-                <i class="fa fa-caret-down"></i>
-            </button>
+        <form method="GET" action="{{ route('orders.index') }}">
+    <div class="form-group row">
+        <div class="col-md-2">
+            <label>Date range:</label>
+            <div class="input-group">
+                <button type="button" class="btn btn-default" id="daterange-btn">
+                    <span>
+                        <i class="fa fa-calendar"></i> Date range picker
+                    </span>
+                    <i class="fa fa-caret-down"></i>
+                </button>
+            </div>
+            <input type="hidden" name="start_date" id="start_date" value="">
+            <input type="hidden" name="end_date" id="end_date" value="">
         </div>
 
-        <!-- Hidden inputs to store the selected date range -->
-        <input type="text" name="start_date" id="start_date" value="">
-        <input type="text" name="end_date" id="end_date" value="">
+        <div class="col-md-2">
+            <label for="amount_filter">Filter by Amount:</label>
+            <select name="remaining_amount_filter" id="remaining_amount_filter" class="form-control">
+                <option value="">Select Filter</option>
+                <option value="due">Amount Due</option>
+                <option value="paid">Amount Paid</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-success mt-4" style = 'margin-top:24px'><i class="fa fa-filter"></i> Filter</button>
+        </div>
     </div>
-
-    <!-- Submit button to apply the filter -->
-    <button type="submit" class="btn btn-primary">Filter</button>
 </form>
+
                 
-        </div>
 
         <div class="text-right">
             <a href="{{ route('orders.create') }}" class="btn btn-success">
@@ -535,8 +543,8 @@
       },
       function (start, end) {
         $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
-        $('#start_date').val(start.format('YYYY-MM-DD')); // Start date
-        $('#end_date').val(end.format('YYYY-MM-DD'));     // End date
+         $('#start_date').val(start.format('YYYY-MM-DD')); // Start date
+            $('#end_date').val(end.format('YYYY-MM-DD'));     // End date
       }
     )
 

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 use Exception;
 
@@ -585,8 +586,13 @@ public function index(Request $request)
 
         $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
 
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $startDate = $request->input('start_date', Carbon::now()->subDays(29)->toDateString());
+        $endDate = $request->input('end_date', Carbon::now()->toDateString());
+
+        $startDate = Carbon::parse($startDate)->startOfDay();
+        $endDate = Carbon::parse($endDate)->endOfDay();
+
+        $filterRemainingAmount = $request->input('remaining_amount_filter', 'all'); // 'all', 'due', 'paid'
 
         $ordersQuery = Order::select('orders.*', 'statuses.status_name')
             ->leftJoin('statuses', 'orders.status', '=', 'statuses.id')
@@ -594,12 +600,12 @@ public function index(Request $request)
             ->whereNull('orders.deleted_at')
             ->with('customer')
             ->orderBy('orders.created_at', 'desc');
-            
+
         if ($startDate && $endDate) {
             $ordersQuery->whereBetween('orders.created_at', [$startDate, $endDate]);
         }
 
-        $orders = $ordersQuery->get();    
+        $orders = $ordersQuery->get();
 
         foreach ($orders as $order) {
             $grossAmount = 0;
@@ -628,7 +634,6 @@ public function index(Request $request)
             $grossAmountAfterOrderDiscount = $grossAmount - $orderDiscount;
             $netTotal = $grossAmountAfterOrderDiscount + $order->other_charges;
 
-            // Calculate Tax
             $taxRate = $order->tax_rate;
             $taxAmount = 0;
             if ($taxRate) {
@@ -641,15 +646,13 @@ public function index(Request $request)
 
             $remainingAmount = $netTotalWithTax - $payments;
 
-            if ($order->status_name === 'Return') { // is return ? 
-                
+            if ($order->status_name === 'Return') {
                 $totalGrossAmount -= $grossAmount;
                 $totalOrderDiscount -= $orderDiscount;
                 $totalNetAmount -= $netTotalWithTax;
                 $totalPaid -= $payments;
                 $totalAmountDue -= $remainingAmount;
             } else {
-                // Add amounts for non-returned orders
                 $totalGrossAmount += $grossAmount;
                 $totalOrderDiscount += $orderDiscount;
                 $totalNetAmount += $netTotalWithTax;
@@ -663,6 +666,17 @@ public function index(Request $request)
             $order->netTotal = $netTotalWithTax;
             $order->remainingAmount = $remainingAmount;
             $order->ordersPaidAmount = $payments;
+        }
+
+        // Apply remaining amount filter
+        if ($filterRemainingAmount === 'due') {
+            $orders = $orders->filter(function ($order) {
+                return $order->remainingAmount > 0;
+            });
+        } elseif ($filterRemainingAmount === 'paid') {
+            $orders = $orders->filter(function ($order) {
+                return $order->remainingAmount <= 0;
+            });
         }
 
         $accounts = \DB::table('accounts')
@@ -690,17 +704,16 @@ public function index(Request $request)
 
 public function edit($customOrderId)
 {
-    // Fetch the order by custom_order_id
+    
     $order = Order::where('custom_order_id', $customOrderId)->first();
 
     if (!$order) {
         return redirect()->route('orders.index')->with('error', 'Order not found.');
     }
 
-    // Fetch all customers for the dropdown
     $customers = Customer::all();
 
-    // Pass the order and customers to the view
+    
     return view('orders.edit', compact('order', 'customers'));
 }
 
