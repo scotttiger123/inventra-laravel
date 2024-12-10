@@ -62,6 +62,15 @@ body {
     font-size: 14px; 
     outline: none; 
   }
+  .pos-input{
+    
+    padding: 22px 10px; 
+    border-radius: 6px;
+    background-color: rgb(249, 245, 245);
+    border: 1px solid lightgrey;
+    font-size: 14px; 
+    outline: none; 
+  }
   #warehouse-name-input {
     width: 25px;
     padding: 22px 10px; 

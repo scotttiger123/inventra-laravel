@@ -566,106 +566,124 @@ class OrderController extends Controller
         'customer_id' => $customer->id,      // Ensure this is being returned
     ]);
 }
-            public function index(Request $request)
-            {
-                try {
-                    $user = auth()->user();
-                    $userId = $user->id;
-                    $parentUserId = $user->parent_id;
 
-                    $totalGrossAmount = 0;
-                    $totalOrderDiscount = 0;
-                    $totalNetAmount = 0;
-                    $totalPaid = 0;
-                    $totalAmountDue = 0; // Total amount due
 
-                    $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
 
-                   
-                                $orders = Order::select('orders.*', 'statuses.status_name') 
-                                ->leftJoin('statuses', 'orders.status', '=', 'statuses.id') 
-                                ->whereIn('orders.created_by', [$userId, $parentUserId]) 
-                                ->with('customer') 
-                                ->orderBy('orders.created_at', 'desc') 
-                                ->get();
-                    foreach ($orders as $order) {
-                        $grossAmount = 0;
-                        $orderItems = OrderItem::where('custom_order_id', $order->custom_order_id)->get();
 
-                        foreach ($orderItems as $item) {
-                            $totalBeforeDiscount = $item->unit_price * $item->quantity;
-                            $discountAmount = $item->discount_amount;
+public function index(Request $request)
+{
+    try {
+        $user = auth()->user();
+        $userId = $user->id;
+        $parentUserId = $user->parent_id;
 
-                            if ($item->discount_type == '%') {
-                                $discountAmountCalculated = ($totalBeforeDiscount * $discountAmount) / 100;
-                            } else {
-                                $discountAmountCalculated = $discountAmount;
-                            }
+        $totalGrossAmount = 0;
+        $totalOrderDiscount = 0;
+        $totalNetAmount = 0;
+        $totalPaid = 0;
+        $totalAmountDue = 0;
 
-                            $grossAmount += $totalBeforeDiscount - $discountAmountCalculated;
-                        }
+        $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
 
-                        $orderDiscount = 0;
-                        if ($order->discount_type == '%') {
-                            $orderDiscount = ($grossAmount * $order->discount_amount) / 100;
-                        } else {
-                            $orderDiscount = $order->discount_amount;
-                        }
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-                        $grossAmountAfterOrderDiscount = $grossAmount - $orderDiscount;
-                        $netTotal = $grossAmountAfterOrderDiscount + $order->other_charges;
+        $ordersQuery = Order::select('orders.*', 'statuses.status_name')
+            ->leftJoin('statuses', 'orders.status', '=', 'statuses.id')
+            ->whereIn('orders.created_by', [$userId, $parentUserId])
+            ->whereNull('orders.deleted_at')
+            ->with('customer')
+            ->orderBy('orders.created_at', 'desc');
+            
+        if ($startDate && $endDate) {
+            $ordersQuery->whereBetween('orders.created_at', [$startDate, $endDate]);
+        }
 
-                        // Calculate Tax
-                        $taxRate = $order->tax_rate; 
-                        $taxAmount = 0;
-                        if ($taxRate) {
-                            $taxAmount = ($netTotal * $taxRate) / 100;
-                        }
-                        $netTotalWithTax = $netTotal + $taxAmount;
-                        
-                         
-                        $payments = Payment::where('invoice_id', $order->custom_order_id) // Match custom_order_id with invoice_id
-                        ->sum('amount');
+        $orders = $ordersQuery->get();    
 
-                        $remainingAmount = $netTotalWithTax - $payments;
+        foreach ($orders as $order) {
+            $grossAmount = 0;
+            $orderItems = OrderItem::where('custom_order_id', $order->custom_order_id)->get();
 
-                      
-                        $totalAmountDue += $remainingAmount;
-                        
-                        
-                        $order->grossAmount = $grossAmount;
-                        $order->orderDiscount = $orderDiscount;
-                        $order->grossAmountAfterOrderDiscount = $grossAmountAfterOrderDiscount;
-                        $order->netTotal = $netTotalWithTax;
-                        $order->remainingAmount = $remainingAmount;
-                        $order->ordersPaidAmount = $payments;
+            foreach ($orderItems as $item) {
+                $totalBeforeDiscount = $item->unit_price * $item->quantity;
+                $discountAmount = $item->discount_amount;
 
-                        $totalGrossAmount += $grossAmount;
-                        $totalOrderDiscount += $orderDiscount;
-                        $totalNetAmount += $netTotal;
-                        $totalPaid += $payments;
-                    }
-
-                    $accounts = \DB::table('accounts')
-                    ->whereNull('deleted_at') 
-                    ->pluck('name', 'id'); 
-                    // Pass totals to the view
-                    return view('orders.index', compact(
-                        'orders',
-                        'totalGrossAmount',
-                        'totalOrderDiscount',
-                        'totalNetAmount',
-                        'totalPaid',
-                        'totalAmountDue',
-                        'currencySymbol',
-                        'accounts'
-                        
-                    ));
-                } catch (Exception $e) {
-                    \Log::error('Failed to fetch orders: ' . $e->getMessage());
-                    return redirect()->back()->withErrors('Failed to fetch orders. Please try again later.');
+                if ($item->discount_type == '%') {
+                    $discountAmountCalculated = ($totalBeforeDiscount * $discountAmount) / 100;
+                } else {
+                    $discountAmountCalculated = $discountAmount;
                 }
+
+                $grossAmount += $totalBeforeDiscount - $discountAmountCalculated;
             }
+
+            $orderDiscount = 0;
+            if ($order->discount_type == '%') {
+                $orderDiscount = ($grossAmount * $order->discount_amount) / 100;
+            } else {
+                $orderDiscount = $order->discount_amount;
+            }
+
+            $grossAmountAfterOrderDiscount = $grossAmount - $orderDiscount;
+            $netTotal = $grossAmountAfterOrderDiscount + $order->other_charges;
+
+            // Calculate Tax
+            $taxRate = $order->tax_rate;
+            $taxAmount = 0;
+            if ($taxRate) {
+                $taxAmount = ($netTotal * $taxRate) / 100;
+            }
+            $netTotalWithTax = $netTotal + $taxAmount;
+
+            $payments = Payment::where('invoice_id', $order->custom_order_id)
+                ->sum('amount');
+
+            $remainingAmount = $netTotalWithTax - $payments;
+
+            if ($order->status_name === 'Return') { // is return ? 
+                
+                $totalGrossAmount -= $grossAmount;
+                $totalOrderDiscount -= $orderDiscount;
+                $totalNetAmount -= $netTotalWithTax;
+                $totalPaid -= $payments;
+                $totalAmountDue -= $remainingAmount;
+            } else {
+                // Add amounts for non-returned orders
+                $totalGrossAmount += $grossAmount;
+                $totalOrderDiscount += $orderDiscount;
+                $totalNetAmount += $netTotalWithTax;
+                $totalPaid += $payments;
+                $totalAmountDue += $remainingAmount;
+            }
+
+            $order->grossAmount = $grossAmount;
+            $order->orderDiscount = $orderDiscount;
+            $order->grossAmountAfterOrderDiscount = $grossAmountAfterOrderDiscount;
+            $order->netTotal = $netTotalWithTax;
+            $order->remainingAmount = $remainingAmount;
+            $order->ordersPaidAmount = $payments;
+        }
+
+        $accounts = \DB::table('accounts')
+            ->whereNull('deleted_at')
+            ->pluck('name', 'id');
+
+        return view('orders.index', compact(
+            'orders',
+            'totalGrossAmount',
+            'totalOrderDiscount',
+            'totalNetAmount',
+            'totalPaid',
+            'totalAmountDue',
+            'currencySymbol',
+            'accounts'
+        ));
+    } catch (Exception $e) {
+        \Log::error('Failed to fetch orders: ' . $e->getMessage());
+        return redirect()->back()->withErrors('Failed to fetch orders. Please try again later.');
+    }
+}
 
 
 

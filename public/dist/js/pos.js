@@ -1,6 +1,6 @@
 window.onload = function() {
     
-  document.getElementById('customer-name-input').focus();
+  document.getElementById('customer-name-input-pos').focus();
 };
 
 let selectedProducts = [];
@@ -405,7 +405,10 @@ function submitPosOrder() {
   }
 
   
-
+  const statusField = document.getElementById('status-id');
+  formData.append('status_id', statusField.value);
+    
+    
   
   $('#loader').show();
 
@@ -574,6 +577,20 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+
+  const orderStatusInput = document.getElementById('order-status');
+  const orderStatusIdField = document.getElementById('status-id');
+
+  orderStatusInput.addEventListener('input', function() {
+      const selectedOption = document.querySelector(`#orderStatusList option[value="${orderStatusInput.value}"]`);
+      
+      if (selectedOption) {
+          const statusId = selectedOption.getAttribute('data-id');
+          orderStatusIdField.value = statusId; 
+      } else {
+          orderStatusIdField.value = ''; 
+      }
+  });
 
 
 

@@ -18,7 +18,10 @@
           <meta name="csrf-token" content="{{ csrf_token() }}">
           <div class="searches">
             
-            <div class="icon-pos" data-toggle="modal" data-target="#shortcutModal">   <i class="bi bi-keyboard"></i></div>
+            <div class="icon-pos" data-toggle="modal" data-target="#shortcutModal">   <i class="bi bi-keyboard"></i></div> &nbsp;
+            <div class="icon-pos" data-toggle="modal" data-target="#orderStatusModal">
+                <i class="bi bi-three-dots"></i> <!-- Bootstrap Icons -->
+            </div>
 
             <div class="inputs">
                 <div class="col-md-3">
@@ -346,6 +349,10 @@
               <td><kbd>Ctrl</kbd> + <kbd>R</kbd></td>
             </tr>
             <tr>
+              <td>Display Product List</td>
+              <td><kbd>space</kbd></td>
+            </tr>
+            <tr>
               <td>Close Modal</td>
               <td><kbd>Esc</kbd></td>
             </tr>
@@ -357,6 +364,67 @@
       </div>
     </div>
   </div>
+</div>
+
+
+<div class="modal fade" id="orderStatusModal" tabindex="-1" role="dialog" aria-labelledby="orderStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderStatusModalLabel">Update Order Status</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="order-date">Order Date</label>
+                        <input 
+                            type="datetime-local"
+                            class="form-control pos-input" 
+                            id="order-date" 
+                            name="order_date" 
+                            value="{{ $order->order_date ?? '' }}" 
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="order-status">Order Status</label>
+                        <input 
+                            type="text" 
+                            list="orderStatusList" 
+                            class="form-control pos-input" 
+                            id="order-status" 
+                            name="order_status" 
+                            placeholder="Select Status" 
+                            value="{{ $defaultStatus->status_name ?? 'Complete' }}" 
+                            required>
+                        <datalist id="orderStatusList">
+                            @foreach($statuses as $status)
+                                <option value="{{ $status->status_name }}" data-id="{{ $status->id }}">
+                                    {{ $status->status_name }}
+                                </option>
+                            @endforeach
+                        </datalist>
+                        <input 
+                            type="text" 
+                            id="status-id" 
+                            name="status_id" 
+                            value="{{ $defaultStatus->id ?? $statuses->firstWhere('status_name', 'Complete')->id }}">
+                    </div>
+                    <label for="order-date">Sale Reference : </label>
+                     <span id="sale-id-comment">Auto-Generated Sale ID if left blank</span>
+
+                          <div class="input-group" style="width: 100%;">
+                              <input type="text" list="orderList" name="custom_order_id" class="form-control pos-input" placeholder="Sale Id.">
+                          </div>
+                      
+                  </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            
+        </div>
+    </div>
 </div>
 
 

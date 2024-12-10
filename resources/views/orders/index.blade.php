@@ -73,7 +73,33 @@
                 </div>
             @endif
         </div>
-        <!-- Button to Add a New Order -->
+        <div class="form-group">
+                <label>Date range button:</label>
+
+                <form method="GET" action="{{ route('orders.index') }}">
+    <div class="form-group">
+        <label>Date range button:</label>
+
+        <div class="input-group">
+            <button type="button" class="btn btn-default pull-right" id="daterange-btn">
+                <span>
+                    <i class="fa fa-calendar"></i> Date range picker
+                </span>
+                <i class="fa fa-caret-down"></i>
+            </button>
+        </div>
+
+        <!-- Hidden inputs to store the selected date range -->
+        <input type="text" name="start_date" id="start_date" value="">
+        <input type="text" name="end_date" id="end_date" value="">
+    </div>
+
+    <!-- Submit button to apply the filter -->
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+                
+        </div>
+
         <div class="text-right">
             <a href="{{ route('orders.create') }}" class="btn btn-success">
                 <i class="fa fa-plus"></i> Add Order
@@ -101,8 +127,9 @@
             </thead>
             <tbody>
     @foreach($orders as $order)
-        <tr>
-            <td>{{ $order->status_name }}</td>
+        <tr @if($order->status_name === 'Return') class="text-danger" @endif>
+            <td >{{ $order->status_name }}</td>
+            
             <td><a href="javascript:void(0);" onclick="getInvoiceDetails('{{ $order->custom_order_id }}')">{{ $order->custom_order_id }}</a></td> <!-- Display Custom Order ID -->
   
             <td>{{ $order->order_date }}</td>
@@ -474,6 +501,54 @@
     </div>
 </div>
 
+    <!-- jQuery 3 -->
+<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Datemask dd/mm/yyyy
+    $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+    //Datemask2 mm/dd/yyyy
+    $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+    //Money Euro
+    $('[data-mask]').inputmask()
+
+    //Date range picker
+    $('#reservation').daterangepicker()
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({ timePicker: true, timePickerIncrement: 30, format: 'MM/DD/YYYY h:mm A' })
+    //Date range as a button
+    $('#daterange-btn').daterangepicker(
+      {
+        ranges   : {
+          'Today'       : [moment(), moment()],
+          'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
+          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+          'This Month'  : [moment().startOf('month'), moment().endOf('month')],
+          'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        startDate: moment().subtract(29, 'days'),
+        endDate  : moment()
+      },
+      function (start, end) {
+        $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+        $('#start_date').val(start.format('YYYY-MM-DD')); // Start date
+        $('#end_date').val(end.format('YYYY-MM-DD'));     // End date
+      }
+    )
+
+    //Date picker
+    $('#datepicker').datepicker({
+      autoclose: true
+    })
+
+   
+   
+  })
+</script>
 <script> 
 
 function savePayment() {
