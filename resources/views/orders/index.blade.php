@@ -74,39 +74,42 @@
             @endif
         </div>
 
-
         <form method="GET" action="{{ route('orders.index') }}">
-    <div class="form-group row">
-        <div class="col-md-2">
-            <label>Date range:</label>
-            <div class="input-group">
-                <button type="button" class="btn btn-default" id="daterange-btn">
-                    <span>
-                        <i class="fa fa-calendar"></i> Date range picker
-                    </span>
-                    <i class="fa fa-caret-down"></i>
-                </button>
+            <div class="form-group row">
+                <div class="col-md-2">
+                    <label>Date range:</label>
+                    <div class="input-group">
+                        <button type="button" class="btn btn-default" id="daterange-btn">
+                            <span>
+                                <i class="fa fa-calendar"></i> 
+                                {{ request('start_date') && request('end_date') 
+                                    ? request('start_date') . ' - ' . request('end_date') 
+                                    : 'Date range picker' }}
+                            </span>
+                            <i class="fa fa-caret-down"></i>
+                        </button>
+                    </div>
+                    <input type="hidden" name="start_date" id="start_date" value="{{ request('start_date', '') }}">
+                    <input type="hidden" name="end_date" id="end_date" value="{{ request('end_date', '') }}">
+                </div>
+
+                <div class="col-md-2">
+                    <label for="amount_filter">Filter by Amount:</label>
+                    <select name="remaining_amount_filter" id="remaining_amount_filter" class="form-control">
+                        <option value="" {{ request('remaining_amount_filter') == '' ? 'selected' : '' }}>Select Filter</option>
+                        <option value="due" {{ request('remaining_amount_filter') == 'due' ? 'selected' : '' }}>Amount Due</option>
+                        <option value="paid" {{ request('remaining_amount_filter') == 'paid' ? 'selected' : '' }}>Amount Paid</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-success mt-4" style="margin-top:24px">
+                        <i class="fa fa-filter"></i> Filter
+                    </button>
+                </div>
             </div>
-            <input type="hidden" name="start_date" id="start_date" value="">
-            <input type="hidden" name="end_date" id="end_date" value="">
-        </div>
-
-        <div class="col-md-2">
-            <label for="amount_filter">Filter by Amount:</label>
-            <select name="remaining_amount_filter" id="remaining_amount_filter" class="form-control">
-                <option value="">Select Filter</option>
-                <option value="due">Amount Due</option>
-                <option value="paid">Amount Paid</option>
-            </select>
-        </div>
-
-        <div class="col-md-4">
-            <button type="submit" class="btn btn-success mt-4" style = 'margin-top:24px'><i class="fa fa-filter"></i> Filter</button>
-        </div>
-    </div>
-</form>
-
-                
+        </form>
+                    
 
         <div class="text-right">
             <a href="{{ route('orders.create') }}" class="btn btn-success">

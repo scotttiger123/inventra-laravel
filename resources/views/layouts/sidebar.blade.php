@@ -40,16 +40,19 @@
 
       <li class="treeview">
         <a href="#">
-          <i class="fa fa-signal"></i>
-          <span>Reports</span>
-          <span class="pull-right-container">
-            <i class="fa fa-angle-left pull-right"></i>
-          </span>
+            <i class="fa fa-signal"></i>
+            <span>Reports</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/reports"><i class="fa fa-dot-circle-o"></i> View Reports</a></li>
+            <li style="padding-left: 20px;">
+                <a href="{{ route('customer-ledger.index') }}"><i class="fa fa-dot-circle-o"></i> Customer Ledger</a>
+            </li>
         </ul>
-      </li>
+    </li>
+
 
       <li class="treeview">
         <a href="#">

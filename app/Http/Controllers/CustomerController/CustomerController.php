@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
+use App\Models\Payment;
+use App\Models\Order;
+use App\Http\Controllers\OrderController\OrderController;  
 
 class CustomerController extends Controller
 {
@@ -138,4 +142,130 @@ class CustomerController extends Controller
             return redirect()->back()->withErrors(['error' => 'An unexpected error occurred.'])->withInput();
         }
     }
+
+    
+
+
+
+ public function ledger(Request $request)
+{
+    try {
+        // Get all customers
+        $customers = Customer::select('id', 'name')->get();
+
+        // Get the currency symbol
+        $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
+
+        // Get selected customer ID
+        $customerId = $request->input('customer_id');
+
+        // Get start and end dates from the request, defaulting to the last 30 days if not provided
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // If no date range is selected, set start and end dates to null to fetch all data for the customer
+        if (!$startDate && !$endDate) {
+            $startDate = null;
+            $endDate = null;
+        }
+
+        // If a date range is provided, parse the dates
+        if ($startDate && $endDate) {
+            $startDate = Carbon::parse($startDate)->startOfDay();
+            $endDate = Carbon::parse($endDate)->endOfDay();
+        }
+
+        // Fetch sale orders for the customer
+        $saleOrdersQuery = Order::query()
+            ->select('custom_order_id', 'total_amount', 'created_at')
+            ->where('customer_id', $customerId)
+            ->whereNull('deleted_at'); // Exclude soft-deleted orders
+
+        // Apply date range filter if dates are provided
+        if ($startDate && $endDate) {
+            $saleOrdersQuery->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $saleOrders = $saleOrdersQuery->get();
+
+        // Fetch payments for the customer
+        $paymentsQuery = Payment::query()
+            ->select('amount', 'created_at', 'invoice_id')
+            ->where('payable_id', $customerId);
+
+        // Apply date range filter if dates are provided
+        if ($startDate && $endDate) {
+            $paymentsQuery->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $payments = $paymentsQuery->get();
+
+        // Combine sale orders and payments into one collection
+        $ledgerData = collect();
+
+        // Instantiate the OrderController to call the getInvoice method
+        $orderController = new OrderController();
+
+        // Add sale orders to ledgerData with 'Sale Order' type
+        foreach ($saleOrders as $order) {
+            // Fetch order details using the getInvoice method from OrderController
+            $orderData = $orderController->getInvoice($order->custom_order_id)->getData();
+
+            $ledgerData->push([
+                'date' => $order->created_at->format('Y-m-d'),
+                'order_number' => $order->custom_order_id,
+                'payment_amount' => null, // No payment amount for sale orders
+                'total_amount' => $orderData->netTotalWithTax, // Total amount after taxes
+                'balance' => null,
+                'entry_type' => 'Sale Order',
+            ]);
+        }
+
+        // Add payments to ledgerData with 'Payment' type
+        foreach ($payments as $payment) {
+            $ledgerData->push([
+                'date' => $payment->created_at->format('Y-m-d'),
+                'order_number' => $payment->invoice_id,
+                'payment_amount' => $payment->amount,
+                'total_amount' => null, // No total amount for payments
+                'balance' => null,
+                'entry_type' => 'Payment',
+            ]);
+        }
+
+        // Sort the combined ledger data by date (oldest first)
+        $ledgerData = $ledgerData->sortBy('date');
+
+        // Initialize balance
+        $balance = 0;
+
+         $ledgerData = $ledgerData->map(function ($entry) use (&$balance, $currencySymbol) {
+            if ($entry['entry_type'] == 'Payment') {
+                // Add payment amount to balance
+                $balance += $entry['payment_amount'];
+            }
+
+            if ($entry['entry_type'] == 'Sale Order') {
+                // Deduct sale amount from balance
+                $balance -= abs($entry['total_amount']);
+            }
+
+            // Update the balance for each entry
+            $entry['balance'] = $currencySymbol . ' ' . number_format($balance, 2);
+
+            return $entry;
+        });
+
+
+        // Return the view with the ledger data
+        return view('customers.customer-ledger', compact('customers', 'ledgerData', 'currencySymbol', 'startDate', 'endDate', 'customerId'));
+    } catch (Exception $e) {
+        // Log the error and return with an error message
+        \Log::error('Failed to fetch ledger data: ' . $e->getMessage());
+        return redirect()->back()->withErrors('Failed to fetch ledger data. Please try again later.');
+    }
+}
+
+    
+
 }

@@ -223,6 +223,7 @@ class OrderController extends Controller
             'otherCharges' => $otherCharges,
             'netTotal' => $netTotal,
             'taxRate' => $taxRate,
+            'netTotalWithTax' => $netTotalWithTax,
             'taxAmount' => $taxAmount,
             'paidAmount' => $paidAmount,
             'remainingAmount' => $remainingAmount,
