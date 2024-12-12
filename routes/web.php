@@ -97,7 +97,8 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::put('/customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
     Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
     Route::get('/customer-ledger', [CustomerController::class, 'ledger'])->name('customer-ledger.index');
-
+    Route::get('/customer-ledger-pdf', [CustomerController::class, 'ledgerPDF'])->name('customer-ledger-pdf');
+    
 
     // Supplier routes
     Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');

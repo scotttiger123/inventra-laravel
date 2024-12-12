@@ -88,8 +88,13 @@
                         <i class="fa fa-filter"></i> Filter
                     </button>
                 </div>
+                </form>
+                <div class="d-flex justify-content-end mt-4">
+                    <button id="generate-pdf" class="btn btn-secondry mt-4">  <i class="fa fa-file"></i> PDF</button>
+                    <button id="print-pdf" class="btn btn-secondry mt-4"><i class="fa fa-print"></i> Print</button>
+                </div>                    
             </div>
-        </form>
+        
 
         @if(!empty($ledgerData))
         <table class="table table-bordered table-striped mt-4">
@@ -163,15 +168,14 @@
     <p class="text-center mt-4">No ledger entries found for the selected filters.</p>
 @endif
 
-<button id="generate-pdf" class="btn btn-primary mt-4">
-    <i class="fa fa-file-pdf"></i> Generate PDF
-</button>
     </div>
 
 </div>
-
+<div id="balancesTableContainer"></div>
 <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <script>
+    
   $(function () {
     // Initialize Select2 Elements
     $('.select2').select2();
@@ -198,115 +202,207 @@
 
 
   $(document).ready(function () {
-
-  $('#generatePdfBtn').on('click', function () {
-        var selectedCustomerNames = $('#customerSelect').val();
-        var selectedCityFilter = $('#cityFilter').val();
-        var sortOption = $('#sortSelect').val();
-
-        if (selectedCustomerNames && selectedCustomerNames.length > 0) {
+    $('#generate-pdf').on('click', function (e) {
+        e.preventDefault(); 
+        var selectedCustomerId = $('#customer_id').val();
+        if (selectedCustomerId) {
             var token = $('meta[name="csrf-token"]').attr('content');
-            showLoader();
+            $('#loader').show();
+
             $.ajax({
-                url: '{{ route('getCustomerBalances') }}',
+                url: '{{ route('customer-ledger-pdf') }}',
                 type: 'GET',
                 data: {
                     _token: token,
-                    customer_names: selectedCustomerNames,
-                    city_filter: selectedCityFilter
+                    customer_id: selectedCustomerId
                 },
                 success: function (response) {
-                    $('#balancesTableContainer').show();
+                    
+                    if (response.success) {
+                        let ledgerData = response.ledger_data;
+                        let closingBalance = response.closing_balance;
+                        let currencySymbol = response.currency_symbol;
+                        let customerName = response.customerName;
+                        let logoUrl = response.logoUrl;
+                        var formattedTime = new Date().toLocaleString();
 
-                    var currentTime = new Date();
-                    var formattedTime = currentTime.toLocaleString();
+                            var tableHtml = '<div class="pdf-table-responsive mt-4">';
+                            tableHtml += '<div class="pdf-header text-center mb-4">';
+                            tableHtml += '<img src="' + logoUrl + '" alt="Logo" class="pdf-logo" style="max-width: 150px;">';
+                            tableHtml += '</div>';
+                            tableHtml += '<h3 class="text-center mb-4"><strong>Customer Ledger Report</strong></h3>';
+                            tableHtml += '<h5 class="text-center mb-2">Customer Name: ' + customerName + '</h5>';
+                            tableHtml += '<p class="text-center mb-4">Report generated on: ' + formattedTime + '</p>';
+                            tableHtml += '<table class="pdf-table table-bordered table-striped">';
+                            tableHtml += '<thead class="pdf-thead-dark">';
+                            tableHtml += '<tr>';
+                            tableHtml += '<th>Date</th>';
+                            tableHtml += '<th>Order Number</th>';
+                            tableHtml += '<th>Type</th>';
+                            tableHtml += '<th>Payment Amount</th>';
+                            tableHtml += '<th>Total Amount</th>';
+                            tableHtml += '<th>Balance</th>';
+                            tableHtml += '</tr>';
+                            tableHtml += '</thead>';
+                            tableHtml += '<tbody>';
 
-                    var tableHtml = '<div class="table-responsive mt-4">';
-                    tableHtml += '<h3 class="text-center mb-4"><strong>Customer Balance Report</strong></h3>';
+                            // Loop through the data to generate rows
+                            ledgerData.forEach(entry => {
+                                tableHtml += '<tr>';
+                                tableHtml += '<td>' + entry.date + '</td>';
+                                tableHtml += '<td>' + entry.order_number + '</td>';
+                                tableHtml += '<td>' + entry.entry_type + '</td>';
+                                tableHtml += '<td>' + (entry.payment_amount || '-') + '</td>';
+                                tableHtml += '<td>' + (entry.total_amount || '-') + '</td>';
+                                tableHtml += '<td>' + entry.balance + '</td>';
+                                tableHtml += '</tr>';
+                            });
+
+                            tableHtml += '</tbody>';
+                            tableHtml += '</table>';
+                            tableHtml += '<p class="text-end pdf-footer"><strong>Closing Balance: ' + closingBalance + '</strong></p>';
+                            tableHtml += '</div>';
+
+
+                        $('#balancesTableContainer').html(tableHtml);
+
+                        var element = document.getElementById('balancesTableContainer');
+                        html2pdf(element, {
+                            margin: 15,
+                            filename: 'customer_ledger_report.pdf',
+                            image: { type: 'jpeg', quality: 0.98 },
+                            html2canvas: { scale: 2 },
+                            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                        });
+
+                        setTimeout(function () {
+                            $('#balancesTableContainer').hide();
+                        }, 2000);
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+
+                    $('#loader').hide();
+                },
+                error: function (error) {
+                    $('#loader').hide();
+                    console.error('Error:', error);
+                    alert('Failed to generate the ledger report.');
+                }
+            });
+        } else {
+            alert('Please select a customer to generate the ledger report.');
+        }
+    });
+
+   
+});
+
+$('#print-pdf').on('click', function (e) {
+    e.preventDefault();
+    var selectedCustomerId = $('#customer_id').val();
+    if (selectedCustomerId) {
+        var token = $('meta[name="csrf-token"]').attr('content');
+        
+        
+        $('#loader').show();
+        
+        $.ajax({
+            url: '{{ route('customer-ledger-pdf') }}',
+            type: 'GET',
+            data: {
+                _token: token,
+                customer_id: selectedCustomerId
+            },
+            success: function (response) {
+                // Hide the loader when the request is successful
+                $('#loader').hide();
+                
+                if (response.success) {
+                    let ledgerData = response.ledger_data;
+                    let closingBalance = response.closing_balance;
+                    let currencySymbol = response.currency_symbol;
+                    let customerName = response.customerName;
+                    let logoUrl = response.logoUrl;
+                    var formattedTime = new Date().toLocaleString();
+
+                    var tableHtml = '<div id="pdf-content" class="table-responsive mt-4">';
+                    tableHtml += '<div class="text-center mb-4">';
+                    tableHtml += '<img src="' + logoUrl + '" alt="Logo" style="max-width: 150px;">';
+                    tableHtml += '</div>';
+                    tableHtml += '<h3 class="text-center mb-4"><strong>Customer Ledger Report</strong></h3>';
+                    tableHtml += '<h5 class="text-center mb-2">Customer Name: ' + customerName + '</h5>';
                     tableHtml += '<p class="text-center mb-4">Report generated on: ' + formattedTime + '</p>';
                     tableHtml += '<table class="table table-bordered table-striped">';
-                    tableHtml += '<thead class="thead-dark"><tr><th>Id</th><th>Customer Name</th><th>City</th><th>address</th><th>Balance</th></tr></thead><tbody>';
+                    tableHtml += '<thead class="thead-dark">';
+                    tableHtml += '<tr>';
+                    tableHtml += '<th>Date</th>';
+                    tableHtml += '<th>Order Number</th>';
+                    tableHtml += '<th>Type</th>';
+                    tableHtml += '<th>Payment Amount</th>';
+                    tableHtml += '<th>Total Amount</th>';
+                    tableHtml += '<th>Balance</th>';
+                    tableHtml += '</tr>';
+                    tableHtml += '</thead>';
+                    tableHtml += '<tbody>';
 
-                    var rows = [];
-                    var filterValue = $('#balanceFilter').val();
-                    var counter = 1;
-                    var totalBalance = 0;
-
-                    for (var customerName in response) {
-                        var customerData = response[customerName];
-                        var balance = customerData.balance;
-                        var city = customerData.city;
-                        var address = customerData.address;
-
-                        if ((filterValue !== '' && balance > filterValue) || filterValue === '') {
-                            rows.push({
-                                customerName: customerName.toUpperCase(),
-                                city: city,
-                                address: address,
-                                balance: balance
-                            });
-                        }
-                    }
-
-                    if (sortOption === 'city') {
-                        rows.sort((a, b) => a.city.localeCompare(b.city));
-                    } else {
-                        rows.sort((a, b) => a.customerName.localeCompare(b.customerName));
-                    }
-
-                    rows.forEach(row => {
+                    ledgerData.forEach(entry => {
                         tableHtml += '<tr>';
-                        tableHtml += '<td style="border: 1px solid black;">' + counter + '</td>';
-                        tableHtml += '<td style="border: 1px solid black;">' + row.customerName + '</td>';
-                        tableHtml += '<td style="border: 1px solid black;">' + row.city + '</td>';
-                        tableHtml += '<td style="border: 1px solid black;">' + row.address + '</td>';
-                        tableHtml += '<td style="border: 1px solid black;"><b>' + row.balance.toLocaleString() + '</b></td>';
+                        tableHtml += '<td>' + entry.date + '</td>';
+                        tableHtml += '<td>' + entry.order_number + '</td>';
+                        tableHtml += '<td>' + entry.entry_type + '</td>';
+                        tableHtml += '<td>' + (entry.payment_amount || '-') + '</td>';
+                        tableHtml += '<td>' + (entry.total_amount || '-') + '</td>';
+                        tableHtml += '<td>' + entry.balance + '</td>';
                         tableHtml += '</tr>';
-                        counter++;
-                        totalBalance += parseFloat(row.balance);
                     });
 
-                    var formattedTotalBalance = totalBalance.toLocaleString();
-                    tableHtml += '<tr><td colspan="4"><strong>Total Balance:</strong></td><td><strong>' + formattedTotalBalance + '</strong></td></tr>';
-                    tableHtml += '</tbody></table></div>';
-
-                    $('#balancesTableContainer').html(tableHtml);
-
-                    var element = document.getElementById('balancesTableContainer');
-                    html2pdf(element, {
-                        margin: 15,
-                        filename: 'customer_balance_report.pdf',
-                        image: { type: 'jpeg', quality: 0.98 },
-                        html2canvas: { scale: 2 },
-                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                    });
+                    tableHtml += '</tbody>';
+                    tableHtml += '</table>';
+                    tableHtml += '<p class="text-end"><strong>Closing Balance: ' + closingBalance + '</strong></p>';
+                    tableHtml += '</div>';
+                    
+                    var printWindow = window.open('', '', 'height=600,width=800');
+                    
+                    printWindow.document.write('<html><head><title>Print</title>');
+                    printWindow.document.write('<style>');
+                    printWindow.document.write('body { font-family: Arial, sans-serif; margin: 0; padding: 0; }');
+                    printWindow.document.write('.table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }');
+                    printWindow.document.write('.table th, .table td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; }');
+                    printWindow.document.write('.text-center { text-align: center; }');
+                    printWindow.document.write('.text-end { text-align: right; }');
+                    printWindow.document.write('.thead-dark { background-color: #343a40; color: #fff; }');
+                    printWindow.document.write('</style>');
+                    printWindow.document.write('</head><body>');
+                    printWindow.document.write(tableHtml); 
+                    printWindow.document.write('</body></html>');
+                    printWindow.document.close();
+                    printWindow.print(); 
 
                     setTimeout(function () {
                         $('#balancesTableContainer').hide();
                     }, 2000);
 
-                    hideLoader();
-                },
-                error: function (error) {
-                    hideLoader();
-                    console.error('Error:', error);
+                } else {
+                    alert('Error: ' + response.message);
                 }
-            });
-        } else {
-            hideLoader();
-            alert('Please select at least one customer.');
-        }
-    });
-
-    function showLoader() {
-        $('#loader-container').removeClass('d-none');
-    }
-
-    function hideLoader() {
-        $('#loader-container').addClass('d-none');
+            },
+            error: function (error) {
+                // Hide the loader in case of error
+                $('#loader').hide();
+                console.error('Error:', error);
+                alert('Failed to generate the ledger report.');
+            }
+        });
+    } else {
+        alert('Please select a customer to generate the ledger report.');
     }
 });
 
-    
 </script>
+
+<style>
+ 
+
+</style>
 @endsection

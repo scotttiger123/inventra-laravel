@@ -436,3 +436,44 @@
 .input-group-addon:hover i {
   color: #007bff; /* Color on hover */
 }
+
+
+.pdf-ledger-report {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.pdf-header, .pdf-footer {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.pdf-logo img {
+  margin: 0 auto;
+  display: block;
+  max-width: 150px;
+  height: auto;
+}
+
+.pdf-table-responsive {
+  margin-top: 20px;
+}
+
+.pdf-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pdf-table th, .pdf-table td {
+  padding: 10px;
+  text-align: left;
+}
+
+.pdf-thead-dark {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.pdf-footer {
+  margin-top: 20px;
+}
