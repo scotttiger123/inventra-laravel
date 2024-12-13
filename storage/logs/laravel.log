@@ -4026,3 +4026,7 @@
 #50 C:\\xampp\\htdocs\\inventra\\inventra\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('C:\\\\xampp\\\\htdocs...')
 #51 {main}
 "} 
+[2024-12-13 07:13:12] local.ERROR: Cannot redeclare App\Http\Controllers\CustomerController\CustomerController::ledger() {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot redeclare App\\Http\\Controllers\\CustomerController\\CustomerController::ledger() at C:\\xampp\\htdocs\\inventra\\inventra\\app\\Http\\Controllers\\CustomerController\\CustomerController.php:325)
+[stacktrace]
+#0 {main}
+"} 

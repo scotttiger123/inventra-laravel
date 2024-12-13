@@ -62,8 +62,8 @@
                             <i class="fa fa-caret-down"></i>
                         </button>
                     </div>
-                    <input type="hidden" name="start_date" id="start_date" value="{{ request('start_date', '') }}">
-                    <input type="hidden" name="end_date" id="end_date" value="{{ request('end_date', '') }}">
+                    <input type="hidden" name="start_date" id="start_date_id" value="{{ request('start_date', '') }}">
+                    <input type="hidden" name="end_date" id="end_date_id" value="{{ request('end_date', '') }}">
                 </div>
 
                 <!-- Customer Dropdown -->
@@ -189,8 +189,8 @@
       endDate  : moment()
     }, function (start, end) {
         $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
-        $('#start_date').val(start.format('YYYY-MM-DD'));
-        $('#end_date').val(end.format('YYYY-MM-DD'));
+        $('#start_date_id').val(start.format('YYYY-MM-DD'));
+        $('#end_date_id').val(end.format('YYYY-MM-DD'));
     });
   });
 
@@ -200,6 +200,9 @@
     $('#generate-pdf').on('click', function (e) {
         e.preventDefault(); 
         var selectedCustomerId = $('#customer_id').val();
+        var startDate = $('#start_date_id').val();
+        var endDate = $('#end_date_id').val();
+        
         if (selectedCustomerId) {
             var token = $('meta[name="csrf-token"]').attr('content');
             $('#loader').show();
@@ -209,7 +212,9 @@
                 type: 'GET',
                 data: {
                     _token: token,
-                    customer_id: selectedCustomerId
+                    customer_id: selectedCustomerId,
+                    start_date: startDate,
+                    end_date: endDate
                 },
                 success: function (response) {
                     
@@ -229,8 +234,7 @@
                             tableHtml += '<h3 class="text-center mb-4"><strong>Customer Ledger Report</strong></h3>';
                             tableHtml += '<h5 class="text-center mb-2">Customer Name: ' + customerName + '</h5>';
                             tableHtml += '<p class="text-center mb-4">Report generated on: ' + formattedTime + '</p>';
-
-                            // Include Opening Balance
+                            
                             tableHtml += '<p class="text-center mb-4"><strong>Opening Balance: ' + openingBalance + '</strong></p>';
 
                             tableHtml += '<table class="pdf-table table-bordered table-striped">';
@@ -301,7 +305,8 @@ $('#print-pdf').on('click', function (e) {
     var selectedCustomerId = $('#customer_id').val();
     if (selectedCustomerId) {
         var token = $('meta[name="csrf-token"]').attr('content');
-        
+        var startDate = $('#start_date_id').val();
+        var endDate = $('#end_date_id').val();
         
         $('#loader').show();
         
@@ -310,7 +315,10 @@ $('#print-pdf').on('click', function (e) {
             type: 'GET',
             data: {
                 _token: token,
-                customer_id: selectedCustomerId
+                customer_id: selectedCustomerId,
+                start_date: startDate,
+                end_date: endDate,
+
             },
             success: function (response) {
                 // Hide the loader when the request is successful
@@ -321,6 +329,7 @@ $('#print-pdf').on('click', function (e) {
                     let closingBalance = response.closing_balance;
                     let currencySymbol = response.currency_symbol;
                     let customerName = response.customerName;
+                    let openingBalance = response.opening_balance;  
                     let logoUrl = response.logoUrl;
                     var formattedTime = new Date().toLocaleString();
 
@@ -331,6 +340,7 @@ $('#print-pdf').on('click', function (e) {
                     tableHtml += '<h3 class="text-center mb-4"><strong>Customer Ledger Report</strong></h3>';
                     tableHtml += '<h5 class="text-center mb-2">Customer Name: ' + customerName + '</h5>';
                     tableHtml += '<p class="text-center mb-4">Report generated on: ' + formattedTime + '</p>';
+                    tableHtml += '<p class="text-center mb-4"><strong>Opening Balance: ' + openingBalance + '</strong></p>';
                     tableHtml += '<table class="table table-bordered table-striped">';
                     tableHtml += '<thead class="thead-dark">';
                     tableHtml += '<tr>';

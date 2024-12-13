@@ -322,12 +322,11 @@ class CustomerController extends Controller
         }
     }
     
-
     public function ledgerPDF(Request $request)
     {
         try {
-            // Get all customers, including their initial balance
-            $customers = Customer::select('id', 'name', 'initial_balance')->get();
+            // Get all customers
+            $customers = Customer::select('id', 'name', 'initial_balance')->get();  // Fetch initial_balance
     
             // Get the currency symbol
             $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
@@ -367,13 +366,18 @@ class CustomerController extends Controller
             $saleOrders = $saleOrdersQuery->get();
             $payments = $paymentsQuery->get();
     
-            // Fetch the customer's initial balance
-            $customer = Customer::find($customerId);
-            $initialBalance = $customer->initial_balance === null ? 0 : $customer->initial_balance;
-            $customerName = $customer->name;
-            
             // Fetch opening balance
-            $openingBalance = $initialBalance;
+            $openingBalance = 0;
+            
+            // Get customer's initial balance
+            $initialBalance = 0;
+            if ($customerId) {
+                $customer = Customer::find($customerId);
+                $initialBalance = $customer->initial_balance == NULL ? 0 : $customer->initial_balance;
+            }    
+            // Include initial balance in the opening balance
+            $openingBalance += $initialBalance;
+    
             if ($startDate) {
                 // Get transactions before the start date to calculate opening balance
                 $previousOrders = Order::where('customer_id', $customerId)
@@ -385,10 +389,11 @@ class CustomerController extends Controller
                     ->where('payment_date', '<', $startDate)
                     ->get();
     
+                // Apply the same balance calculation logic to previous orders
                 foreach ($previousOrders as $order) {
                     $orderData = (new OrderController())->getInvoice($order->custom_order_id)->getData();
                     $entryType = ($order->status == 1) ? 'Return' : 'Sale Order';
-    
+                    
                     // Calculate entry balance
                     $entryBalance = 0;
                     if ($entryType == 'Sale Order') {
@@ -401,8 +406,14 @@ class CustomerController extends Controller
                     $openingBalance += $entryBalance;
                 }
     
+                // Apply the same balance calculation logic to previous payments
                 foreach ($previousPayments as $payment) {
-                    $openingBalance -= $payment->amount;
+                    // Debit payment reduces balance, Credit payment adds to the balance
+                    if ($payment->payment_type == 'debit') {
+                        $openingBalance += $payment->amount;
+                    } elseif ($payment->payment_type == 'credit') {
+                        $openingBalance -= $payment->amount;
+                    }
                 }
             }
     
@@ -478,30 +489,23 @@ class CustomerController extends Controller
             // Closing balance is the final balance after the end date
             $closingBalance = number_format($balance, 2);
     
-            $logoUrl = asset('../../dist/img/logo.png'); 
-
+            // Prepare the JSON response
             return response()->json([
                 'success' => true,
                 'customer_id' => $customerId,
-                'customerName' => $customerName,
+                'customerName' => $customers->firstWhere('id', $customerId)->name,
                 'start_date' => $startDate ? $startDate->toDateString() : null,
                 'end_date' => $endDate ? $endDate->toDateString() : null,
                 'currency_symbol' => $currencySymbol,
                 'opening_balance' => $currencySymbol . ' ' . number_format($openingBalance, 2),
                 'closing_balance' => $currencySymbol . ' ' . $closingBalance,
                 'ledger_data' => $ledgerData,
-                'logoUrl' => $logoUrl,
+                'logoUrl' => asset('dist/img/logo.png'),  // Add logo URL here
             ]);
-
-            
-            
-
+    
         } catch (Exception $e) {
             \Log::error('Failed to fetch ledger data: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch ledger data. Please try again later.',
-            ]);
+            return response()->json(['success' => false, 'message' => 'Failed to fetch ledger data. Please try again later.']);
         }
     }
     
