@@ -8,7 +8,7 @@
             <div class="col-lg-6 col-xs-6">
                 <div class="small-box bg-grey">
                     <div class="inner">
-                        <h3>0.00</h3>
+                        <h3> {{ $currencySymbol }} {{ number_format($openingBalance, 2) }} </h3>
                         <p>Opening Balance</p>
                     </div>
                     <div class="icon" style="color:#222D32">
@@ -20,9 +20,9 @@
 
             <!-- Discount Amount -->
             <div class="col-lg-6 col-xs-6">
-                <div class="small-box" style="background-color: {{ $closingBalance > 0 ? '#B13C2E' : '#d3d3d3' }};">
+                <div class="small-box" style="background-color: {{ $closingBalance > 0 ? '#B13C2E' : '#008548' }};">
                     <div class="inner">
-                        <h3>{{ number_format((float)($closingBalance ?? 0.00), 2) }}</h3>
+                        <h3>{{ $currencySymbol }} {{ number_format((float)($closingBalance ?? 0.00), 2) }}</h3>
                         <p>Closing Balance</p>
                     </div>
                     <div class="icon" style="color:#222D32">
@@ -31,10 +31,7 @@
                     <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
-
-
         </div>
-
         <div class="box-header with-border">
             <h3 class="box-title custom-title">Customer Ledger</h3>
             @if(session('success'))
@@ -156,9 +153,7 @@
                 <tr class="total-row">
                     <td colspan="4" class="text-right"><strong>Total Balance</strong></td>
                     <td colspan="2" class="text-left">
-                        
-                                {{ $currencySymbol . ' ' . number_format((float)($closingBalance ?? 0.00), 2) }}
-                        
+                        {{ $currencySymbol . ' ' . number_format((float)($closingBalance ?? 0.00), 2) }}
                     </td>
                 </tr>
             </tfoot>
@@ -221,6 +216,7 @@
                     if (response.success) {
                         let ledgerData = response.ledger_data;
                         let closingBalance = response.closing_balance;
+                        let openingBalance = response.opening_balance;  // Added opening balance
                         let currencySymbol = response.currency_symbol;
                         let customerName = response.customerName;
                         let logoUrl = response.logoUrl;
@@ -233,6 +229,10 @@
                             tableHtml += '<h3 class="text-center mb-4"><strong>Customer Ledger Report</strong></h3>';
                             tableHtml += '<h5 class="text-center mb-2">Customer Name: ' + customerName + '</h5>';
                             tableHtml += '<p class="text-center mb-4">Report generated on: ' + formattedTime + '</p>';
+
+                            // Include Opening Balance
+                            tableHtml += '<p class="text-center mb-4"><strong>Opening Balance: ' + openingBalance + '</strong></p>';
+
                             tableHtml += '<table class="pdf-table table-bordered table-striped">';
                             tableHtml += '<thead class="pdf-thead-dark">';
                             tableHtml += '<tr>';
@@ -249,7 +249,7 @@
                             // Loop through the data to generate rows
                             ledgerData.forEach(entry => {
                                 tableHtml += '<tr>';
-                                tableHtml += '<td>' + entry.date + '</td>';
+                                tableHtml += '<td>' + (entry.date ? entry.date : '') + '</td>';
                                 tableHtml += '<td>' + entry.order_number + '</td>';
                                 tableHtml += '<td>' + entry.entry_type + '</td>';
                                 tableHtml += '<td>' + (entry.payment_amount || '-') + '</td>';
@@ -262,7 +262,6 @@
                             tableHtml += '</table>';
                             tableHtml += '<p class="text-end pdf-footer"><strong>Closing Balance: ' + closingBalance + '</strong></p>';
                             tableHtml += '</div>';
-
 
                         $('#balancesTableContainer').html(tableHtml);
 
@@ -294,9 +293,8 @@
             alert('Please select a customer to generate the ledger report.');
         }
     });
-
-   
 });
+
 
 $('#print-pdf').on('click', function (e) {
     e.preventDefault();
@@ -348,7 +346,7 @@ $('#print-pdf').on('click', function (e) {
 
                     ledgerData.forEach(entry => {
                         tableHtml += '<tr>';
-                        tableHtml += '<td>' + entry.date + '</td>';
+                        tableHtml += '<td>' + (entry.date ? entry.date : '') + '</td>';
                         tableHtml += '<td>' + entry.order_number + '</td>';
                         tableHtml += '<td>' + entry.entry_type + '</td>';
                         tableHtml += '<td>' + (entry.payment_amount || '-') + '</td>';
@@ -400,9 +398,4 @@ $('#print-pdf').on('click', function (e) {
 });
 
 </script>
-
-<style>
- 
-
-</style>
 @endsection
