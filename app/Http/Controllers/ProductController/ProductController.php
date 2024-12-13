@@ -7,6 +7,9 @@ use App\Models\UOM;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Tax;
+use App\Models\Warehouse;
+use App\Models\OrderItem;
+use App\Models\PurchaseItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -216,5 +219,34 @@ class ProductController extends Controller
 
             return response()->json(['success' => false, 'message' => 'Product not found.']);
         }
+
+
+        
+        
+        public function stockReport()
+        {
+            // Retrieve all products with their relationships (category, UOM, and warehouse)
+            $products = Product::with(['category', 'uom', 'warehouse'])->get();
+        
+            // Calculate current stock for each product (purchase stock - order stock)
+            foreach ($products as $product) {
+                $purchasedQuantity = PurchaseItem::where('product_id', $product->id)->sum('quantity');
+                $orderedQuantity = OrderItem::where('product_id', $product->id)->sum('quantity');
+        
+                // Current stock calculation
+                $product->current_stock = $purchasedQuantity - $orderedQuantity;
+            }
+        
+            // Retrieve all warehouses for the dropdown
+            $warehouses = Warehouse::all();
+        
+            // Calculate the total number of products
+            $totalProducts = $products->count();
+        
+            // Return the view with products, warehouses, and totalProducts data
+            return view('stockReport.index', compact('products', 'warehouses', 'totalProducts'));
+        }
+        
+        
 
 }

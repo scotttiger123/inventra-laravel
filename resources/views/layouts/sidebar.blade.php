@@ -54,6 +54,12 @@
             <li style="padding-left: 20px;">
                 <a href="{{ route('supplier-ledger.index') }}"><i class="fa fa-dot-circle-o"></i> Supplier Ledger</a>
             </li>
+            <li style="padding-left: 20px;">
+                <a href="{{ route('stock-report-view') }}">
+                    <i class="fa fa-dot-circle-o"></i> Stock Report
+                </a>
+            </li>
+
         </ul>
     </li>
 

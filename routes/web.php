@@ -82,8 +82,9 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::get('/get-product-details/{code}', [ProductController::class, 'getProductDetails']);
     Route::get('/load-products', [ProductController::class, 'loadProducts'])->name('products.load');
+    Route::get('/stock-report-view', [ProductController::class, 'stockReport'])->name('stock-report-view');
 
-    
+
 
 
 

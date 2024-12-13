@@ -46,9 +46,7 @@ class PurchaseController extends Controller
     
     public function getPurchase($customOrderId)
     {
-        // $purchaseOrder = Purchase::where('custom_purchase_id', $customOrderId)->first();
         
-
         $purchaseOrder = Purchase::where('custom_purchase_id', $customOrderId)
             ->leftJoin('statuses', 'statuses.id', '=', 'purchases.status') 
             ->select('purchases.*', 'statuses.status_name')
@@ -109,7 +107,6 @@ class PurchaseController extends Controller
                 'unit_price' => $unitPrice,
                 'entry_warehouse' => $item->inward_warehouse_id,
                 'warehouse_name' => $item->warehouse_name, 
-      
                 'discount_amount' => $item->discount_value > 0 ? $item->discount_value . $item->discount_type : '0',
                 'net_rate' => $item->net_rate,
                 'amount' => $item->total_after_discount,
