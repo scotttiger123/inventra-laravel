@@ -12,9 +12,7 @@ use App\Models\Uom;
 use App\Models\Status;
 use App\Models\Warehouse;
 use App\Models\Tax;
-
-
-
+use Carbon\Carbon;
 use App\Models\User; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -156,6 +154,7 @@ class PurchaseController extends Controller
             'otherCharges' => $otherCharges,
             'netTotal' => $netTotal,
             'taxRate' => $purchaseOrder->tax_rate,
+            'netTotalWithTax' => $netTotalWithTax,
             'paidAmount' => $paidAmount,
             'remainingAmount' => $remainingAmount,
             'currencySymbol' => $currencySymbol,

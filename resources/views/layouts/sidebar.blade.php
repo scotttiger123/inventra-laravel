@@ -50,6 +50,10 @@
             <li style="padding-left: 20px;">
                 <a href="{{ route('customer-ledger.index') }}"><i class="fa fa-dot-circle-o"></i> Customer Ledger</a>
             </li>
+        
+            <li style="padding-left: 20px;">
+                <a href="{{ route('supplier-ledger.index') }}"><i class="fa fa-dot-circle-o"></i> Supplier Ledger</a>
+            </li>
         </ul>
     </li>
 
