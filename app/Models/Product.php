@@ -33,6 +33,11 @@ class Product extends Model
      */
     protected $dates = ['deleted_at'];
 
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
     /**
      * Define relationship with the User model (creator).
      */

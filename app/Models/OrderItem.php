@@ -23,9 +23,17 @@ class OrderItem extends Model
     /**
      * Define relationship with the Order model.
      */
+    
+
     public function order()
     {
-        return $this->belongsTo(Order::class, 'order_id');
+        return $this->belongsTo(Order::class, 'custom_order_id', 'custom_order_id');
+    }
+
+    
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class, 'exit_warehouse'); 
     }
 
     /**

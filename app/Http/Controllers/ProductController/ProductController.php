@@ -10,8 +10,10 @@ use App\Models\Tax;
 use App\Models\Warehouse;
 use App\Models\OrderItem;
 use App\Models\PurchaseItem;
+use App\Models\Transfer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 
 class ProductController extends Controller
@@ -244,9 +246,65 @@ class ProductController extends Controller
             $totalProducts = $products->count();
         
             // Return the view with products, warehouses, and totalProducts data
-            return view('stockReport.index', compact('products', 'warehouses', 'totalProducts'));
+            return view('products.stock-report', compact('products', 'warehouses', 'totalProducts'));
         }
         
+        public function stockHistory(Product $product)
+        {
+            // Sales history
+            $salesHistory = OrderItem::with(['order', 'warehouse'])
+                ->where('product_id', $product->id)
+                ->whereHas('order', function($query) {
+                    $query->where('status', '!=', 1); // Regular sale (status != 1)
+                })
+                ->get();
         
-
+            // Purchase history
+            $purchaseHistory = PurchaseItem::with(['purchase', 'warehouse'])
+                ->where('product_id', $product->id)
+                ->whereHas('purchase', function($query) {
+                    $query->where('status', '!=', 1); // Regular purchase (status != 1)
+                })
+                ->get();
+        
+            // Sales return history
+            $salesReturnHistory = OrderItem::with(['order', 'warehouse'])
+                ->where('product_id', $product->id)
+                ->whereHas('order', function($query) {
+                    $query->where('status', 1); // Sales return (status = 1)
+                })
+                ->get();
+        
+            // Purchase return history
+            $purchaseReturnHistory = PurchaseItem::with(['purchase', 'warehouse'])
+                ->where('product_id', $product->id)
+                ->whereHas('purchase', function($query) {
+                    $query->where('status', 1); // Purchase return (status = 1)
+                })
+                ->get();
+        
+            // Warehouse transfer history
+            $transfersHistory = Transfer::with(['fromWarehouse', 'toWarehouse'])
+                ->where('product_id', $product->id)
+                ->get();
+        
+            // Calculate remaining stock
+            $purchased = $purchaseHistory->sum('quantity');
+            $sales = $salesHistory->sum('quantity');
+            $salesReturns = $salesReturnHistory->sum('quantity');
+            $purchaseReturns = $purchaseReturnHistory->sum('quantity');
+            
+            
+            $remainingStock = ($purchased - $sales) + ($salesReturns - $purchaseReturns);
+        
+            // Pass all data to the view
+            return view('products.stock-history', compact(
+                'product', 'salesHistory', 'purchaseHistory', 
+                'salesReturnHistory', 'purchaseReturnHistory', 
+                'transfersHistory', 'remainingStock'
+            ));
+        }
+        
+                
+        
 }

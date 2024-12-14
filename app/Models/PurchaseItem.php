@@ -36,9 +36,13 @@ class PurchaseItem extends Model
      */
     public function purchase()
     {
-        return $this->belongsTo(Purchase::class, 'purchase_id');
+        return $this->belongsTo(Purchase::class, 'custom_purchase_id', 'custom_purchase_id');
     }
 
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class, 'inward_warehouse_id'); 
+    }
     /**
      * Define relationship with the Product model.
      */

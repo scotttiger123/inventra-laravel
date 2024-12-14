@@ -83,6 +83,9 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::get('/get-product-details/{code}', [ProductController::class, 'getProductDetails']);
     Route::get('/load-products', [ProductController::class, 'loadProducts'])->name('products.load');
     Route::get('/stock-report-view', [ProductController::class, 'stockReport'])->name('stock-report-view');
+    Route::get('/products/{product}/stock-history', [ProductController::class, 'stockHistory'])->name('products.stockHistory');
+
+
 
 
 

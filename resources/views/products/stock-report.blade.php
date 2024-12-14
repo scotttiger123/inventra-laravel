@@ -32,7 +32,7 @@
             </a>
         </div>
 
-        <form method="GET" action="{{ route('stockReport.index') }}">
+        <form >
             <div class="row">
                 <!-- Warehouse Dropdown -->
                 <div class="col-md-4">
@@ -85,16 +85,12 @@
                                 Actions <i class="fa fa-caret-down"></i>
                             </button>
                             <div class="custom-dropdown-menu">
-                                <a href="{{ route('products.edit', $product->id) }}" class="custom-dropdown-item">
-                                    <i class="fa fa-edit"></i> Edit
-                                </a>
-                                <form id="deleteForm-{{ $product->id }}" action="{{ route('products.destroy', $product->id) }}" method="POST" class="custom-dropdown-item delete-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmDelete({{ $product->id }})" class="delete-btn btn btn-danger">
-                                        <i class="fa fa-trash"></i> Delete
-                                    </button>
-                                </form>
+
+                                    <a href="{{ route('products.stockHistory', $product->id) }}" class="custom-dropdown-item">
+
+                                        <i class="fa fa-history"></i> Stock History
+                                    </a>
+
                             </div>
                         </div>
                     </td>
