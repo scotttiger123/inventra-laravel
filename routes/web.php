@@ -84,8 +84,11 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::get('/load-products', [ProductController::class, 'loadProducts'])->name('products.load');
     Route::get('/stock-report-view', [ProductController::class, 'stockReport'])->name('stock-report-view');
     Route::get('/products/{product}/stock-history', [ProductController::class, 'stockHistory'])->name('products.stockHistory');
-
-
+    Route::get('/reports/product-sold-report', [ProductController::class, 'productSoldReport'])->name('reports.product-sold-report');
+    Route::get('product-sold-report-pdf', [ProductController::class, 'productSoldReportPDF'])->name('product-sold-report-pdf');
+    
+    Route::get('/reports/product-purchased-report', [ProductController::class, 'productPurchasedReport'])->name('reports.product-purchased-report');
+    Route::get('product-purchased-report-pdf', [ProductController::class, 'productPurchasedReportPDF'])->name('product-purchased-report-pdf');
 
 
 
@@ -152,14 +155,15 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
 
     
     // Warehouse routes
-    Route::get('/warehouses', [WarehouseController::class, 'index'])->name('warehouses.index'); // List all warehouses
-    Route::get('/warehouses/create', [WarehouseController::class, 'create'])->name('warehouses.create'); // Show form to create a warehouse
-    Route::post('/warehouses/store', [WarehouseController::class, 'store'])->name('warehouses.store'); // Store a new warehouse
-    Route::get('/warehouses/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show'); // Show a specific warehouse
-    Route::get('/warehouses/{warehouse}/edit', [WarehouseController::class, 'edit'])->name('warehouses.edit'); // Show form to edit a warehouse
-    Route::put('/warehouses/{warehouse}', [WarehouseController::class, 'update'])->name('warehouses.update'); // Update a specific warehouse
-    Route::delete('/warehouses/{warehouse}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy'); // Soft delete a warehouse
-
+    Route::get('/warehouses', [WarehouseController::class, 'index'])->name('warehouses.index'); 
+    Route::get('/warehouses/create', [WarehouseController::class, 'create'])->name('warehouses.create'); 
+    Route::post('/warehouses/store', [WarehouseController::class, 'store'])->name('warehouses.store'); 
+    Route::get('/warehouses/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show'); 
+    Route::get('/warehouses/{warehouse}/edit', [WarehouseController::class, 'edit'])->name('warehouses.edit'); 
+    Route::put('/warehouses/{warehouse}', [WarehouseController::class, 'update'])->name('warehouses.update'); 
+    Route::delete('/warehouses/{warehouse}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy'); 
+    Route::get('/warehouse/warehouse-report', [WarehouseController::class, 'warehouseReport'])->name('reports.warehouse-report');
+    Route::get('/warehouse/warehouse-report-pdf', [WarehouseController::class, 'warehouseReportPDF'])->name('reports.warehouse-report-pdf');
 
     // Transfer routes
     Route::get('/transfers', [TransferController::class, 'index'])->name('transfers.index'); // List all transfers
@@ -193,7 +197,8 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::delete('/expenses-head/{expense}', [ExpenseHeadController::class, 'destroy'])->name('expenses-heads.destroy-head'); // Delete an expense
 
 
-    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index'); // List all expenses
+    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index'); 
+    Route::get('/expensesPDF', [ExpenseController::class, 'indexPDF'])->name('expenses.indexPDF'); 
     Route::get('/expenses/create', [ExpenseController::class, 'create'])->name('expenses.create');
     Route::post('/expenses/store', [ExpenseController::class, 'store'])->name('expenses.store');
     Route::get('/expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit'); // Show form to edit an expense
@@ -213,6 +218,7 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
 
 
     Route::get('/income', [IncomeController::class, 'index'])->name('income.index'); 
+    Route::get('/incomePDF', [IncomeController::class, 'indexPDF'])->name('income.indexPDF'); 
     Route::get('/income/create', [IncomeController::class, 'create'])->name('income.create'); 
     Route::post('/income/store', [IncomeController::class, 'store'])->name('income.store'); 
     Route::get('/income/{income}/edit', [IncomeController::class, 'edit'])->name('income.edit'); 

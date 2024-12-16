@@ -11,18 +11,70 @@ use Illuminate\Http\Request;
 
 class IncomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        
-        $payments = Payment::with('paymentHead')->where('payable_type', 'income')->get(); // Filter by income type
-        
-        $totalPayments = $payments->count();  // Total number of income entries
-        $totalAmount = $payments->sum('amount');  // Total amount of all incomes
-        
-
-        // Pass payments, totalPayments, totalAmount, and totalCountAmount to the view
-        return view('incomes.index', compact('payments', 'totalPayments', 'totalAmount'));
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $paymentHeadId = $request->input('payment_head_id');
+    
+        $paymentHeads = PaymentHead::all();
+    
+        $query = Payment::with('paymentHead')
+            ->where('payable_type', 'income');
+    
+        if ($startDate && $endDate) {
+            $query->whereBetween('payment_date', [$startDate, $endDate]);
+        }
+    
+        if ($paymentHeadId) {
+            $query->where('payable_id', $paymentHeadId);
+        }
+    
+        $payments = $query->get();
+    
+        $totalPayments = $payments->count();
+        $totalAmount = $payments->sum('amount');
+        $totalCountAmount = $totalAmount;
+    
+        return view('incomes.index', compact('payments', 'totalPayments', 'totalAmount', 'totalCountAmount', 'paymentHeads'));
     }
+
+
+    public function indexPDF(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $paymentHeadId = $request->input('payment_head_id');
+    
+        $query = Payment::with('paymentHead')
+                        ->where('payable_type', 'income');
+    
+        if ($startDate && $endDate) {
+            $query->whereBetween('payment_date', [$startDate, $endDate]);
+        }
+    
+        if ($paymentHeadId) {
+            $query->where('payable_id', $paymentHeadId);
+        }
+    
+        $payments = $query->get();
+    
+        $totalPayments = $payments->count();
+        $totalAmount = $payments->sum('amount');
+        $totalCountAmount = $totalPayments * $totalAmount;
+    
+        $payments->each(function ($payment) {
+            $payment->paymentHeadName = $payment->paymentHead ? $payment->paymentHead->name : 'Unknown Payment Head';
+        });
+    
+        return response()->json([
+            'payments' => $payments,
+            'totalPayments' => $totalPayments,
+            'totalAmount' => $totalAmount,
+            'totalCountAmount' => $totalCountAmount,
+        ]);
+    }
+    
 
     public function create()
     {

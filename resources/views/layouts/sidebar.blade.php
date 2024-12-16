@@ -55,11 +55,16 @@
                 <a href="{{ route('supplier-ledger.index') }}"><i class="fa fa-dot-circle-o"></i> Supplier Ledger</a>
             </li>
             <li style="padding-left: 20px;">
-                <a href="{{ route('stock-report-view') }}">
-                    <i class="fa fa-dot-circle-o"></i> Stock Report
-                </a>
+                <a href="{{ route('stock-report-view') }}"> <i class="fa fa-dot-circle-o"></i> Stock Report </a>
             </li>
-         
+            <li style="padding-left: 20px;"><a href="{{ route('orders.index') }}"><i class="fa fa-dot-circle-o"></i> Sales Report</a></li>
+            <li style="padding-left: 20px;"> <a href="{{ route('reports.product-sold-report') }}"> <i class="fa fa-dot-circle-o"></i> Product sold report </a></li>
+            <li style="padding-left: 20px;"><a href="{{ route('purchases.index') }}"><i class="fa fa-dot-circle-o"></i> Purchase Report </a></li>
+            <li style="padding-left: 20px;"> <a href="{{ route('reports.product-purchased-report') }}"> <i class="fa fa-dot-circle-o"></i> Product Purchased</a></li>
+            <li style="padding-left: 20px;"> <a href="{{ route('reports.warehouse-report') }}"> <i class="fa fa-dot-circle-o"></i> Warehouse Report</a></li>
+            <li style="padding-left: 20px;"> <a href="{{ route('income.index') }}"> <i class="fa fa-dot-circle-o"></i> Income Report</a></li>
+            <li style="padding-left: 20px;"> <a href="{{ route('expenses.index') }}"> <i class="fa fa-dot-circle-o"></i> Expense Report</a></li>
+            
         </ul>
     </li>
 

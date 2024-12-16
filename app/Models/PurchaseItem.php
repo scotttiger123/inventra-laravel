@@ -43,6 +43,12 @@ class PurchaseItem extends Model
     {
         return $this->belongsTo(Warehouse::class, 'inward_warehouse_id'); 
     }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id'); // Adjust the foreign key if necessary
+    }
+
     /**
      * Define relationship with the Product model.
      */

@@ -12,18 +12,72 @@ class ExpenseController extends Controller
 {
             
     
-    public function index()
+    public function index(Request $request)
     {
-        // Fetch payments and calculate totals
-        $payments = Payment::with('paymentHead')->get();  // Eager load the paymentHead relation
-        
-        $totalPayments = $payments->count();  // Total number of payments
-        $totalAmount = $payments->sum('amount');  // Total amount of all payments
-        $totalCountAmount = $totalPayments * $totalAmount;  // New calculation for Total Count Amount
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $paymentHeadId = $request->input('payment_head_id');
     
-        // Pass payments, totalPayments, totalAmount, and totalCountAmount to the view
-        return view('expenses.index', compact('payments', 'totalPayments', 'totalAmount', 'totalCountAmount'));
+        $paymentHeads = PaymentHead::all();
+    
+        $query = Payment::with('paymentHead')
+            ->where('payable_type', 'expense');
+    
+        if ($startDate && $endDate) {
+            $query->whereBetween('payment_date', [$startDate, $endDate]);
+        }
+    
+        if ($paymentHeadId) {
+            $query->where('payable_id', $paymentHeadId);
+        }
+    
+        $payments = $query->get();
+    
+        $totalPayments = $payments->count();
+        $totalAmount = $payments->sum('amount');
+        $totalCountAmount = $totalPayments * $totalAmount;
+    
+        return view('expenses.index', compact('payments', 'totalPayments', 'totalAmount', 'totalCountAmount', 'paymentHeads'));
     }
+    
+
+
+    public function indexPDF(Request $request)
+{
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
+    $paymentHeadId = $request->input('payment_head_id');
+
+    $query = Payment::with('paymentHead')
+                    ->where('payable_type', 'expense');
+
+    if ($startDate && $endDate) {
+        $query->whereBetween('payment_date', [$startDate, $endDate]);
+    }
+
+    if ($paymentHeadId) {
+        $query->where('payable_id', $paymentHeadId);
+    }
+
+    $payments = $query->get();
+
+    $totalPayments = $payments->count();
+    $totalAmount = $payments->sum('amount');
+    $totalCountAmount = $totalPayments * $totalAmount;
+
+    $payments->each(function ($payment) {
+        $payment->paymentHeadName = $payment->paymentHead ? $payment->paymentHead->name : 'Unknown Payment Head';
+    });
+
+    return response()->json([
+        'payments' => $payments,
+        'totalPayments' => $totalPayments,
+        'totalAmount' => $totalAmount,
+        'totalCountAmount' => $totalCountAmount,
+    ]);
+}
+
+
                     
 
 

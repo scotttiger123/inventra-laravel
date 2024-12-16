@@ -31,7 +31,11 @@ class Order extends Model
         'created_by', 
     ];
 
-
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+    
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class, 'custom_order_id');  

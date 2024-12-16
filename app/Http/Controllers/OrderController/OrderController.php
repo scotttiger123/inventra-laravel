@@ -593,7 +593,7 @@ public function index(Request $request)
         $startDate = Carbon::parse($startDate)->startOfDay();
         $endDate = Carbon::parse($endDate)->endOfDay();
 
-        $filterRemainingAmount = $request->input('remaining_amount_filter', 'all'); // 'all', 'due', 'paid'
+        $filterRemainingAmount = $request->input('remaining_amount_filter', 'all'); 
 
         $ordersQuery = Order::select('orders.*', 'statuses.status_name')
             ->leftJoin('statuses', 'orders.status', '=', 'statuses.id')

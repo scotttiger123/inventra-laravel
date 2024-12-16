@@ -305,6 +305,199 @@ class ProductController extends Controller
             ));
         }
         
+
+
+        public function productSoldReport(Request $request)
+            {
+                $warehouses = Warehouse::all();
+
+                // Build query
+                $query = Product::with(['orderItems' => function ($q) use ($request) {
+                    if ($request->has('warehouse_id') && $request->warehouse_id != '') {
+                        $q->where('exit_warehouse', $request->warehouse_id);
+                    }
+                }, 'orderItems.order.customer', 'orderItems.warehouse']);
+
+                if ($request->has('warehouse_id') && $request->warehouse_id != '') {
+                    $query->whereHas('orderItems', function ($q) use ($request) {
+                        $q->where('exit_warehouse', $request->warehouse_id);
+                    });
+                }
+
+                if ($request->has('start_date') && $request->has('end_date') && $request->start_date != '' && $request->end_date != '') {
+                    $query->whereHas('orderItems.order', function ($q) use ($request) {
+                        $q->whereBetween('order_date', [$request->start_date, $request->end_date]);
+                    });
+                }
+
+                $products = $query->get();
+
+                $totalQuantitySold = $products->sum(function ($product) {
+                    return $product->orderItems->sum('quantity');
+                });
+
+                $totalRevenue = $products->sum(function ($product) {
+                    return $product->orderItems->sum(function ($orderItem) {
+                        return $orderItem->quantity * $orderItem->unit_price;
+                    });
+                });
+
+                return view('products.product-sold-report', compact('products', 'totalQuantitySold', 'totalRevenue', 'warehouses'));
+            }
+
+
+
+            public function productSoldReportPDF(Request $request)
+            {
+                $warehouses = Warehouse::all();
+
+                // Build query
+                $query = Product::with(['orderItems' => function ($q) use ($request) {
+                    if ($request->has('warehouse_id') && $request->warehouse_id != '') {
+                        $q->where('exit_warehouse', $request->warehouse_id);
+                    }
+                }, 'orderItems.order.customer', 'orderItems.warehouse']);
+
+                if ($request->has('warehouse_id') && $request->warehouse_id != '') {
+                    $query->whereHas('orderItems', function ($q) use ($request) {
+                        $q->where('exit_warehouse', $request->warehouse_id);
+                    });
+                }
+
+                if ($request->has('start_date') && $request->has('end_date') && $request->start_date != '' && $request->end_date != '') {
+                    $query->whereHas('orderItems.order', function ($q) use ($request) {
+                        $q->whereBetween('order_date', [$request->start_date, $request->end_date]);
+                    });
+                }
+
+                $products = $query->get();
+
+                $totalQuantitySold = $products->sum(function ($product) {
+                    return $product->orderItems->sum('quantity');
+                });
+
+                $totalRevenue = $products->sum(function ($product) {
+                    return $product->orderItems->sum(function ($orderItem) {
+                        return $orderItem->quantity * $orderItem->unit_price;
+                    });
+                });
+
+                // Create the JSON response
+                return response()->json([
+                    'products' => $products,
+                    'totalQuantitySold' => $totalQuantitySold,
+                    'totalRevenue' => $totalRevenue,
+                    'warehouses' => $warehouses,
+                ]);
+            }
+
+        
+            public function productPurchasedReport(Request $request)
+            {
+                $warehouses = Warehouse::all();
+            
+                $query = Product::with(['purchaseItems' => function ($q) use ($request) {
+                    if ($request->has('warehouse_id') && $request->warehouse_id != '') {
+                        $q->where('inward_warehouse_id', $request->warehouse_id);
+                    }
+                }, 'purchaseItems.purchase.supplier', 'purchaseItems.warehouse']);
+            
+                if ($request->has('warehouse_id') && $request->warehouse_id != '') {
+                    $query->whereHas('purchaseItems', function ($q) use ($request) {
+                        $q->where('inward_warehouse_id', $request->warehouse_id);
+                    });
+                }
+            
+                if ($request->has('start_date') && $request->has('end_date') && $request->start_date != '' && $request->end_date != '') {
+                    $query->whereHas('purchaseItems.purchase', function ($q) use ($request) {
+                        $q->whereBetween('purchase_date', [$request->start_date, $request->end_date]);
+                    });
+                }
+            
+                $products = $query->get();
+            
+                $totalQuantityPurchased = $products->sum(function ($product) {
+                    return $product->purchaseItems->sum('quantity');
+                });
+            
+                $totalExpenditure = $products->sum(function ($product) {
+                    return $product->purchaseItems->sum(function ($purchaseItem) {
+                        return $purchaseItem->quantity * $purchaseItem->rate;
+                    });
+                });
+            
+                $groupedByProduct = $products->mapWithKeys(function ($product) {
+                    return [
+                        $product->id => [
+                            'product_name' => $product->name,
+                            'total_quantity' => $product->purchaseItems->sum('quantity'),
+                            'total_expenditure' => $product->purchaseItems->sum(function ($item) {
+                                return $item->quantity * $item->rate;
+                            }),
+                        ],
+                    ];
+                });
+            
+                return view('products.product-purchased-report', compact('products', 'totalQuantityPurchased', 'totalExpenditure', 'groupedByProduct', 'warehouses'));
+            }
+            
+
+            public function productPurchasedReportPDF(Request $request)
+            {
+                $warehouses = Warehouse::all();
+            
+                $query = Product::with(['purchaseItems' => function ($q) use ($request) {
+                    if ($request->has('warehouse_id') && $request->warehouse_id != '') {
+                        $q->where('inward_warehouse_id', $request->warehouse_id);
+                    }
+                }, 'purchaseItems.purchase.supplier', 'purchaseItems.warehouse']);
+            
+                if ($request->has('warehouse_id') && $request->warehouse_id != '') {
+                    $query->whereHas('purchaseItems', function ($q) use ($request) {
+                        $q->where('inward_warehouse_id', $request->warehouse_id);
+                    });
+                }
+            
+                if ($request->has('start_date') && $request->has('end_date') && $request->start_date != '' && $request->end_date != '') {
+                    $query->whereHas('purchaseItems.purchase', function ($q) use ($request) {
+                        $q->whereBetween('purchase_date', [$request->start_date, $request->end_date]);
+                    });
+                }
+            
+                $products = $query->get();
+            
+                $totalQuantityPurchased = $products->sum(function ($product) {
+                    return $product->purchaseItems->sum('quantity');
+                });
+            
+                $totalExpenditure = $products->sum(function ($product) {
+                    return $product->purchaseItems->sum(function ($purchaseItem) {
+                        return $purchaseItem->quantity * $purchaseItem->rate;
+                    });
+                });
+            
+                $groupedByProduct = $products->mapWithKeys(function ($product) {
+                    return [
+                        $product->id => [
+                            'product_name' => $product->name,
+                            'total_quantity' => $product->purchaseItems->sum('quantity'),
+                            'total_expenditure' => $product->purchaseItems->sum(function ($item) {
+                                return $item->quantity * $item->rate;
+                            }),
+                        ],
+                    ];
+                });
+            
                 
+                return response()->json([
+                    'products' => $products,
+                    'totalQuantityPurchased' => $totalQuantityPurchased,
+                    'totalExpenditure' => $totalExpenditure,
+                    'warehouses' => $warehouses,
+                ]);
+            }
+            
+
+                        
         
 }

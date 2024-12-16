@@ -114,4 +114,29 @@ class Product extends Model
     {
         return $this->belongsTo(Uom::class, 'uom_id'); // Assuming `uom_id` is the foreign key
     }
+
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    // Relationship with PurchaseItem (purchases)
+    public function purchaseItems()
+    {
+        return $this->hasMany(PurchaseItem::class);
+    }
+
+    // Relationship with Order (for sales)
+    public function orders()
+    {
+        return $this->hasManyThrough(Order::class, OrderItem::class);
+    }
+
+    // Relationship with Purchase (for purchases)
+    public function purchases()
+    {
+        return $this->hasManyThrough(Purchase::class, PurchaseItem::class);
+    }
+
 }
