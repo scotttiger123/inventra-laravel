@@ -96,4 +96,25 @@ class DashboardController extends Controller
         // Pass the calculated data to the view
         return view('dashboard.dashboard', compact('sales', 'totalPurchases', 'paid', 'amountDue'));
     }
+
+
+
+
+
+
+    public function profitLossView()
+    {
+        return view('dashboard.profit-loss'); // Blade file path
+    }
+
+
+
+
+
+
+
+
+
+
+
 }

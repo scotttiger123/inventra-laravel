@@ -46,6 +46,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () { 
 
 Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
+Route::get('/profit-loss', [DashboardController::class, 'profitLossView'])->name('profit.loss');
 
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
