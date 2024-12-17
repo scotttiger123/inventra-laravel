@@ -94,7 +94,7 @@
             <div class="col-lg-3 col-xs-12">
                 <div class="small-box bg-grey">
                     <div class="inner">
-                        <h3 style="color: white;">$25,000.00</h3>
+                        <h3 style="color: white;"> {{$currencySymbol }}{{ $totalNetProfit}} </h3>
                         <p style="color: white;">Revenue Avg. Profit</p>
                     </div>
                     <div class="icon" style="color: #008548;"> <!-- Green -->

@@ -125,7 +125,8 @@ class DashboardController extends Controller
             // Pass data to the view
             return view('dashboard.profit-loss', [
                 'saleTotalNetAmount' => $totals['totalNetAmount'],
-                'saleReturnTotalNetAmount' => $totals['totalNetReturnAmount'],
+                'totalNetProfit' => $totals['totalNetProfit'],
+                'saleReturnTotalNetAmount' => $totals['totalNetReturnAmount'], 
                 'purchaseTotalNetAmount' => $totalsPurchase['totalNetTotalWithTax'],
                 'purchaseReturnTotalNetAmount' => $totalsPurchase['totalNetReturnAmount'],
                 'totalIncome' => $totalIncome['totalAmount'],

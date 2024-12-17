@@ -584,7 +584,9 @@ public function index(Request $request)
         $totalNetAmount = 0;
         $totalPaid = 0;
         $totalAmountDue = 0;
-        $totalNetReturnAmount = 0;  
+        $totalNetReturnAmount = 0;
+        $totalProductCost = 0; // Initialize variable for total product cost
+        $totalNetProfit = 0; // Initialize variable for total net profit
 
         $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
 
@@ -612,6 +614,7 @@ public function index(Request $request)
         foreach ($orders as $order) {
             $grossAmount = 0;
             $orderItems = OrderItem::where('custom_order_id', $order->custom_order_id)->get();
+            $orderProductCost = 0; // Initialize product cost for this order
 
             foreach ($orderItems as $item) {
                 $totalBeforeDiscount = $item->unit_price * $item->quantity;
@@ -622,6 +625,9 @@ public function index(Request $request)
                 } else {
                     $discountAmountCalculated = $discountAmount;
                 }
+
+                // Calculate product cost for each item
+                $orderProductCost += $item->cost_price * $item->quantity;
 
                 $grossAmount += $totalBeforeDiscount - $discountAmountCalculated;
             }
@@ -643,6 +649,9 @@ public function index(Request $request)
             }
             $netTotalWithTax = $netTotal + $taxAmount;
 
+            
+            
+
             $payments = Payment::where('invoice_id', $order->custom_order_id)
                 ->sum('amount');
 
@@ -651,24 +660,31 @@ public function index(Request $request)
             if ($order->status_name === 'Return') {
                 $totalGrossAmount -= $grossAmount;
                 $totalOrderDiscount -= $orderDiscount;
-                $totalNetAmount -= $netTotalWithTax;
+                
                 $totalPaid -= $payments;
                 $totalAmountDue -= $remainingAmount;
                 $totalNetReturnAmount += $netTotalWithTax;
+                $netProfit = $netTotal - $orderProductCost; 
+                $totalNetProfit -= $netProfit;
+                
             } else {
                 $totalGrossAmount += $grossAmount;
                 $totalOrderDiscount += $orderDiscount;
                 $totalNetAmount += $netTotalWithTax;
                 $totalPaid += $payments;
                 $totalAmountDue += $remainingAmount;
+                $netProfit = $netTotal - $orderProductCost; 
+                $totalNetProfit += $netProfit;
             }
 
+            // Store order calculations in the order object
             $order->grossAmount = $grossAmount;
             $order->orderDiscount = $orderDiscount;
             $order->grossAmountAfterOrderDiscount = $grossAmountAfterOrderDiscount;
             $order->netTotal = $netTotalWithTax;
             $order->remainingAmount = $remainingAmount;
             $order->ordersPaidAmount = $payments;
+            $order->netProfit = $netProfit; // Store net profit for this order
         }
 
         // Apply remaining amount filter
@@ -695,6 +711,7 @@ public function index(Request $request)
             'totalPaid',
             'totalAmountDue',
             'currencySymbol',
+            'totalNetProfit', 
             'accounts'
         ));
     } catch (Exception $e) {
@@ -702,7 +719,6 @@ public function index(Request $request)
         return redirect()->back()->withErrors('Failed to fetch orders. Please try again later.');
     }
 }
-
 
 
 
