@@ -13,6 +13,10 @@ use App\Models\PurchaseItem;
 use App\Models\Payment;
 use App\Http\Controllers\OrderController\OrderController;
 use App\Http\Controllers\PurchaseController\PurchaseController;
+use App\Http\Controllers\IncomeController\IncomeController;
+use App\Http\Controllers\ExpenseController\ExpenseController;
+use App\Http\Controllers\PaymentController\PaymentController;
+
 
 class DashboardController extends Controller
 {
@@ -102,23 +106,32 @@ class DashboardController extends Controller
 
 
 
-
-
-    public function profitLossView(Request $request
-    , OrderController $orderController
-    ,PurchaseController $purchaseController)
-    {
+    public function profitLossView(
+        Request $request,
+        OrderController $orderController,
+        PurchaseController $purchaseController,
+        IncomeController $incomeController,
+        ExpenseController $expenseController,
+        PaymentController $paymentController
+    ) {
         try {
-            
+            // Fetch sales, purchase, income, expense, and payment data
             $totals = $orderController->index($request);
             $totalsPurchase = $purchaseController->index($request);
-
-            
+            $totalIncome = $incomeController->index($request, true);
+            $totalExpense = $expenseController->index($request, true);
+            $totalPayment = $paymentController->index($request, true);
+    
+            // Pass data to the view
             return view('dashboard.profit-loss', [
                 'saleTotalNetAmount' => $totals['totalNetAmount'],
                 'saleReturnTotalNetAmount' => $totals['totalNetReturnAmount'],
                 'purchaseTotalNetAmount' => $totalsPurchase['totalNetTotalWithTax'],
                 'purchaseReturnTotalNetAmount' => $totalsPurchase['totalNetReturnAmount'],
+                'totalIncome' => $totalIncome['totalAmount'],
+                'totalExpense' => $totalExpense['totalAmount'],
+                'totalCredit' => $totalPayment['totalCredit'],
+                'totalDebit' => $totalPayment['totalDebit'],
                 'currencySymbol' => $totals['currencySymbol'],
             ]);
         } catch (\Exception $e) {
@@ -126,6 +139,7 @@ class DashboardController extends Controller
             return redirect()->back()->withErrors('Failed to fetch profit/loss data. Please try again later.');
         }
     }
+    
 
 
 

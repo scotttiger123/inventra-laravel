@@ -68,7 +68,7 @@
             <div class="col-lg-3 col-xs-12">
                 <div class="small-box bg-grey">
                     <div class="inner">
-                        <h3 style="color: white;">$40,000.00</h3>
+                        <h3 style="color: white;">   {{$currencySymbol }}{{ $totalIncome}} </h3>
                         <p style="color: white;">Income</p>
                     </div>
                     <div class="icon" style="color: #008548;"> <!-- Green -->
@@ -81,7 +81,7 @@
             <div class="col-lg-3 col-xs-12">
                 <div class="small-box bg-grey">
                     <div class="inner">
-                        <h3 style="color: white;">$20,000.00</h3>
+                        <h3 style="color: white;"> {{$currencySymbol }}{{ $totalExpense}} </h3>
                         <p style="color: white;">Expenses</p>
                     </div>
                     <div class="icon" style="color: #b13c2e;"> <!-- Red -->
@@ -125,7 +125,7 @@
             <div class="col-lg-4 col-xs-12">
                 <div class="small-box bg-grey">
                     <div class="inner">
-                        <h3 style="color: white;">$50,000.00</h3>
+                        <h3 style="color: white;">{{$currencySymbol }}{{ $totalCredit}}</h3>
                         <p style="color: white;">Payments Received</p>
                     </div>
                     <div class="icon" style="color: #008548;"> <!-- Green -->
@@ -138,7 +138,7 @@
             <div class="col-lg-4 col-xs-12">
                 <div class="small-box bg-grey">
                     <div class="inner">
-                        <h3 style="color: white;">$30,000.00</h3>
+                        <h3 style="color: white;">{{$currencySymbol }}{{ $totalDebit}}</h3>
                         <p style="color: white;">Payments Sent</p>
                     </div>
                     <div class="icon" style="color: #b13c2e;"> <!-- Red -->
@@ -151,7 +151,8 @@
             <div class="col-lg-4 col-xs-12">
                 <div class="small-box bg-grey">
                     <div class="inner">
-                        <h3 style="color: white;">$20,000.00</h3>
+                    <h3 style="color: white;">{{ $currencySymbol }}{{ $totalCredit - $totalDebit }}</h3>
+
                         <p style="color: white;">Payments Net</p>
                     </div>
                     <div class="icon" style="color: #008548;"> <!-- Neutral -->
