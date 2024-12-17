@@ -323,6 +323,9 @@ public function index(Request $request)
                              ->orderBy('created_at', 'desc')
                              ->get();
 
+        $totalNetTotalWithTax = 0;
+        $totalNetReturnAmount = 0;  // Variable to store total return amount
+
         foreach ($purchases as $purchase) {
             $grossAmount = 0;
             $purchaseItems = PurchaseItem::where('custom_purchase_id', $purchase->custom_purchase_id)->get(); 
@@ -362,25 +365,37 @@ public function index(Request $request)
                 $taxAmount = ($netTotal * $taxRate) / 100;
             }
             $netTotalWithTax = $netTotal + $taxAmount;
-    
+            
             // Calculate remaining amount
             $remainingAmount = $netTotalWithTax - $purchase->paid;
 
-            // Attach the calculated values to the purchase object
-            $purchase->grossAmount = $grossAmount;
-            $purchase->purchaseDiscount = $purchaseDiscount;
-            $purchase->grossAmountAfterPurchaseDiscount = $grossAmountAfterPurchaseDiscount;
-            $purchase->netTotal = $netTotalWithTax;
-            $purchase->remainingAmount = $remainingAmount;
+            // Add to total net amount only if it is a regular purchase, not a return
+            if ($purchase->status == '1') {
+                $totalNetReturnAmount += $netTotalWithTax;
+                
+                
+            } else {
+                
+                $purchase->grossAmount = $grossAmount;
+                $purchase->purchaseDiscount = $purchaseDiscount;
+                $purchase->grossAmountAfterPurchaseDiscount = $grossAmountAfterPurchaseDiscount;
+                $purchase->netTotal = $netTotalWithTax;
+                $purchase->remainingAmount = $remainingAmount;
+                $totalNetTotalWithTax += $netTotalWithTax;
+                
+            }
+
+            
         }
 
         // Return the purchase listings view
-        return view('purchases.index', compact('purchases'));
+        return view('purchases.index', compact('purchases', 'totalNetTotalWithTax', 'totalNetReturnAmount'));
     } catch (Exception $e) {
         \Log::error('Failed to fetch purchases: ' . $e->getMessage());
         return redirect()->back()->withErrors('Failed to fetch purchases. Please try again later.');
     }
 }
+
 
 
 

@@ -11,7 +11,7 @@
             <div class="col-lg-3 col-xs-12">
                 <div class="small-box bg-grey">
                     <div class="inner">
-                        <h3 style="color: white;">$100,000.00</h3>
+                        <h3 style="color: white;">{{$currencySymbol }}{{ $saleTotalNetAmount}}</h3>
                         <p style="color: white;">Sales</p>
                     </div>
                     <div class="icon" style="color: #008548;"> <!-- Green -->
@@ -22,9 +22,9 @@
 
             <!-- Purchase Box -->
             <div class="col-lg-3 col-xs-12">
-                <div class="small-box bg-grey">
+                <div class="small-box bg-grey"> 
                     <div class="inner">
-                        <h3 style="color: white;">$70,000.00</h3>
+                        <h3 style="color: white;">{{$currencySymbol }}{{ $purchaseTotalNetAmount}}</h3>
                         <p style="color: white;">Purchases</p>
                     </div>
                     <div class="icon" style="color: #b13c2e;"> <!-- Red -->
@@ -37,7 +37,7 @@
             <div class="col-lg-3 col-xs-12">
                 <div class="small-box bg-grey">
                     <div class="inner">
-                        <h3 style="color: white;">$5,000.00</h3>
+                        <h3 style="color: white;">{{$currencySymbol }}{{ $saleReturnTotalNetAmount}}</h3>
                         <p style="color: white;">Sales Return</p>
                     </div>
                     <div class="icon" style="color: #b13c2e;"> <!-- Red -->
@@ -50,7 +50,7 @@
             <div class="col-lg-3 col-xs-12">
                 <div class="small-box bg-grey">
                     <div class="inner">
-                        <h3 style="color: white;">$3,000.00</h3>
+                        <h3 style="color: white;">{{$currencySymbol }}{{ $purchaseReturnTotalNetAmount}}</h3>
                         <p style="color: white;">Purchase Return</p>
                     </div>
                     <div class="icon" style="color: #008548;"> <!-- Green -->

@@ -11,6 +11,8 @@ use App\Models\OrderItem;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\Payment;
+use App\Http\Controllers\OrderController\OrderController;
+use App\Http\Controllers\PurchaseController\PurchaseController;
 
 class DashboardController extends Controller
 {
@@ -102,9 +104,27 @@ class DashboardController extends Controller
 
 
 
-    public function profitLossView()
+    public function profitLossView(Request $request
+    , OrderController $orderController
+    ,PurchaseController $purchaseController)
     {
-        return view('dashboard.profit-loss'); // Blade file path
+        try {
+            
+            $totals = $orderController->index($request);
+            $totalsPurchase = $purchaseController->index($request);
+
+            
+            return view('dashboard.profit-loss', [
+                'saleTotalNetAmount' => $totals['totalNetAmount'],
+                'saleReturnTotalNetAmount' => $totals['totalNetReturnAmount'],
+                'purchaseTotalNetAmount' => $totalsPurchase['totalNetTotalWithTax'],
+                'purchaseReturnTotalNetAmount' => $totalsPurchase['totalNetReturnAmount'],
+                'currencySymbol' => $totals['currencySymbol'],
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to fetch profit/loss data: ' . $e->getMessage());
+            return redirect()->back()->withErrors('Failed to fetch profit/loss data. Please try again later.');
+        }
     }
 
 

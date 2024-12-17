@@ -584,6 +584,7 @@ public function index(Request $request)
         $totalNetAmount = 0;
         $totalPaid = 0;
         $totalAmountDue = 0;
+        $totalNetReturnAmount = 0;  
 
         $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
 
@@ -653,6 +654,7 @@ public function index(Request $request)
                 $totalNetAmount -= $netTotalWithTax;
                 $totalPaid -= $payments;
                 $totalAmountDue -= $remainingAmount;
+                $totalNetReturnAmount += $netTotalWithTax;
             } else {
                 $totalGrossAmount += $grossAmount;
                 $totalOrderDiscount += $orderDiscount;
@@ -689,6 +691,7 @@ public function index(Request $request)
             'totalGrossAmount',
             'totalOrderDiscount',
             'totalNetAmount',
+            'totalNetReturnAmount',
             'totalPaid',
             'totalAmountDue',
             'currencySymbol',

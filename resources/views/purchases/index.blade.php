@@ -107,6 +107,7 @@
                 <th>Other Charges</th>
                 <th>Net Total</th>
                 <th>Paid</th>
+                <th>Status</th>
                 <th>Amount Due</th>
                 <th>Actions</th>
             </tr>
@@ -123,6 +124,7 @@
                     <td>{{ $purchase->other_charges }}</td>
                     <td>{{ $purchase->netTotal }}</td>
                     <td>{{ $purchase->paid }}</td>
+                    <td>{{ $purchase->status }}</td>
                     <td class="text-center">
                         <span class="badge 
                             @if($purchase->remainingAmount > 0) 
