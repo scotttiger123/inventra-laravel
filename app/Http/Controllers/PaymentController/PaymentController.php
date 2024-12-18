@@ -26,30 +26,37 @@ class PaymentController extends Controller
           return view('payments.create', compact('Payment')); // Pass roles to the view
       }
 
-      public function index()
-      {
-         
-        $payments = Payment::whereIn('payable_type', ['customer', 'supplier'])->get()->map(function ($payment) {
-            if ($payment->payable_type === 'customer') {
-                $payment->payable_name = Customer::where('id', $payment->payable_id)->value('name');
-            } elseif ($payment->payable_type === 'supplier') {
-                $payment->payable_name = Supplier::where('id', $payment->payable_id)->value('name');
-            }
-            return $payment;
-        });
-  
-                    
-        $totalDebit = $payments->where('payment_type', 'debit')->sum('amount');
-    
-        $totalCredit = $payments->where('payment_type', 'credit')->sum('amount');
 
-          // Pass all data to the view, including individual payment details
-          return view('payments.index', compact('payments',
-              'totalDebit', 'totalCredit'
-              
-          ));
-      }
-  
+
+      public function index(Request $request)
+        {
+            $startDate = $request->get('start_date');
+            $endDate = $request->get('end_date');
+
+            $query = Payment::whereIn('payable_type', ['customer', 'supplier']);
+
+            if ($startDate) {
+                $query->whereDate('payment_date', '>=', $startDate);
+            }
+            if ($endDate) {
+                $query->whereDate('payment_date', '<=', $endDate);
+            }
+
+            $payments = $query->get()->map(function ($payment) {
+                if ($payment->payable_type === 'customer') {
+                    $payment->payable_name = Customer::where('id', $payment->payable_id)->value('name');
+                } elseif ($payment->payable_type === 'supplier') {
+                    $payment->payable_name = Supplier::where('id', $payment->payable_id)->value('name');
+                }
+                return $payment;
+            });
+
+            $totalDebit = $payments->where('payment_type', 'debit')->sum('amount');
+            $totalCredit = $payments->where('payment_type', 'credit')->sum('amount');
+
+            return view('payments.index', compact('payments', 'totalDebit', 'totalCredit', 'startDate', 'endDate'));
+        }
+
 
 
                 
@@ -114,7 +121,7 @@ class PaymentController extends Controller
                 'payment_head' => 'required|string',
             ]);
         
-            // Determine the payment_head ID
+            
             $paymentHeadId = null;
         
             if ($request->input('payment_head') == 'customer') {
@@ -139,7 +146,7 @@ class PaymentController extends Controller
                 'payment_method' => $request->payment_method,
                 'payment_date' => $request->payment_date,
                 'note' => $request->note,
-                'payment_head' => $paymentHeadId, // Store the payment_head as ID
+                'payment_head' => $paymentHeadId, 
                 'created_by' => auth()->id(),
             ]);
         

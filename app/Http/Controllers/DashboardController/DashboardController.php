@@ -11,6 +11,7 @@ use App\Models\OrderItem;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\Payment;
+use App\Models\Product;
 use App\Http\Controllers\OrderController\OrderController;
 use App\Http\Controllers\PurchaseController\PurchaseController;
 use App\Http\Controllers\IncomeController\IncomeController;
@@ -115,12 +116,12 @@ class DashboardController extends Controller
         PaymentController $paymentController
     ) {
         try {
-            // Fetch sales, purchase, income, expense, and payment data
+            
             $totals = $orderController->index($request);
             $totalsPurchase = $purchaseController->index($request);
-            $totalIncome = $incomeController->index($request, true);
-            $totalExpense = $expenseController->index($request, true);
-            $totalPayment = $paymentController->index($request, true);
+            $totalIncome = $incomeController->index($request);
+            $totalExpense = $expenseController->index($request);
+            $totalPayment = $paymentController->index($request);
     
             // Pass data to the view
             return view('dashboard.profit-loss', [
@@ -141,15 +142,6 @@ class DashboardController extends Controller
         }
     }
     
-
-
-
-
-
-
-
-
-
 
 
 }

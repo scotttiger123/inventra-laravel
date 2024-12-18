@@ -65,6 +65,8 @@
             <li style="padding-left: 20px;"> <a href="{{ route('income.index') }}"> <i class="fa fa-dot-circle-o"></i> Income Report</a></li>
             <li style="padding-left: 20px;"> <a href="{{ route('expenses.index') }}"> <i class="fa fa-dot-circle-o"></i> Expense Report</a></li>
             <li style="padding-left: 20px;"> <a href="{{ route('profit.loss') }}"> <i class="fa fa-dot-circle-o"></i> Profit-Loss Report</a></li>
+            <li style="padding-left: 20px;"> <a href="{{ route('product.quantity.alerts.index') }}"> <i class="fa fa-dot-circle-o"></i> Product Quantity Alerts</a></li>
+            
             
         </ul>
     </li>

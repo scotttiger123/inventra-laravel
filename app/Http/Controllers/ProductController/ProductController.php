@@ -225,28 +225,65 @@ class ProductController extends Controller
 
         
         
+        private function calculateStockForProducts()
+        {
+            $products = Product::with(['category', 'uom', 'warehouse'])->get();
+    
+            foreach ($products as $product) {
+                $purchasedQuantity = PurchaseItem::where('product_id', $product->id)
+                    ->whereHas('purchase', function ($query) {
+                        $query->where('status', '!=', 1);
+                    })
+                    ->sum('quantity');
+    
+                $returnedPurchaseQuantity = PurchaseItem::where('product_id', $product->id)
+                    ->whereHas('purchase', function ($query) {
+                        $query->where('status', 1);
+                    })
+                    ->sum('quantity');
+    
+                $orderedQuantity = OrderItem::where('product_id', $product->id)
+                    ->whereHas('order', function ($query) {
+                        $query->where('status', '!=', 1);
+                    })
+                    ->sum('quantity');
+    
+                $returnedOrderQuantity = OrderItem::where('product_id', $product->id)
+                    ->whereHas('order', function ($query) {
+                        $query->where('status', 1);
+                    })
+                    ->sum('quantity');
+    
+                $product->current_stock = $purchasedQuantity - $orderedQuantity + $returnedOrderQuantity - $returnedPurchaseQuantity;
+            }
+    
+            return $products;
+        }
+    
+        /**
+         * Display stock report.
+         */
         public function stockReport()
         {
-            // Retrieve all products with their relationships (category, UOM, and warehouse)
-            $products = Product::with(['category', 'uom', 'warehouse'])->get();
-        
-            // Calculate current stock for each product (purchase stock - order stock)
-            foreach ($products as $product) {
-                $purchasedQuantity = PurchaseItem::where('product_id', $product->id)->sum('quantity');
-                $orderedQuantity = OrderItem::where('product_id', $product->id)->sum('quantity');
-        
-                // Current stock calculation
-                $product->current_stock = $purchasedQuantity - $orderedQuantity;
-            }
-        
-            // Retrieve all warehouses for the dropdown
+            $products = $this->calculateStockForProducts();
             $warehouses = Warehouse::all();
-        
-            // Calculate the total number of products
             $totalProducts = $products->count();
-        
-            // Return the view with products, warehouses, and totalProducts data
+    
             return view('products.stock-report', compact('products', 'warehouses', 'totalProducts'));
+        }
+    
+        /**
+         * Display products with alert quantity.
+         */
+        public function quantityAlerts(Request $request)
+        {
+            $products = $this->calculateStockForProducts();
+    
+            $alertProducts = $products->filter(function ($product) {
+                return $product->alert_quantity > $product->current_stock;
+            });
+    
+            return view('dashboard.product-alert-quantity', ['products' => $alertProducts]);
         }
         
         public function stockHistory(Product $product)

@@ -48,6 +48,8 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
 Route::get('/profit-loss', [DashboardController::class, 'profitLossView'])->name('profit.loss');
 
+
+
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
 Route::get('/orders/create-pos', [OrderController::class, 'createPOS'])->name('orders.create-pos');
@@ -87,9 +89,9 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::get('/products/{product}/stock-history', [ProductController::class, 'stockHistory'])->name('products.stockHistory');
     Route::get('/reports/product-sold-report', [ProductController::class, 'productSoldReport'])->name('reports.product-sold-report');
     Route::get('product-sold-report-pdf', [ProductController::class, 'productSoldReportPDF'])->name('product-sold-report-pdf');
-    
     Route::get('/reports/product-purchased-report', [ProductController::class, 'productPurchasedReport'])->name('reports.product-purchased-report');
     Route::get('product-purchased-report-pdf', [ProductController::class, 'productPurchasedReportPDF'])->name('product-purchased-report-pdf');
+    Route::get('/product-quantity-alerts', [ProductController::class, 'quantityAlerts'])->name('product.quantity.alerts.index');
 
 
 

@@ -309,6 +309,8 @@ class PurchaseController extends Controller
 }
 
 
+
+
 public function index(Request $request)
 {
     try {
@@ -318,13 +320,24 @@ public function index(Request $request)
 
         $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
 
-        $purchases = Purchase::whereIn('created_by', [$userId, $parentUserId])
-                             ->with('supplier')  
-                             ->orderBy('created_at', 'desc')
-                             ->get();
+            $startDate = $request->get('start_date');
+            $endDate = $request->get('end_date');
+            $query = Purchase::whereIn('created_by', [$userId, $parentUserId])
+            ->with('supplier')
+            ->orderBy('created_at', 'desc'); 
+    
+            
+            if ($startDate) {
+                $query->whereDate('purchase_date', '>=', $startDate); 
+            }
+            if ($endDate) {
+                $query->whereDate('purchase_date', '<=', $endDate); 
+            }
+    
+            $purchases = $query->get();
 
         $totalNetTotalWithTax = 0;
-        $totalNetReturnAmount = 0;  // Variable to store total return amount
+        $totalNetReturnAmount = 0;  
 
         foreach ($purchases as $purchase) {
             $grossAmount = 0;

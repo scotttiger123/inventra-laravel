@@ -585,8 +585,8 @@ public function index(Request $request)
         $totalPaid = 0;
         $totalAmountDue = 0;
         $totalNetReturnAmount = 0;
-        $totalProductCost = 0; // Initialize variable for total product cost
-        $totalNetProfit = 0; // Initialize variable for total net profit
+        $totalProductCost = 0; 
+        $totalNetProfit = 0; 
 
         $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
 
@@ -777,10 +777,10 @@ public function update(Request $request)
         $existingOrder->other_charges = $request->other_charges;
         $existingOrder->paid = $request->paid_amount;
 
-        $existingOrder->updated_by = auth()->id();  // Set the user updating the order
+        $existingOrder->updated_by = auth()->id();  
         $existingOrder->save();
 
-        // Clear previous order items before updating (if needed)
+        
         DB::table('order_items')->where('order_id', $existingOrder->id)->delete();
 
         // Check if orderData is provided
