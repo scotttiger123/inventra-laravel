@@ -96,6 +96,7 @@
 });
 
       setTimeout(function() {
+
           var successMessage = document.getElementById('successMessage');
           var errorMessage = document.getElementById('errorMessage');
           
@@ -106,7 +107,83 @@
           if (errorMessage) {
               errorMessage.style.display = 'none';
           }
+
+
+          
       }, 5000);
+
+
+      $(document).ready(function() {
+        $('#loader').show(); // Show the loader
+        
+        $(window).on('load', function() {
+            $('#loader').fadeOut(); 
+        });
+        
+        let totalAlertCount = 0;
+        function updateLowStock() {
+            
+
+            $.ajax({
+                url: '/product-quantity-alerts-json',  
+                type: 'GET',
+                success: function(response) {
+                    console.log(response);
+                    if(response.lowStockCount>0){
+                        totalAlertCount++;
+                        $('#total_alert').text(totalAlertCount);
+                        
+                        $('#lowStockAlertCountHeader').text('Low Stock Items: ' + response.lowStockCount);
+    
+                    }else { 
+                        $('#lowStockAlert').text('Low Stock products: 0');
+                    }
+
+                    
+                },
+                error: function(xhr, status, error) {
+                    console.error('There was an error fetching low stock products:', error);
+                }
+            });
+        }
+ 
+        updateLowStock();
+
+
+        setInterval(updateLowStock, 30000);
+    });
+
+    function toggleFullScreen() {
+        if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            // Enter fullscreen
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) {
+                document.documentElement.msRequestFullscreen();
+            }
+        } else {
+            // Exit fullscreen
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
+
+    // Event listener for the fullscreen button
+    document.getElementById("fullscreenBtn").addEventListener("click", toggleFullScreen);
+
+
+    
 </script>
 </body>
 </html>

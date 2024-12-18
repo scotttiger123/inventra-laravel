@@ -272,19 +272,29 @@ class ProductController extends Controller
             return view('products.stock-report', compact('products', 'warehouses', 'totalProducts'));
         }
     
-        /**
-         * Display products with alert quantity.
-         */
+        
+        public function quantityAlertsIndex(Request $request)
+            {
+                return view('dashboard.product-alert-quantity');
+                
+            }
+
         public function quantityAlerts(Request $request)
-        {
-            $products = $this->calculateStockForProducts();
+            {
     
-            $alertProducts = $products->filter(function ($product) {
-                return $product->alert_quantity > $product->current_stock;
-            });
-    
-            return view('dashboard.product-alert-quantity', ['products' => $alertProducts]);
-        }
+                $products = $this->calculateStockForProducts();
+            
+                $alertProducts = $products->filter(function ($product) {
+                    return $product->alert_quantity > $product->current_stock;
+                });
+                
+                return response()->json([
+                    'lowStockCount' => $alertProducts->count(),
+                    'products' => $alertProducts
+                ]);
+            }
+
+
         
         public function stockHistory(Product $product)
         {

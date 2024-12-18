@@ -91,7 +91,8 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::get('product-sold-report-pdf', [ProductController::class, 'productSoldReportPDF'])->name('product-sold-report-pdf');
     Route::get('/reports/product-purchased-report', [ProductController::class, 'productPurchasedReport'])->name('reports.product-purchased-report');
     Route::get('product-purchased-report-pdf', [ProductController::class, 'productPurchasedReportPDF'])->name('product-purchased-report-pdf');
-    Route::get('/product-quantity-alerts', [ProductController::class, 'quantityAlerts'])->name('product.quantity.alerts.index');
+    Route::get('/product-quantity-alerts-json', [ProductController::class, 'quantityAlerts'])->name('product.quantity.alerts.json');
+    Route::get('/product-quantity-alerts', [ProductController::class, 'quantityAlertsIndex'])->name('product.quantity.alerts.index');
 
 
 
