@@ -77,4 +77,78 @@ class AccountController extends Controller
             return redirect()->route('accounts.index')->with('error', 'Failed to delete account. Please try again.');
         }
     }
+
+    public function show($id)
+    {
+        
+        $account = Account::findOrFail($id);
+
+        
+        return view('accounts.index', compact('account'));
+    }
+
+
+    public function accountBalanceSheet()
+    {
+    $accounts = Account::with('payments')->get();
+
+    $totalCredits = 0;
+    $totalDebits = 0;
+    $totalBalance = 0;
+
+    foreach ($accounts as $account) {
+        $credits = $account->payments->where('payment_type', 'credit')->sum('amount');
+        $debits = $account->payments->where('payment_type', 'debit')->sum('amount');
+        $balance = $account->initial_balance + $credits - $debits;
+
+        $totalCredits += $credits;
+        $totalDebits += $debits;
+        $totalBalance += $balance;
+
+        $account->calculated_balance = $balance; 
+    }
+
+    return view('accounts.balance_sheet', compact('accounts', 'totalCredits', 'totalDebits', 'totalBalance'));
+    }
+
+    public function accountBalanceSheetJSON()
+        {
+            $accounts = Account::with('payments')->get();
+
+            $totalCredits = 0;
+            $totalDebits = 0;
+            $totalBalance = 0;
+
+            $accountData = [];
+
+            foreach ($accounts as $account) {
+                $credits = $account->payments->where('payment_type', 'credit')->sum('amount');
+                $debits = $account->payments->where('payment_type', 'debit')->sum('amount');
+                $balance = $account->initial_balance + $credits - $debits;
+
+                $totalCredits += $credits;
+                $totalDebits += $debits;
+                $totalBalance += $balance;
+
+                // Adding account data with calculated balance
+                $accountData[] = [
+                    'account_no' => $account->account_no,
+                    'name' => $account->name,
+                    'initial_balance' => $account->initial_balance,
+                    'total_credits' => $credits,
+                    'total_debits' => $debits,
+                    'calculated_balance' => $balance,
+                ];
+            }
+
+            return response()->json([
+                'accounts' => $accountData,
+                'totalCredits' => $totalCredits,
+                'totalDebits' => $totalDebits,
+                'totalBalance' => $totalBalance,
+            ]);
+        }
+
+    
+
 }

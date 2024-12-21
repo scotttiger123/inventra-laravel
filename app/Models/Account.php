@@ -16,4 +16,9 @@ class Account extends Model
         'initial_balance',
         'note',
     ];
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'account_id', 'id');
+    }
 }

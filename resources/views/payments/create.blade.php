@@ -12,6 +12,11 @@
                     {{ session('success') }}
                 </div>
             @endif
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
@@ -24,26 +29,20 @@
         </div>
 
         <!-- Payment Creation Form -->
-        <form action="{{ route('payments.store') }}" method="POST">
+        <form action="{{ route('payments.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="box-body">
-                <!-- Payable Type (hidden field, as the value is set dynamically) -->
-                <div class="col-md-4" hidden>
-                    <div class="form-group">
-                        <label>Payable Type *</label>
-                        <input type="text" name="payable_type" class="form-control myInput" value="{{ old('payable_type') }}" required>
-                        @error('payable_type')
-                            <span class="validation-msg text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Payment Head Selection -->
+                
+               
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Payment Head *</label>
+                        <label for="payment_head" class="text-primary font-weight-bold">
+                            Transaction Type <span class="text-danger">*</span>
+                        </label>
+                            <small class="d-block text-muted">Choose the category of payment (e.g., Customer, Supplier)</small>
+                        
                         <select id="payment_head" name="payment_head" class="form-control myInput" required>
-                            <option value="">Select Head...</option>
+                            <option value="">Select Category...</option>
                             <option value="customer" {{ old('payment_head') == 'customer' ? 'selected' : '' }}>Customer</option>
                             <option value="supplier" {{ old('payment_head') == 'supplier' ? 'selected' : '' }}>Supplier</option>
                         </select>
@@ -57,6 +56,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="payable_id_label" id="payableLabel">Payable  *</label>
+                        <small class="d-block text-muted">The entity or account against which the payment is made</small>
                         <select name="payable_id" class="form-control myInput" id="payable_id" required>
                             <option value="">Select...</option>
                             
@@ -71,7 +71,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Amount *</label>
-                        <input type="number" step="0.01" name="amount" class="form-control myInput" value="{{ old('amount') }}" required>
+                        <input type="number" step="0.01" name="amount" class="form-control myInput" value="{{ old('amount') }}" >
                         @error('amount')
                             <span class="validation-msg text-danger">{{ $message }}</span>
                         @enderror
@@ -114,46 +114,61 @@
                         @enderror
                     </div>
                 </div>
-
-                <!-- Payment Type Selection -->
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Payment Type *</label>
-                        <select name="payment_type" class="form-control myInput" required>
-                            <option value="credit" class="badge-badge-success" {{ old('payment_type') == 'credit' ? 'selected' : '' }}><span class="text-success">+ </span> Credit (Payment In)</option>
-                            <option value="debit" class="badge-badge-danger" {{ old('payment_type') == 'debit' ? 'selected' : '' }}><span class="text-danger">- </span> Debit (Payment Out)</option>
-                            
-                        </select>
-                        @error('payment_type')
-                            <span class="validation-msg text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Payment Method Selection -->
+ 
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Payment Method *</label>
                         <select name="payment_method" class="form-control myInput" required>
-                            <option value="Cash" {{ old('payment_method') == 'Cash' ? 'selected' : '' }}>Cash</option>
-                            <option value="Online" {{ old('payment_method') == 'Online' ? 'selected' : '' }}>Online</option>
-                            <option value="Cheque" {{ old('payment_method') == 'Cheque' ? 'selected' : '' }}>Cheque</option>
-                            <option value="Money Order" {{ old('payment_method') == 'Money Order' ? 'selected' : '' }}>Money Order</option>
-                            <option value="Western Union" {{ old('payment_method') == 'Western Union' ? 'selected' : '' }}>Western Union</option>
-                            <option value="Money Gram" {{ old('payment_method') == 'Money Gram' ? 'selected' : '' }}>Money Gram</option>
-                            <option value="Skrill" {{ old('payment_method') == 'Skrill' ? 'selected' : '' }}>Skrill</option>
+                            @foreach ($paymentMethods as $paymentMethod)
+                                <option value="{{ $paymentMethod->name }}" {{ old('payment_method') == $paymentMethod->name ? 'selected' : '' }}>
+                                    {{ $paymentMethod->name }}
+                                </option>
+                            @endforeach
                         </select>
                         @error('payment_method')
                             <span class="validation-msg text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Account *</label>
+                        <select name="account_id" class="form-control myInput" required>
+                            <option value="">Select Account</option>
+                            @foreach($accounts as $account)
+                                <option value="{{ $account->id }}" {{ old('account_id') == $account->id ? 'selected' : '' }}>
+                                    {{ $account->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('account_id')
+                            <span class="validation-msg text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
 
+
+                <div class="col-md-3">
+                        <label class="mr-2">Import CSV</label>
+                        <input type="file" name="import_csv" class="form-control btn btn-primary" >
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                       <label class="mr-2">Sample File</label>
+                        <button type="button" class="btn btn-info ml-2" data-toggle="modal" data-target="#importCsvModal">
+                            <i class="fa fa-info-circle"></i>
+                        </button>
+                    </div>     
+                </div>    
+            
             </div>
+            
             <!-- Remarks/Note Field (New Field Added) -->
-            <div class="col-md-12">
+                 <div class="col-md-12">
                     <div class="form-group">
                         <label>Remarks/Notes</label>
+                        <small class="d-block text-muted">Provide any additional information regarding the payment (e.g.,credit not / debit note)</small>
+    
                         <textarea name="note" class="form-control myInput">{{ old('note') }}</textarea>
                         @error('note')
                             <span class="validation-msg text-danger">{{ $note }}</span>
@@ -168,6 +183,42 @@
             </div>
         </form>
     </div>
+</div><!-- Modal for CSV Import -->
+<div class="modal fade" id="importCsvModal" tabindex="-1" role="dialog" aria-labelledby="importCsvModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importCsvModalLabel">Import CSV File</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <small class="form-text text-muted">
+                    If a CSV file is selected, the amount field in the form will not be required. You only need to select the following fields for importing the CSV:
+                    <ul style="padding-left:30px">
+                        
+                        <li><strong>Transaction Type</strong> (e.g., Customer, Supplier)</li>
+                        <li><strong>Payable</strong> (The entity or account against which the payment is made)</li>
+
+                    </ul>    
+                    Upload a CSV file containing payment details. The file should include the following fields:
+                    <ul style="padding-left:30px">
+                        <li><strong>Amount</strong> (Payment amount)</li>
+                        <li><strong>Date</strong> (Payment date)</li>
+                        <li><strong>Status</strong> (Completed, Pending)</li>
+                        <li><strong>Payment Method</strong> (Cash, Online, etc.)</li>
+                        <li><strong>Payment Note</strong> (Any credit or debit note)</li>
+                    </ul>    
+                </small>
+                
+                <a href="{{ route('download-sample-excel') }}" class="btn btn-success mt-3">
+                    <i class="fa fa-download"></i> Download Sample Excel
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
 @endsection
+

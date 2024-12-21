@@ -27,6 +27,13 @@ class Payment extends Model
         'created_by', // The user who entered the payment
     ];
 
+
+
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class);
+    }
+
     /**
      * Define relationship with the User model (creator).
      */
@@ -87,4 +94,13 @@ class Payment extends Model
             $payment->deleted_by = auth()->id(); // Capture the user ID of the deleter
         });
     }
+
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class, 'account_id');
+    }
+
+
+    
 }

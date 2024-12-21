@@ -130,7 +130,7 @@
                 success: function(response) {
                     console.log(response);
                     if(response.lowStockCount>0){
-                        totalAlertCount++;
+                        totalAlertCount = 1;
                         $('#total_alert').text(totalAlertCount);
                         
                         $('#lowStockAlertCountHeader').text('Low Stock Items: ' + response.lowStockCount);

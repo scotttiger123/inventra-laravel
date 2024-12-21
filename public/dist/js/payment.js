@@ -23,13 +23,14 @@ $(document).ready(function() {
         const label2 = document.getElementById('saleOrPurchase');
         
         if (head === 'customer') {
+      
             label.textContent = 'Customer  *';
             label2.textContent = 'Sale Order Id';
-            $('input[name="payable_type"]').val('customer');
+            
         } else if (head === 'supplier') {
             label.textContent = 'Supplier  *';
             label2.textContent = 'Purchase Order Id';
-            $('input[name="payable_type"]').val('supplier');
+            
         }
 
         if (head !== '') {

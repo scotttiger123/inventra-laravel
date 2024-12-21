@@ -145,6 +145,8 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::get('/payments/get-payable-options/{head}', [PaymentController::class, 'getPayableOptions'])->name('payments.getPayableOptions');
     Route::get('/get-payment-details/{voucherId}', [PaymentController::class, 'getPaymentDetails']);
     Route::get('/payments/view/{orderId}', [PaymentController::class, 'viewPayments']);
+    Route::get('/download-sample-excel', [PaymentController::class, 'downloadSampleExcel'])->name('download-sample-excel');
+
 
     // Role routes
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');  // Display a listing of roles
@@ -250,6 +252,8 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::resource('brand', BrandController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('accounts', AccountController::class);
+    Route::get('/account-balance-sheet', [AccountController::class, 'accountBalanceSheet'])->name('balanceSheet.index');
+    Route::get('/account-balance-sheetJSON', [AccountController::class, 'accountBalanceSheetJSON'])->name('balanceSheet.indexJSON');
     
 
     

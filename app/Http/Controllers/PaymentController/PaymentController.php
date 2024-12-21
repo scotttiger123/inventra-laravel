@@ -7,24 +7,32 @@ use App\Models\PaymentHead;
 use App\Models\Customer;
 use App\Models\Supplier;
 use App\Models\Order;
+use App\Models\PaymentMethod;
+use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SamplePaymentExport;
+use Carbon\Carbon;
 
 
 
 class PaymentController extends Controller
 {
     
+  
+      
+        public function create()
+        {
+            $payments = Payment::all();
+            $paymentMethods = PaymentMethod::all();
+            $accounts = Account::all();
 
+            return view('payments.create', compact('payments', 'paymentMethods', 'accounts'));
+        }
 
-      // Show create role form
-      public function create()
-      {
-          
-          $Payment = Payment::all(); // Fetch all roles
-          return view('payments.create', compact('Payment')); // Pass roles to the view
-      }
+    
 
 
 
@@ -104,54 +112,116 @@ class PaymentController extends Controller
             return response()->json(['customers' => $customers, 'suppliers' => $suppliers]);
         }
         
+      
 
 
+    public function store(Request $request)
+    {
+    // Validation for the CSV file
+    $request->validate([
+        'import_csv' => 'nullable|file|mimes:csv,xlsx,txt|max:2048',  // Max size 2MB
+    ]);
+
+    // Validate amount if no CSV file is uploaded
+    if (!$request->hasFile('import_csv')) {
+        $request->validate([
+            'amount' => 'required|numeric|min:1', 
+        ]);
+    }
+
+    // Initialize payment variables
+    $paymentHeadId = null;
+    $payableType = null;
+    $paymentType = null;
+    $paymentMethodId = null;
+    $paymentMethodId = PaymentMethod::where('name', $request->payment_method)->first()->id ?? null;
+
+    
+    if ($request->input('payment_head') == 'customer') {
+        $paymentHead = PaymentHead::where('type', 'customer')->first();
+        if ($paymentHead) {
+            $payableType = 'customer';   
+            $paymentHeadId = $paymentHead->id;
+            $paymentType = 'credit';
+        }
+    } elseif ($request->input('payment_head') == 'supplier') {
+        $paymentHead = PaymentHead::where('type', 'supplier')->first();
+        if ($paymentHead) {
+            $payableType = 'supplier';
+            $paymentHeadId = $paymentHead->id;
+            $paymentType = 'debit';
+        }
+    }
+
+    // If CSV file is uploaded, process the file
+    if ($request->hasFile('import_csv')) {
+        $file = $request->file('import_csv');
+        $path = $file->getRealPath();
+
+        // Read and process CSV data
+        $csvData = array_map('str_getcsv', file($path));
+        $header = $csvData[0];
+        $rows = array_slice($csvData, 1);
+
+        // Insert each row from CSV into the database
+        foreach ($rows as $row) {
+            $paymentData = array_combine($header, $row);
+
+            // Get the payment method ID based on the 'name' in the CSV
+            $paymentMethodId = PaymentMethod::where('name', $paymentData['Payment Method'])->first()->id ?? null;
+             
+            $paymentDate = Carbon::createFromFormat('d/m/Y', $paymentData['Date'])->format('Y-m-d');
 
 
-        public function store(Request $request)
-        {
-            $request->validate([
-                'amount' => 'required|numeric',
-                'payment_type' => 'required|in:credit,debit',
-                'payable_id' => 'required|integer',
-                'payable_type' => 'required|string',
-                'payment_method' => 'required|string',
-                'payment_date' => 'required|date',
-                'note' => 'nullable|string',
-                'payment_head' => 'required|string',
-            ]);
-        
-            
-            $paymentHeadId = null;
-        
-            if ($request->input('payment_head') == 'customer') {
-                $paymentHead = PaymentHead::where('type', 'customer')->first();
-                if ($paymentHead) {
-                    $paymentHeadId = $paymentHead->id;
-                }
-            } elseif ($request->input('payment_head') == 'supplier') {
-                $paymentHead = PaymentHead::where('type', 'supplier')->first();
-                if ($paymentHead) {
-                    $paymentHeadId = $paymentHead->id;
-                }
-            }
-        
-            // Create the payment record
             Payment::create([
-                'amount' => $request->amount,
-                'status' => $request->status,
-                'payment_type' => $request->payment_type,
-                'payable_id' => $request->payable_id,
-                'payable_type' => $request->payable_type,
-                'payment_method' => $request->payment_method,
-                'payment_date' => $request->payment_date,
-                'note' => $request->note,
-                'payment_head' => $paymentHeadId, 
+                'amount' => $paymentData['Amount'] ?? null,
+                'payment_date' => $paymentDate ?? null,
+                'status' => $paymentData['Status'] ?? null,
+                'payment_type' => $paymentType ?? null,
+                'payment_method' => $paymentMethodId ?? null,
+                'note' => $paymentData['Payment Note'] ?? null,
+                'payable_id' => $request->payable_id ?? null,  
+                'payable_type' => $payableType ?? null,
+                'payment_head' => $paymentHeadId ?? '',
+                'account_id' => $request->account_id ?? null,
                 'created_by' => auth()->id(),
             ]);
-        
-            return redirect()->route('payments.create')->with('success', 'Payment created successfully!');
         }
+
+        return redirect()->route('payments.create')->with('success', 'Payments imported successfully!');
+    }
+
+    // If no CSV file is uploaded, create payment manually
+    Payment::create([
+        'amount' => $request->amount,
+        'status' => $request->status,
+        'payment_type' => $paymentType,
+        'payable_id' => $request->payable_id,
+        'payable_type' => $payableType ?? null,
+        'payment_method' => $paymentMethodId,
+        'payment_date' => $request->payment_date,
+        'note' => $request->note,
+        'payment_head' => $paymentHeadId,
+        'account_id' => $request->account_id ?? null,
+        'created_by' => auth()->id(),
+    ]);
+
+    return redirect()->route('payments.create')->with('success', 'Payment created successfully!');
+}
+
+        
+        
+        
+        /**
+         * Get Payment Head ID based on the type.
+         */
+        private function getPaymentHeadId($type)
+        {
+            $paymentHead = PaymentHead::where('type', $type)->first();
+            return $paymentHead ? $paymentHead->id : null;
+        }
+        
+        
         
 
 
@@ -342,6 +412,42 @@ class PaymentController extends Controller
                     'message' => 'Failed to fetch payment details.',
                 ]);
             }
+        }
+
+
+    public function downloadSampleExcel()
+        {
+           
+               
+        $data = [
+            ['Amount', 'Date', 'Status', 'Payment Method','Payment Note'],
+            ['1000', '2024-12-19', 'Completed', 'Cash','credit note'],
+            ['2000', '2024-12-18', 'Pending', 'Online','debit note'],
+        ];
+
+        
+        $fileName = 'sample_payment_data.csv';
+
+        // Set headers
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ];
+
+        // Use a callback to write data to output
+        $callback = function () use ($data) {
+            $file = fopen('php://output', 'w');
+
+            foreach ($data as $row) {
+                fputcsv($file, $row);
+            }
+
+            fclose($file);
+        };
+
+        // Return the response as a streamed download
+        return response()->stream($callback, 200, $headers);
+
         }
 
 

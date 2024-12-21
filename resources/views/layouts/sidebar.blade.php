@@ -170,10 +170,11 @@
                   
                   <!-- Account Summary -->
                   <li style="padding-left: 20px;">
-                      <a href="/accounts/summary">
-                          <i class="fa fa-dot-circle-o"></i> Account Summary
+                      <a href="{{ route('balanceSheet.index') }}">
+                          <i class="fa fa-dot-circle-o"></i> Balance Sheet
                       </a>
                   </li>
+
               </ul>
           </li>
 
