@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Payment extends Model
 {
     use HasFactory, SoftDeletes;
-
+    protected $casts = [
+        'payment_date' => 'datetime',
+    ];
+    
     protected $fillable = [
         
         'payable_id', // ID of the related payable (customer or supplier)

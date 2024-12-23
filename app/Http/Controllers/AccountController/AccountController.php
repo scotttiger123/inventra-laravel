@@ -6,6 +6,7 @@ namespace App\Http\Controllers\AccountController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Account;
+use App\Models\Payment;
 
 class AccountController extends Controller
 {
@@ -108,7 +109,7 @@ class AccountController extends Controller
         $account->calculated_balance = $balance; 
     }
 
-    return view('accounts.balance_sheet', compact('accounts', 'totalCredits', 'totalDebits', 'totalBalance'));
+    return view('accounts.balance-sheet', compact('accounts', 'totalCredits', 'totalDebits', 'totalBalance'));
     }
 
     public function accountBalanceSheetJSON()
@@ -148,6 +149,96 @@ class AccountController extends Controller
                 'totalBalance' => $totalBalance,
             ]);
         }
+
+
+
+        public function accountStatement(Request $request)
+{
+    $accountId = $request->input('account_id');
+    $accounts = Account::all();
+    $transactions = [];
+    $selectedAccount = null;
+    $totalCredit = 0;
+    $totalDebit = 0;
+    $initialBalance = 0;
+    $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value'); // Fetch currency symbol from settings
+
+    if ($accountId) {
+        $selectedAccount = Account::find($accountId);
+
+        if ($selectedAccount) {
+            // Get the initial balance from the selected account
+            $initialBalance = $selectedAccount->initial_balance;
+
+            // Fetch the transactions for the account
+            $transactions = Payment::where('account_id', $accountId)
+                ->orderBy('payment_date', 'desc')
+                ->get();
+
+            // Calculate total credit and debit
+            $totalCredit = Payment::where('account_id', $accountId)
+                ->where('payment_type', 'credit') 
+                ->sum('amount'); 
+
+            $totalDebit = Payment::where('account_id', $accountId)
+                ->where('payment_type', 'debit')
+                ->sum('amount');
+        }
+    }
+
+    return view('accounts.account-statement', compact('accounts', 'selectedAccount', 'transactions', 'totalCredit', 'totalDebit', 'initialBalance', 'currencySymbol'));
+}
+
+        
+        
+
+        
+public function accountStatementJSON($accountId)
+{
+    $selectedAccount = Account::find($accountId);
+    if (!$selectedAccount) {
+        return response()->json(['error' => 'Account not found'], 404);
+    }
+
+    $accounts = Account::all();
+    $totalCredit = 0;
+    $totalDebit = 0;
+    $initialBalance = $selectedAccount->initial_balance;
+
+    $transactions = Payment::where('account_id', $accountId)
+        ->orderBy('payment_date', 'desc')
+        ->get();
+
+    $totalCredit = Payment::where('account_id', $accountId)
+        ->where('payment_type', 'credit')
+        ->sum('amount');
+
+    $totalDebit = Payment::where('account_id', $accountId)
+        ->where('payment_type', 'debit')
+        ->sum('amount');
+
+    $totalBalance = $initialBalance + $totalCredit - $totalDebit;
+
+    $response = [
+        'accounts' => $accounts,
+        'selectedAccount' => [
+            'account_id' => $selectedAccount->id,
+            'account_no' => $selectedAccount->account_no,
+            'name' => $selectedAccount->name,
+            'initial_balance' => $selectedAccount->initial_balance,
+            'total_credits' => $totalCredit,
+            'total_debits' => $totalDebit,
+            'calculated_balance' => $totalBalance,
+        ],
+        'transactions' => $transactions,
+        'totalCredits' => $totalCredit,
+        'totalDebits' => $totalDebit,
+        'totalBalance' => $totalBalance,
+    ];
+
+    return response()->json($response);
+}
+
 
     
 

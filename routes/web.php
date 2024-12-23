@@ -254,7 +254,9 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::resource('accounts', AccountController::class);
     Route::get('/account-balance-sheet', [AccountController::class, 'accountBalanceSheet'])->name('balanceSheet.index');
     Route::get('/account-balance-sheetJSON', [AccountController::class, 'accountBalanceSheetJSON'])->name('balanceSheet.indexJSON');
-    
+    Route::get('/account-statement', [AccountController::class, 'accountStatement'])->name('accountStatement.index');
+    Route::get('/account-statementJSON/{accountId}', [AccountController::class, 'accountStatementJSON'])->name('accountStatement.indexJSON');
+
 
     
 });

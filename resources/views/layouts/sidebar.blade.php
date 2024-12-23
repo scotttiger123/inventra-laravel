@@ -174,6 +174,11 @@
                           <i class="fa fa-dot-circle-o"></i> Balance Sheet
                       </a>
                   </li>
+                  <li style="padding-left: 20px;">
+                      <a href="{{ route('accountStatement.index') }}">
+                          <i class="fa fa-dot-circle-o"></i> Account Statement
+                      </a>
+                  </li>
 
               </ul>
           </li>
