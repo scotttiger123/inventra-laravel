@@ -634,7 +634,8 @@ function clearGridAndSelections() {
   
 }
 
-function clearFinancialFields() {
+function clearFinancialFields(e) {
+  e.preventDefault();
 
     
 
@@ -700,4 +701,65 @@ const toggleBtn = document.getElementById("toggle-btn");
         }, 300);
       }
     });
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('create-customer-form-pos').addEventListener('submit', function (e) {
+      e.preventDefault(); 
+
+      const form = this;  
+      const formData = new FormData(form);  
+
+      document.getElementById('success-message-customer-save').style.display = 'none';
+      document.getElementById('error-message-customer-save').style.display = 'none';
+
+      fetch(form.action, {
+          method: 'POST',
+          headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+              'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log(data);
+
+          if (data.success) {
+              document.getElementById('success-message-customer-save').style.display = 'block';
+              document.getElementById('success-message-customer-save').innerText = data.message;
+              form.reset();  
+
+              if (data.customer_name && data.customer_id) {
+                  const customerNamesList = document.getElementById('customer-names');
+                  const newOption = document.createElement('option');
+                  newOption.value = data.customer_name;
+                  newOption.setAttribute('data-id', data.customer_id);
+                  customerNamesList.appendChild(newOption);
+
+                  const customerNameInput = document.getElementById('customer-name-input-pos');
+                  const customerIdInput = document.getElementById('customer-id-pos');
+
+                  if (customerNameInput && customerIdInput) {
+                      // Set the input field values to the new customer's name and ID
+                      customerNameInput.value = data.customer_name;
+                      customerIdInput.value = data.customer_id;
+                  } else {
+                      console.error('Missing input fields for customer name or customer ID');
+                  }
+              } else {
+                  console.error('Missing customer data in response');
+              }
+
+          } else {
+              document.getElementById('error-message-customer-save').style.display = 'block';
+              document.getElementById('error-message-customer-save').innerHTML = data.message;
+          }
+      })
+      .catch(error => {
+          console.error("Error:", error);
+          document.getElementById('error-message-customer-save').style.display = 'block';
+          document.getElementById('error-message-customer-save').innerText = "An unexpected error occurred. Please try again later.";
+      });
+  });
+});
 

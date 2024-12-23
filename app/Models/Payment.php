@@ -14,9 +14,9 @@ class Payment extends Model
     
     protected $fillable = [
         
-        'payable_id', // ID of the related payable (customer or supplier)
-        'payable_type', // Type of payable (e.g., Customer or Supplier)
-        'amount', // Payment amount
+        'payable_id', 
+        'payable_type', 
+        'amount', 
         'status', // Payment status (pending, completed, cancelled)
         'payment_type', // Type of payment (credit or debit)
         'invoice_id', // ID of related invoice (if applicable)
@@ -25,9 +25,9 @@ class Payment extends Model
         'account_id',
         'payment_date',
         'note',
-        'updated_by', // User who last updated the payment
-        'deleted_by', // User who soft deleted the payment
-        'created_by', // The user who entered the payment
+        'updated_by', 
+        'deleted_by', 
+        'created_by', 
     ];
 
 

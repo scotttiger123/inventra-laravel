@@ -30,7 +30,7 @@
                             style="width: 100%;" 
                             name="category-name" 
                             class="form-control myInput" 
-                            placeholder="Select Category" 
+                            placeholder="Category" 
                             tabindex="1" 
                             id="category-name-input">
 
@@ -96,7 +96,9 @@
                       <!-- Hidden field for storing customer ID -->
                       <input type="hidden" name="customer_id" id="customer-id-pos">
                   </div>
-            <button data-toggle="modal" data-target="#CreateNewCustomerModal"> <i class="bi bi-plus"></i> New Customer</button>
+                  <button type="button" class="icon-pos btn btn-primary" data-toggle="modal" data-target="#CreateNewCustomerModal">
+                    <i class="bi bi-plus"></i> Customer
+                </button>
           </div>
          
           <div class="data"></div>
@@ -293,7 +295,8 @@
                                 <div class="p-btns">
                                   <button onclick = 'submitPosOrder()' >PLACE ORDER</button>
                                   <button type="button" class="btn btn-secondary" data-dismiss="modal" tabindex="7">Save</button>
-                                  <button onclick = 'clearFinancialFields()'></i>Clear</button>
+                                  <button onclick="clearFinancialFields(event)">Clear</button>
+
                                 </div>
                               </div>
                           </div>
@@ -406,7 +409,7 @@
                             @endforeach
                         </datalist>
                         <input 
-                            type="text" 
+                            type="hidden" 
                             id="status-id" 
                             name="status_id" 
                             value="{{ $defaultStatus->id ?? $statuses->firstWhere('status_name', 'Complete')->id }}">
@@ -426,6 +429,53 @@
         </div>
     </div>
 </div>
+
+<!-- Create customer modal  -->
+<div class="modal fade" id="CreateNewCustomerModal" tabindex="-1" role="dialog" aria-labelledby="CreateNewCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CreateNewCustomerModalLabel">Create New Customer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="create-customer-form-pos" method="POST" action="{{ route('customer.store') }}">
+                    @csrf
+                    @isset($order)
+                        <input type="text" name="_method" value="PUT">
+                        <input type="text" id="orderId" value="{{ $order->id }}">
+                    @endisset
+                    <div class="form-group">
+                        <label for="new-customer-name">Customer Name</label>
+                        <input type="text" class="form-control" id="new-customer-name" name="name" placeholder="Enter customer name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-customer-email">Customer Email</label>
+                        <input type="email" class="form-control" id="new-customer-email" name="email" placeholder="Enter customer email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-customer-phone">Phone Number</label>
+                        <input type="text" class="form-control" id="new-customer-phone" name="phone" placeholder="Enter phone number" >
+                    </div>
+                    <div class="form-group">
+                        <label for="new-customer-address">Address</label>
+                        <input type="text" class="form-control" id="new-customer-address" name="address" placeholder="Enter address" >
+                    </div>
+                    <div class="form-group">
+                        <label for="new-customer-city">City</label>
+                        <input type="text" class="form-control" id="new-customer-city" name="city" placeholder="Enter city" >
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="submitCustomer">Create Customer</button>
+                </form>
+                <div id="success-message-customer-save" style="display:none;"></div>
+                <div id="error-message-customer-save" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 <style>

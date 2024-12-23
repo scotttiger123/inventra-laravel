@@ -56,15 +56,21 @@
                 <div class="row" >
                     <div class="col-xs-12">
                         <div class="row">
-                            <div class="col-md-2">
-                                <div class="input-group" style="width: 100%;"> 
-                                    <div class="input-group-addon" onclick="GetItems(this.value)" >
+                        <div class="col-md-2">
+                            <div class="input-group" style="width: 100%;">
+                                <div class="input-group-addon" onclick="GetItems(this.value)">
                                     <i class="fa fa-calendar"></i>
-
-                                    </div>
-                                    <input type="datetime-local" name ='order_date' id="datetimepicker_dark1" class="form-control myInput" style="width: 100%;" tabindex="1">
                                 </div>
+                                <input 
+                                    type="datetime-local" 
+                                    name="order_date" 
+                                    id="datetimepicker_dark1" 
+                                    class="form-control myInput" 
+                                    style="width: 100%;" 
+                                    tabindex="1"
+                                >
                             </div>
+                        </div>
 
                             <div class="col-md-2">
                                         <div class="input-group" style="width: 100%;"> 
@@ -222,7 +228,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2">       
-                                    <input type="text" list="warehouse-names" style="width: 100%;" name="warehouse_name" class="form-control myInput" placeholder="Select Warehouse" tabindex="5" id="warehouse-name-input">
+                                    <input type="text" list="warehouse-names" style="width: 100%;" name="warehouse_name" class="form-control myInput" placeholder="Select Warehouse" tabindex="5" id="warehouse-name-input-order">
                                         <datalist id="warehouse-names">
                                             @foreach($warehouses as $warehouse)
                                                 <option value="{{ $warehouse->name }}" data-id="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
@@ -487,15 +493,15 @@
                     </div>
                     <div class="form-group">
                         <label for="new-customer-phone">Phone Number</label>
-                        <input type="text" class="form-control" id="new-customer-phone" name="phone" placeholder="Enter phone number" required>
+                        <input type="text" class="form-control" id="new-customer-phone" name="phone" placeholder="Enter phone number" >
                     </div>
                     <div class="form-group">
                         <label for="new-customer-address">Address</label>
-                        <input type="text" class="form-control" id="new-customer-address" name="address" placeholder="Enter address" required>
+                        <input type="text" class="form-control" id="new-customer-address" name="address" placeholder="Enter address" >
                     </div>
                     <div class="form-group">
                         <label for="new-customer-city">City</label>
-                        <input type="text" class="form-control" id="new-customer-city" name="city" placeholder="Enter city" required>
+                        <input type="text" class="form-control" id="new-customer-city" name="city" placeholder="Enter city" >
                     </div>
                     <button type="submit" class="btn btn-primary" id="submitCustomer">Create Customer</button>
                 </form>
@@ -505,6 +511,4 @@
         </div>
     </div>
 </div>
-
-
 @endsection

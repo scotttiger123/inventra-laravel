@@ -558,7 +558,7 @@ class OrderController extends Controller
         'city' => 'required|string|max:255',
     ]);
 
-    // Create the new customer in the database
+    $validated['created_by'] = auth()->id();  
     $customer = Customer::create($validated);
 
     return response()->json([

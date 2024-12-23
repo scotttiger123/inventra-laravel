@@ -1,18 +1,29 @@
-window.onload = function() {
-    
+document.addEventListener('DOMContentLoaded', function () {
     var dateInput = document.getElementById('datetimepicker_dark1');
-    
-    var currentDate = new Date();
-    var year = currentDate.getFullYear();
-    var month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); 
-    var day = currentDate.getDate().toString().padStart(2, '0');
-    var hours = currentDate.getHours().toString().padStart(2, '0');
-    var minutes = currentDate.getMinutes().toString().padStart(2, '0');
-    var formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
-    dateInput.value = formattedDate;
-    
-    document.getElementById('customer-name-input').focus();
-};
+    var customerNameInput = document.getElementById('customer-name-input');
+
+    if (dateInput) {
+        var currentDate = new Date();
+        var year = currentDate.getFullYear();
+        var month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        var day = currentDate.getDate().toString().padStart(2, '0');
+        var hours = currentDate.getHours().toString().padStart(2, '0');
+        var minutes = currentDate.getMinutes().toString().padStart(2, '0');
+
+        var formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+        dateInput.value = formattedDate;
+
+        if (customerNameInput) {
+            setTimeout(() => {
+                customerNameInput.focus();
+            }, 100); 
+        } else {
+            console.error('Element with ID "customer-name-input" not found.');
+        }
+    } else {
+        console.error('Element with ID "datetimepicker_dark1" not found.');
+    }
+});
 
 $(function () {
     $('#order-listings').DataTable({
@@ -27,40 +38,40 @@ $(function () {
 });
 
 
-// Handle the form submission with AJAX
-document.getElementById('create-customer-form').addEventListener('submit', function (e) {
-    e.preventDefault(); // Prevent the default form submission behavior
 
-    const form = this;  // Get the form element
-    const formData = new FormData(form);  // Create FormData object from the form
-     // Hide messages before submitting the form
+document.getElementById('create-customer-form').addEventListener('submit', function (e) {
+    e.preventDefault(); 
+
+    const form = this;  
+    const formData = new FormData(form);  
+     
      document.getElementById('success-message-customer-save').style.display = 'none';
      document.getElementById('error-message-customer-save').style.display = 'none';
-    // Send the form data using AJAX (fetch)
+    
     fetch(form.action, {
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',  // Set CSRF token (for Laravel)
-            'X-Requested-With': 'XMLHttpRequest'  // Indicate that it's an AJAX request
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',  
+            'X-Requested-With': 'XMLHttpRequest'  
         },
-        body: formData  // Attach the form data to the request
+        body: formData  
     })
-    .then(response => response.json())  // Parse the JSON response
+    .then(response => response.json())  
     .then(data => {
         console.log(data);
-        // Check if the request was successful
+        
         if (data.success) {
             document.getElementById('success-message-customer-save').style.display = 'block';
             document.getElementById('success-message-customer-save').innerText = data.message;
-            form.reset();  // Reset the form after successful submission (optional)
-            // Append the new customer to the dropdown
-             // Check if customer data exists before appending
+            form.reset();  
+            
+            
         if (data.customer_name && data.customer_id) {
-            // Append the new customer to the customer dropdown
+            
             const customerNamesList = document.getElementById('customer-names');
             const newOption = document.createElement('option');
-            newOption.value = data.customer_name; // assuming the server response contains the customer name
-            newOption.setAttribute('data-id', data.customer_id); // assuming the server response contains the customer ID
+            newOption.value = data.customer_name; 
+            newOption.setAttribute('data-id', data.customer_id); 
             customerNamesList.appendChild(newOption);
 
             // Set the input field value to the new customer's name
@@ -76,7 +87,7 @@ document.getElementById('create-customer-form').addEventListener('submit', funct
         }
     })
     .catch(error => {
-        // Handle any errors that occurred during the fetch
+        
         console.error("Error:", error);
         document.getElementById('error-message-customer-save').style.display = 'block';
         document.getElementById('error-message-customer-save').innerText = "An unexpected error occurred. Please try again later.";
@@ -327,10 +338,13 @@ document.getElementById('submitOrder').addEventListener('click', function () {
 
          // var exitWarehouse = document.getElementById('exit_warehouse').checked ? 1 : 0;
          var exitWarehouseValue = document.getElementById('warehouse-id').value;
-         var exitWarehouseId = document.getElementById('warehouse-name-input').value;
+         var exitWarehouseId = document.getElementById('warehouse-name-input-order').value;
 
         if (!exitWarehouseId) {
+            let feild_warehouse = document.getElementById('warehouse-name-input-order');
+            feild_warehouse.focus();
             alert("Please select a warehouse.");
+            
             return;
         }
         
@@ -758,7 +772,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-  const warehouseNameInput = document.getElementById('warehouse-name-input');
+  const warehouseNameInput = document.getElementById('warehouse-name-input-order');
   const warehouseIdField = document.getElementById('warehouse-id');
 
   warehouseNameInput.addEventListener('input', function() {

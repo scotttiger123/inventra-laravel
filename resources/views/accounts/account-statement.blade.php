@@ -285,13 +285,7 @@ $('#print-pdf').on('click', function (e) {
     generateReport(e, 'print');
 });
 
-
-
 });
-
-
-
-
 
 </script>
 @endsection

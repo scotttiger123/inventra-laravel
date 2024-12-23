@@ -21,6 +21,7 @@ class Customer extends Model
         'tax_number',
         'discount_type',
         'discount_value',
+        'created_by',
     ];
 
     public function creator()
