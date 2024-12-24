@@ -36,20 +36,20 @@ class PaymentController extends Controller
 
 
 
-      public function index(Request $request)
+        public function index(Request $request)
         {
             $startDate = $request->get('start_date');
             $endDate = $request->get('end_date');
-
+        
             $query = Payment::whereIn('payable_type', ['customer', 'supplier']);
-
+        
             if ($startDate) {
                 $query->whereDate('payment_date', '>=', $startDate);
             }
             if ($endDate) {
                 $query->whereDate('payment_date', '<=', $endDate);
             }
-
+        
             $payments = $query->get()->map(function ($payment) {
                 if ($payment->payable_type === 'customer') {
                     $payment->payable_name = Customer::where('id', $payment->payable_id)->value('name');
@@ -58,12 +58,24 @@ class PaymentController extends Controller
                 }
                 return $payment;
             });
-
+        
+            // Group payments by month and calculate total credit and debit for each month
+            $monthlyPayments = $payments->groupBy(function ($payment) {
+                return \Carbon\Carbon::parse($payment->payment_date)->format('F Y');
+            })->map(function ($group) {
+                return [
+                    'totalCredit' => $group->where('payment_type', 'credit')->sum('amount'),
+                    'totalDebit' => $group->where('payment_type', 'debit')->sum('amount'),
+                ];
+            });
+        
+            // Calculate overall totals
             $totalDebit = $payments->where('payment_type', 'debit')->sum('amount');
             $totalCredit = $payments->where('payment_type', 'credit')->sum('amount');
-
-            return view('payments.index', compact('payments', 'totalDebit', 'totalCredit', 'startDate', 'endDate'));
+        
+            return view('payments.index', compact('payments', 'monthlyPayments', 'totalDebit', 'totalCredit', 'startDate', 'endDate'));
         }
+        
 
 
 
@@ -277,6 +289,7 @@ class PaymentController extends Controller
                 'account_id' => $request->account_id,
                 'payment_date' => $request->payment_date,
                 'note' => $request->note,
+                'payment_method' => $request->payment_method,
                 'payment_head' => $paymentHeadId, 
                 'created_by' => auth()->id(),
             ]);

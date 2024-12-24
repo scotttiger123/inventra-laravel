@@ -15,7 +15,7 @@
             </a>
         </div>
 
-        <table id="customer-listings" class="table table-bordered table-striped">
+        <table id="customer-listings-grid" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -114,4 +114,19 @@
     </div>
 </div>
 
+<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+     $(function () {
+        $('#customer-listings-grid').DataTable({
+            'paging': true,
+            'lengthChange': true,
+            'searching': true,
+            'ordering': true,
+            'info': true,
+            'autoWidth': true,
+            'order': [[0, 'desc']] // Sorts by first column (Payment Date) in descending order
+        });
+    });
+
+    </script>
 @endsection

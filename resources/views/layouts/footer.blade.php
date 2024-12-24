@@ -179,7 +179,6 @@
         }
     }
 
-    // Event listener for the fullscreen button
     document.getElementById("fullscreenBtn").addEventListener("click", toggleFullScreen);
 
 

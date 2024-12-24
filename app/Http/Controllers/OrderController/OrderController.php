@@ -15,6 +15,7 @@ use App\Models\Category;
 use App\Models\Warehouse;
 use App\Models\User; 
 use App\Models\Payment; 
+use App\Models\PaymentMethod;
 use App\Models\Account; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -502,30 +503,23 @@ class OrderController extends Controller
 
     
     private function generateOrderNumber($branchId)
-{
-    $year = date('Y');
-    $prefix = $branchId;
+    {
+        $year = date('Y');
+        $prefix = $branchId;
 
-    // Get the last order for the current year and branch, ordered by custom_order_id (to get the latest order)
-    $lastOrder = Order::whereYear('created_at', $year)
+        $lastOrder = Order::whereYear('created_at', $year)
                       ->where('branch_id', $branchId)
                       ->orderBy('custom_order_id', 'desc')
                       ->first();
-
-    // If no orders exist for the current year and branch, start with '001'
-    if ($lastOrder) {
-        // Extract the numeric part from the last order's custom_order_id
+    
+        if ($lastOrder) {
         $lastNumber = (int) substr($lastOrder->custom_order_id, -3);
-        // Increment the last number
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-    } else {
-        // If no order exists, start from '001'
+        } else {
         $newNumber = '001';
-    }
-
-    // Return the generated order number
+        }
     return $prefix.$year.$newNumber;
-}
+    }
 
 
     
@@ -701,7 +695,7 @@ public function index(Request $request)
         $accounts = \DB::table('accounts')
             ->whereNull('deleted_at')
             ->pluck('name', 'id');
-
+            $paymentMethods = PaymentMethod::all(); // Fetch all payment methods
         return view('orders.index', compact(
             'orders',
             'totalGrossAmount',
@@ -712,7 +706,8 @@ public function index(Request $request)
             'totalAmountDue',
             'currencySymbol',
             'totalNetProfit', 
-            'accounts'
+            'accounts',
+           'paymentMethods'
         ));
     } catch (Exception $e) {
         \Log::error('Failed to fetch orders: ' . $e->getMessage());

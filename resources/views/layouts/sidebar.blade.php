@@ -228,13 +228,11 @@
           <li style="padding-left: 20px;"><a href="/settings"><i class="fa fa-dot-circle-o"></i> General Settings</a></li>
           <li style="padding-left: 20px;"><a href="/tax"><i class="fa fa-dot-circle-o"></i> Tax </a></li>
           <li style="padding-left: 20px;"><a href="/"><i class="fa fa-dot-circle-o"></i> Backup Database </a></li>
-          https://stocky.getstocky.com/app/settings/Backup#
-     
         </ul>
         
       </li>
 
-      <li class="treeview">
+      <!-- <li class="treeview">
         <a href="#">
           <i class="fa fa-book"></i>
           <span>Documentation</span>
@@ -245,7 +243,7 @@
         <ul class="treeview-menu">
           <li style="padding-left: 20px;"><a href="/documentation"><i class="fa fa-dot-circle-o"></i> User Guide</a></li>
         </ul>
-      </li>
+      </li> -->
 
     </ul>
 

@@ -1,17 +1,7 @@
-$(function () {
-    
-    $('#customer-listings').DataTable({
-        'paging': true,
-        'lengthChange': false,
-        'searching': false,
-        'ordering': true,
-        'info': true,
-        'autoWidth': false
-    });
-});
+
 
 $('#viewCustomerModal').on('show.bs.modal', function (event) { 
-    var button = $(event.relatedTarget); // Button that triggered the modal
+    var button = $(event.relatedTarget); 
     var modal = $(this);
     
     modal.find('#customer-name').text(button.data('name') || 'N/A');

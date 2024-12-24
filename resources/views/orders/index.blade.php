@@ -465,6 +465,21 @@
                     <label for="receivedAmount">Received Amount</label>
                     <input type="number" class="form-control" id="receivedAmount" placeholder="Enter received amount">
                 </div>
+                
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select name="payment_method" class="form-control myInput" id  = 'payment_method'>
+                            @foreach ($paymentMethods as $paymentMethod)
+                                <option value="{{ $paymentMethod->id }}" {{ old('payment_method') == $paymentMethod->name ? 'selected' : '' }}>
+                                    {{ $paymentMethod->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('payment_method')
+                            <span class="validation-msg text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                
  
                     <div class="form-group">
                         <label for="bankAccountList">Account</label>
@@ -563,18 +578,19 @@
 <script> 
 
 function savePayment() {
-    // Get the orderId from the modal
-    const orderId = $('#orderIdModal').text();  // Assuming the order ID is displayed within the span with id 'orderId'
+    
+    const orderId = $('#orderIdModal').text();  
 
-    // Get values from the input fields
+    $('#loader').show();
     var receivedAmount = document.getElementById('receivedAmount').value;
     var accountId = document.getElementById('bankAccountList').value;
     var remarks = document.getElementById('remarks').value;
     var paymentDate = document.getElementById('payment_date').value;
+    var paymentMethod = document.getElementById('payment_method').value;
     
-    // Check if required fields are filled
+    
     if (receivedAmount && accountId && paymentDate) {
-        // Create FormData object to send data
+        
         var formData = new FormData();
         
         formData.append('payment_head', 'customer'); 
@@ -586,37 +602,43 @@ function savePayment() {
         formData.append('amount', receivedAmount); 
         formData.append('account_id', accountId);
         formData.append('note', remarks); 
-        formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // CSRF token
+        formData.append('payment_method', paymentMethod);
+        formData.append('_token', $('meta[name="csrf-token"]').attr('content')); 
 
-        // Send the payment data using fetch API
+        
         fetch('{{ route('payments.storeUsingSale') }}', {
             method: 'POST',
             headers: {
-                'X-Requested-With': 'XMLHttpRequest', // Identifies the request as an AJAX request
+                'X-Requested-With': 'XMLHttpRequest', 
             },
             body: formData
         })
         .then(response => {
-            console.log('Response:', response); // Log the response object
+            console.log('Response:', response); 
             if (!response.ok) {
                 throw new Error('Network response was not ok');
+                $('#loader').hide();
             }
-            return response.json(); // Parse response as JSON
+            return response.json(); 
         })
         .then(data => {
-            console.log('Parsed Data:', data); // Log parsed data
+            console.log('Parsed Data:', data); 
             if (data.success) {
-                $('#paymentModal').modal('hide'); // Hide the modal
-                location.reload(); // Reload the page to see the updated data
+                $('#loader').hide();
+                $('#paymentModal').modal('hide'); 
+                location.reload(); 
             } else {
+                $('#loader').hide();
                 alert('Failed to save payment. ' + data.message);
             }
         })
         .catch(error => {
+            $('#loader').hide();
             console.error('Error:', error);
             alert('An error occurred while saving the payment. Please try again.');
         });
     } else {
+        $('#loader').hide();
         alert('Please fill in all required fields.');
     }
 }
@@ -624,18 +646,18 @@ function savePayment() {
 
 
 function prepareViewPayments(orderId) {
-    // Set the Order ID in the modal
+    
     $('#viewOrderIdModal').text(orderId);
 
-    // Clear and show a loading message in the payment details section
+    
     const paymentDetailsContainer = $('#paymentDetails');
     paymentDetailsContainer.html('<p>Loading payments...</p>');
 
-    // Fetch payments associated with the order
+    
     fetch(`/payments/view/${orderId}`, {
         method: 'GET',
         headers: {
-            'X-Requested-With': 'XMLHttpRequest', // Indicate an AJAX request
+            'X-Requested-With': 'XMLHttpRequest', 
         },
     })
         .then(response => {
@@ -646,7 +668,7 @@ function prepareViewPayments(orderId) {
         })
         .then(data => {
             if (data.success) {
-                // Build the payment details content
+                
                 let content = `<table class="table table-bordered table-striped">
                     <thead>
                         <tr>

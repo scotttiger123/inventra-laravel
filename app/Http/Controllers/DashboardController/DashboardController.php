@@ -21,90 +21,43 @@ use App\Http\Controllers\PaymentController\PaymentController;
 
 class DashboardController extends Controller
 {
-    public function index()
-    {
-        // Fetch all orders
-        $orders = Order::with('orderItems')->get();
-
-        // Calculate total sales
-        $sales = $orders->reduce(function ($total, $order) {
-            $grossAmount = $order->orderItems->reduce(function ($subtotal, $item) {
-                $totalBeforeDiscount = $item->unit_price * $item->quantity;
-
-                // Calculate product-level discount
-                $discountAmount = (strpos($item->discount_type, '%') !== false)
-                    ? (($totalBeforeDiscount * rtrim($item->discount_amount, '%')) / 100)
-                    : $item->discount_amount;
-
-                $totalAfterDiscount = $totalBeforeDiscount - $discountAmount;
-                return $subtotal + $totalAfterDiscount;
-            }, 0);
-
-            // Apply order-level discount
-            $orderDiscount = ($order->discount_type === 'percentage')
-                ? (($grossAmount * $order->discount_amount) / 100)
-                : $order->discount_amount;
-
-            $grossAmountAfterDiscount = $grossAmount - $orderDiscount;
-            $otherCharges = $order->other_charges ?? 0;
-
-            return $total + $grossAmountAfterDiscount + $otherCharges;
-        }, 0);
-
-        // Fetch all purchases
-        $purchases = Purchase::with('purchaseItems')->get();
-
-        // Calculate total purchases
-        $totalPurchases = $purchases->reduce(function ($total, $purchase) {
-            $grossAmount = $purchase->purchaseItems->reduce(function ($subtotal, $item) {
-                $totalBeforeDiscount = $item->rate * $item->quantity;
-
-                // Calculate product-level discount
-                $discountAmount = (strpos($item->discount_type, '%') !== false)
-                    ? (($totalBeforeDiscount * rtrim($item->discount_amount, '%')) / 100)
-                    : $item->discount_amount;
-
-                $totalAfterDiscount = $totalBeforeDiscount - $discountAmount;
-                return $subtotal + $totalAfterDiscount;
-            }, 0);
-
-            // Apply order-level discount
-            $orderDiscount = ($purchase->discount_type === '%')
-                ? (($grossAmount * $purchase->discount_amount) / 100)
-                : $purchase->discount_amount;
-
-            $grossAmountAfterDiscount = $grossAmount - $orderDiscount;
-            $otherCharges = $purchase->other_charges ?? 0;
-
-            return $total + $grossAmountAfterDiscount + $otherCharges;
-        }, 0);
-
-        // Calculate total paid
-        $paid = Payment::sum('amount');
-
-        // Calculate total amount due (sales and purchases)
-        $amountDue = $orders->reduce(function ($total, $order) {
-            $grossAmount = $order->orderItems->reduce(function ($subtotal, $item) {
-                return $subtotal + ($item->unit_price * $item->quantity);
-            }, 0);
-
-            // Apply order-level discount
-            $orderDiscount = ($order->discount_type === 'percentage')
-                ? (($grossAmount * $order->discount_amount) / 100)
-                : $order->discount_amount;
-
-            $grossAmountAfterDiscount = $grossAmount - $orderDiscount;
-            $otherCharges = $order->other_charges ?? 0;
-            $netTotal = $grossAmountAfterDiscount + $otherCharges;
-
-            return $total + max($netTotal - $order->paid, 0);
-        }, 0);
-
-        // Pass the calculated data to the view
-        return view('dashboard.dashboard', compact('sales', 'totalPurchases', 'paid', 'amountDue'));
-    }
-
-
+    
+    public function index(
+        Request $request,
+        OrderController $orderController,
+        PurchaseController $purchaseController,
+        IncomeController $incomeController,
+        ExpenseController $expenseController,
+        PaymentController $paymentController
+    ) {
+        try {
+            // Fetch the required values by calling profitLossView logic
+            $totals = $orderController->index($request);
+            $totalsPurchase = $purchaseController->index($request);
+            $totalIncome = $incomeController->index($request);
+            $totalExpense = $expenseController->index($request);
+            $totalPayment = $paymentController->index($request);
+    
+            // Prepare data for the dashboard
+            $saleTotalNetAmount = $totals['totalNetAmount'];
+            $purchaseTotalNetAmount = $totalsPurchase['totalNetTotalWithTax'];
+            $totalCredit = $totalPayment['totalCredit'];
+            $totalDebit = $totalPayment['totalDebit'];
+            $monthlyPayments = $totalPayment['monthlyPayments'];
+            
+    
+            return view('dashboard.dashboard', compact(
+                'saleTotalNetAmount',
+                'purchaseTotalNetAmount',
+                'totalCredit',
+                'totalDebit',
+                'monthlyPayments'
+            ));
+        } catch (\Exception $e) {
+            \Log::error('Failed to load dashboard data: ' . $e->getMessage());
+            return redirect()->back()->withErrors('Failed to load dashboard data. Please try again later.');
+        }
+    }   
 
 
     public function profitLossView(

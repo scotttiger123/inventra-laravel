@@ -270,32 +270,27 @@ document.getElementById('submitOrder').addEventListener('click', function () {
     });
 
     function getOrderData() {
-        var orderData = [];  // Array to store the order items data
-    
-        // Get the table rows
+        var orderData = [];  
         var rows = document.getElementById('orderItemsTable').getElementsByTagName('tbody')[0].rows;
-    
-        // Loop through each row and get the data
+        
         for (var i = 0; i < rows.length; i++) {
             var row = rows[i];
             
-            var productId = row.getAttribute('data-product-id');  // Get product ID
-            var productName = row.cells[0].innerText;  // Product name
-            var qty = row.cells[1].querySelector('input').value || 0;  // Quantity input value
+            var productId = row.getAttribute('data-product-id');  
+            var productName = row.cells[0].innerText;  
+            var qty = row.cells[1].querySelector('input').value || 0;  
             var uomId = row.getAttribute('data-uom-id');
-            var rate = parseFloat(row.cells[3].innerText);  // Rate
-            var discountType = row.cells[4].innerText;  // Discount type (percentage or flat)
-            var discountValue = parseFloat(row.cells[4].innerText) || 0;  // Discount value
-            var netRate = parseFloat(row.cells[6].innerText);  // Net rate after discount
-            var amount = parseFloat(row.cells[6].innerText);  // Amount after discount
+            var rate = parseFloat(row.cells[3].innerText);  
+            var discountType = row.cells[4].innerText;  
+            var discountValue = parseFloat(row.cells[4].innerText) || 0;  
+            var netRate = parseFloat(row.cells[6].innerText);  
+            var amount = parseFloat(row.cells[6].innerText);  
             var exitWarehouse = row.getAttribute('data-warehouse-id');
             
             
-    
-            // Add the item data to the orderData array
             orderData.push({
-                product_id: productId,       // Store product ID for reference
-                product_name: productName,   // Store product name for display
+                product_id: productId,       
+                product_name: productName,   
                 qty: qty,
                 uomId: uomId,
                 rate: rate,
@@ -307,27 +302,23 @@ document.getElementById('submitOrder').addEventListener('click', function () {
             });
         }
     
-        return orderData;  // Return the collected order data
+        return orderData;  
     }
 
     
     function addItemToOrder() {
-
-        // Get selected customer
+    
         var customerInput = document.getElementById('customer-name-input');
         var selectedCustomer = customerInput.value;
     
-        // Validate customer selection
         if (!selectedCustomer) {
             alert("Please select a valid customer before adding items.");
-            customerInput.focus(); // Focus on the customer field for user to select
+            customerInput.focus(); 
             return;
         }
     
-        // Get product code from input
-        var productCode = document.getElementById('product-input').value;
         
-        // Locate the corresponding option in the datalist to retrieve the product ID and name
+        var productCode = document.getElementById('product-input').value;
         var selectedOption = document.querySelector(`#product_name option[value="${productCode}"]`);
         if (!selectedOption) {
             alert("Product not found. Please select a valid product.");
@@ -336,7 +327,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
 
 
 
-         // var exitWarehouse = document.getElementById('exit_warehouse').checked ? 1 : 0;
+         
          var exitWarehouseValue = document.getElementById('warehouse-id').value;
          var exitWarehouseId = document.getElementById('warehouse-name-input-order').value;
 
@@ -354,7 +345,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         // Get quantity, rate, discount values
         var qty = parseFloat(document.getElementById('qty_id').value) || 0;
         var rate = parseFloat(document.getElementById('price_id').value);
-        var discountType = document.getElementById('discount_type').value; // Discount type (flat or percentage)
+        var discountType = document.getElementById('discount_type').value; 
         var discountValue = parseFloat(document.getElementById('discount_value').value);
        
         
@@ -368,18 +359,18 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         // Validate price
         if (isNaN(rate) || rate <= 0) {
             alert("Please enter a valid price.");
-            document.getElementById('price_id').focus(); // Focus the price field for the user to correct it
+            document.getElementById('price_id').focus(); 
             return;
         }
     
-        // Calculate the net rate based on the discount type
+        
         var netRate = rate;
     
-        // Apply discount if any
+        
         if (discountType === 'percentage' && discountValue > 0) {
-            netRate = rate - (rate * discountValue / 100); // Percentage discount
+            netRate = rate - (rate * discountValue / 100); 
         } else if (discountType === 'flat' && discountValue > 0) {
-            netRate = rate - discountValue; // Flat discount
+            netRate = rate - discountValue; 
         }
     
         // Ensure netRate is not negative
@@ -406,17 +397,17 @@ document.getElementById('submitOrder').addEventListener('click', function () {
         var cell8 = newRow.insertCell(7); // Exit Warehouse
         var cell9 = newRow.insertCell(8); // Delete button
         
-        // Display product name
+        
         cell1.innerHTML = productName;
         
-        // Create editable input for quantity and add it to cell2
+        
         var input = createEditableQuantityCell(qty);
         cell2.appendChild(input);
         
-        // Set UOM in the next column
+        
         cell3.innerHTML = uomAbbreviation;
         
-        // Set rate
+        
         cell4.innerHTML = rate.toFixed(2);
         
         // Set discount information

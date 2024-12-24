@@ -65,7 +65,7 @@
                             <!-- Vendor Selection -->
                             <div class="col-md-2">
                                 <div class="input-group" style="width: 100%;"> 
-                                    <input type="text" list="vendor-names" style="width: 100%;" name="vendor_name" class="form-control myInput" placeholder="Select Vendor" tabindex="1" id="vendor-name-input">
+                                    <input type="text" list="vendor-names" style="width: 100%;" name="vendor_name" class="form-control myInput" placeholder="Select Vendor" tabindex="2" id="vendor-name-input">
                                     <datalist id="vendor-names">
                                         @foreach($vendors as $vendor)
                                             <option value="{{ $vendor->name }}" data-id="{{ $vendor->id }}">{{ $vendor->name }}</option>
@@ -82,7 +82,7 @@
                                             <div class="input-group-addon" onclick="getPurchaseInvoiceDetails()" >
                                                 <i class="fa fa-search"></i>
                                             </div>
-                                            <input type="text" list="purchaseOrderList" name="custom_purchase_order_id" class="form-control myInput" placeholder="Purchase Id.">
+                                            <input type="text" list="purchaseOrderList" name="custom_purchase_order_id" class="form-control myInput" placeholder="Purchase Id." tabindex="3">
 
                                             
                                             <div onclick="getPurchaseForEdit()" class="input-group-addon" data-toggle="modal">
@@ -93,7 +93,7 @@
                                         
                                     </div>
                                         <div class="col-md-2">       
-                                            <input type="text" list="warehouse-names" style="width: 100%;" name="warehouse_name" class="form-control myInput" placeholder="Select Warehouse" tabindex="1" id="warehouse-name-input">
+                                            <input type="text" list="warehouse-names" style="width: 100%;" name="warehouse_name" class="form-control myInput" placeholder="Select Warehouse" tabindex="4" id="warehouse-name-input-purchase">
                                                 <datalist id="warehouse-names">
                                                     @foreach($warehouses as $warehouse)
                                                         <option value="{{ $warehouse->name }}" data-id="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
@@ -139,7 +139,7 @@
                                     <div class="input-group-addon" data-toggle="modal" data-target="#CreateNewProductModal">
                                         <i class="fa fa-barcode"></i>
                                     </div>
-                                    <input type="text" list="product_name" style="width: 100%;" name="product" onKeydown="Javascript: if (event.keyCode==13) addItemToPurchase();" class="form-control myInput" placeholder="Product Code" tabindex="1" id="product-input">
+                                    <input type="text" list="product_name" style="width: 100%;" name="product" onKeydown="Javascript: if (event.keyCode==13) addItemToPurchase();" class="form-control myInput" placeholder="Product Code" tabindex="5" id="product-input">
                                     <datalist id="product_name">
                                         @foreach($products as $product)
                                             <option value="{{ $product->product_code }}" data-id="{{ $product->id }}">{{ $product->product_name }}</option>
@@ -153,20 +153,20 @@
 
                             <!-- Quantity -->
                             <div class="col-sm-1">
-                                <input type="number" class="form-control myInput" name="qty" value="" placeholder="Quantity" id="qty_id" tabindex="2" onKeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
+                                <input type="number" class="form-control myInput" name="qty" value="" placeholder="Quantity" id="qty_id" tabindex="6" onKeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
                             </div>
                             
                             <!-- Unit Price -->
                             <div class="col-xs-1">
-                                <input type="number" id="price_id" class="form-control myInput" tabindex="3" name="price" placeholder="Unit Price" onKeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
+                                <input type="number" id="price_id" class="form-control myInput" tabindex="7" name="price" placeholder="Unit Price" onKeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
                             </div>
 
                             <!-- Discount -->
                             <div class="col-xs-1">
-                                <input type="number" class="form-control myInput" id="discount_value" placeholder="Discount" tabindex="4" onKeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
+                                <input type="number" class="form-control myInput" id="discount_value" placeholder="Discount" tabindex="8" onKeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
                             </div>
                             <div class="col-xs-1" >
-                                <select id="discount_type" class="form-control myInput" tabindex="5" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
+                                <select id="discount_type" class="form-control myInput" tabindex="9" onKeydown="Javascript: if (event.keyCode==13) addItemToOrder();">
                                     <option value="percentage">%</option>
                                     <option value="flat">Flat</option>
                                 </select>
@@ -174,7 +174,7 @@
 
                             <!-- UOM (Unit of Measure) -->
                             <div class="col-xs-1">
-                                <input type="text" list="UOMList" class="form-control myInput" id="uom-name-input" name="unit" value="" tabindex="6" placeholder="UOM" onkeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
+                                <input type="text" list="UOMList" class="form-control myInput" id="uom-name-input" name="unit" value="" tabindex="10" placeholder="UOM" onkeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
                                 <datalist id="UOMList">
                                     @foreach($uoms as $uom)
                                         <option value="{{ $uom->abbreviation }}" data-id="{{ $uom->id }}">{{ $uom->name }} ({{ $uom->abbreviation }})</option>
@@ -208,7 +208,7 @@
                                     <div class="input-group-addon" data-toggle="modal" >
                                         <i class="fa fa-tags"></i> 
                                     </div>
-                                    <input type="text" id="purchase_note" name="purchase_note" tabindex="7" placeholder="Purchase Notes / Remarks" class="form-control myInput">
+                                    <input type="text" id="purchase_note" name="purchase_note" tabindex="11" placeholder="Purchase Notes / Remarks" class="form-control myInput">
                                 </div>    
                             </div>
                             
@@ -248,7 +248,7 @@
                                     <div class="small-box" >
                                         <div class="inner">
                                             <h3>
-                                             <select name="tax_rate" id="tax_rate" class="form-control">
+                                             <select name="tax_rate" id="tax_rate" class="form-control" tabindex="12">
                                                 <option value="" selected>Order Tax</option>
                                                         @foreach($taxes as $tax)
                                                             <option value="{{ $tax->rate }}">{{ $tax->name }} ({{ $tax->rate }})</option>
@@ -262,7 +262,7 @@
                                 <div class="col-md-3 col-sm-6 col-12" >
                                     <div class="small-box" style = 'height:96px'>
                                         <div class="inner" >
-                                            <h3><input type="number"  name = 'order_discount' id="order_discount_id" value="0" class="form-control" tabindex="8" placeholder="Order Discount "></h3>
+                                            <h3><input type="number"  name = 'order_discount' id="order_discount_id" value="0" class="form-control" tabindex="12" placeholder="Order Discount "></h3>
                                             <label >
                                                 <input type="radio" name="order_discount_type" id = "flat_discount_radio" class="flat-red" value='flat' checked> Flat 
                                             </label> &nbsp;&nbsp;&nbsp;&nbsp;
@@ -276,7 +276,7 @@
                                 <div class="col-md-3 col-sm-6 col-12">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input type = 'number' value ="0" name="other_charges" value="" id = 'other_charges_id' class="form-control" tabindex="9" ></h3>
+                                            <h3><input type = 'number' value ="0" name="other_charges" value="" id = 'other_charges_id' class="form-control" tabindex="13" ></h3>
                                             <p>OTHER CHARGES</p>
                                         </div>
                                     </div>
@@ -285,7 +285,7 @@
                                 <div class="col-md-3 col-sm-6 col-12">
                                     <div class="small-box">
                                         <div class="inner">
-                                            <h3><input name="paid_amount" id="paid_amount_id" type="number" value = "0" class="form-control" tabindex="10" ></h3>
+                                            <h3><input name="paid_amount" id="paid_amount_id" type="number" value = "0" class="form-control" tabindex="14" ></h3>
                                             <p>PAID AMT</p>
                                         </div>
                                     </div>
@@ -413,6 +413,21 @@
 <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
 <script>
     
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname.includes('purchases/create')) {
+    
+    const body = document.body;
+    
+    if (!body.classList.contains('sidebar-collapse')) {
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        if (sidebarToggle) {
+        sidebarToggle.click(); 
+        }
+    }
+    }
+});
+
 $(function () {
     $('#purchase-listings').DataTable({
         'paging': true,
@@ -424,6 +439,8 @@ $(function () {
         'order': [[0, 'desc']] 
     });
 });
+
+
 
 
 function getPurchaseData() {
@@ -569,7 +586,26 @@ function validateSupplierField() {
             return;
         }
 
+            var warehouseInput = document.getElementById('warehouse-id');
+            var selectedWarehouse = warehouseInput.value;
+            const inwardWarehouseInput = document.getElementById('warehouse-name-input-purchase').value;
+            // Validate warehouse selection
+            if (!selectedWarehouse) {
+                alert("Please select a valid warehouse before adding items.");  
+                document.getElementById('warehouse-name-input-purchase').focus();
+                return;
+            }
+
             
+            const statusIdField = document.getElementById('status-id');
+            var selectedStatus = statusIdField.value;
+
+            // Validate status selection
+            if (!selectedStatus) {
+                alert("Please select a valid status before adding items.");
+                statusNameInput.focus();
+                return;
+            }
         
         // Get product code from input
         var productCode = document.getElementById('product-input').value;
@@ -669,7 +705,7 @@ function validateSupplierField() {
         cell7.innerHTML = amount;
         
         // Display exit warehouse status (Yes or No)
-        cell8.innerHTML = inwardWarehouse;
+        cell8.innerHTML = inwardWarehouseInput;
         
         // Create delete button
         var deleteButton = document.createElement("button");
@@ -757,7 +793,7 @@ vendorNameInput.addEventListener('input', function() {
 });
 
 // Warehouse name validation & get ID
-const warehouseNameInput = document.getElementById('warehouse-name-input');
+const warehouseNameInput = document.getElementById('warehouse-name-input-purchase');
 const warehouseIdField = document.getElementById('warehouse-id');
 
 warehouseNameInput.addEventListener('input', function() {
@@ -771,54 +807,64 @@ warehouseNameInput.addEventListener('input', function() {
 });
 
 
-// Status selection validation and ID assignment
-const statusNameInput = document.getElementById('purchase-status-input');
-const statusIdField = document.getElementById('status-id');
-
-statusNameInput.addEventListener('input', function () {
-    const selectedOption = document.querySelector(`#orderStatusList option[value="${statusNameInput.value}"]`);
-    if (selectedOption) {
-        const statusId = selectedOption.getAttribute('data-id');
-        statusIdField.value = statusId;
-    } else {
-        statusIdField.value = '';  // Reset if no match
-    }
-});
-
-
-
-const uomNameInput = document.getElementById('uom-name-input');
-const uomIdField = document.getElementById('uom-id');
-
-uomNameInput.addEventListener('input', function() {
-    const selectedOption = document.querySelector(`#UOMList option[value="${uomNameInput.value}"]`);
-    if (selectedOption) {
-        const uomId = selectedOption.getAttribute('data-id');
-        uomIdField.value = uomId;
-    } else {
-        uomIdField.value = '';  // Reset if no match
-    }
-});
-
-
-
-
-window.onload = function() {
     
-    var dateInput = document.getElementById('purchase-date-input');
-    
-    var currentDate = new Date();
-    var year = currentDate.getFullYear();
-    var month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); 
-    var day = currentDate.getDate().toString().padStart(2, '0');
-    var hours = currentDate.getHours().toString().padStart(2, '0');
-    var minutes = currentDate.getMinutes().toString().padStart(2, '0');
-    var formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
-    dateInput.value = formattedDate;
-    
-    document.getElementById('vendor-name-input').focus();
-};
+    const statusNameInput = document.getElementById('purchase-status-input');
+    const statusIdField = document.getElementById('status-id');
 
+    statusNameInput.addEventListener('input', function () {
+        const selectedOption = document.querySelector(`#orderStatusList option[value="${statusNameInput.value}"]`);
+        if (selectedOption) {
+            const statusId = selectedOption.getAttribute('data-id');
+            statusIdField.value = statusId;
+        } else {
+            statusIdField.value = '';  
+        }
+    });
+
+
+
+    const uomNameInput = document.getElementById('uom-name-input');
+    const uomIdField = document.getElementById('uom-id');
+
+    uomNameInput.addEventListener('input', function() {
+        const selectedOption = document.querySelector(`#UOMList option[value="${uomNameInput.value}"]`);
+        if (selectedOption) {
+            const uomId = selectedOption.getAttribute('data-id');
+            uomIdField.value = uomId;
+        } else {
+            uomIdField.value = '';  
+        }
+    });
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        var dateInput = document.getElementById('purchase-date-input');
+        var vendorNameInput = document.getElementById('vendor-name-input');
+
+        if (dateInput) {
+            var currentDate = new Date();
+            var year = currentDate.getFullYear();
+            var month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            var day = currentDate.getDate().toString().padStart(2, '0');
+            var hours = currentDate.getHours().toString().padStart(2, '0');
+            var minutes = currentDate.getMinutes().toString().padStart(2, '0');
+
+            var formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+            dateInput.value = formattedDate;
+
+            if (vendorNameInput) {
+                setTimeout(() => {
+                    vendorNameInput.focus();
+                }, 100); 
+            } else {
+                console.error('Element with ID "customer-name-input" not found.');
+            }
+        } else {
+            console.error('Element with ID "datetimepicker_dark1" not found.');
+        }
+    });
 
 
     document.getElementById('order_discount_id').addEventListener('input', recalculateTotals);
@@ -1185,6 +1231,8 @@ function clearPurchaseOrderItemsTable() {
 
 document.getElementById('updatePurchaseOrder').addEventListener('click', updatePurchaseOrder);
 document.getElementById('cancelOrder').addEventListener('click', cancelEditMode);
+
+
 
 </script>
 @endsection
