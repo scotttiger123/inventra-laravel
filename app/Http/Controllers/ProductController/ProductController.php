@@ -3,7 +3,7 @@ namespace App\Http\Controllers\ProductController;
 
 use App\Http\Controllers\Controller; 
 use App\Models\Product;
-use App\Models\UOM;
+use App\Models\Uom;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Tax;
@@ -225,7 +225,7 @@ class ProductController extends Controller
 
         
         
-        private function calculateStockForProducts()
+        public function calculateStockForProducts()
         {
             $products = Product::with(['category', 'uom', 'warehouse'])->get();
     
@@ -260,9 +260,7 @@ class ProductController extends Controller
             return $products;
         }
     
-        /**
-         * Display stock report.
-         */
+        
         public function stockReport()
         {
             $products = $this->calculateStockForProducts();

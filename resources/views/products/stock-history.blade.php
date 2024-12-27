@@ -245,10 +245,8 @@
                 </table>
             </div>
         </div>
-
-        <!-- Back Button -->
         <div class="mt-4">
-            <a href="{{ route('products.index') }}" class="btn btn-secondary">
+            <a href="{{ route('stock-report-view') }}" class="btn btn-secondary">
                 <i class="fa fa-arrow-left"></i> Back to Product List
             </a>
         </div>

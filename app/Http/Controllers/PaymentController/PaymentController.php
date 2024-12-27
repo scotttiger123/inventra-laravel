@@ -59,21 +59,20 @@ class PaymentController extends Controller
                 return $payment;
             });
         
-            // Group payments by month and calculate total credit and debit for each month
-            $monthlyPayments = $payments->groupBy(function ($payment) {
-                return \Carbon\Carbon::parse($payment->payment_date)->format('F Y');
+            
+            $dailyPayments = $payments->groupBy(function ($payment) {
+                return \Carbon\Carbon::parse($payment->payment_date)->format('Y-m-d');
             })->map(function ($group) {
                 return [
                     'totalCredit' => $group->where('payment_type', 'credit')->sum('amount'),
                     'totalDebit' => $group->where('payment_type', 'debit')->sum('amount'),
                 ];
             });
-        
-            // Calculate overall totals
+ 
             $totalDebit = $payments->where('payment_type', 'debit')->sum('amount');
             $totalCredit = $payments->where('payment_type', 'credit')->sum('amount');
         
-            return view('payments.index', compact('payments', 'monthlyPayments', 'totalDebit', 'totalCredit', 'startDate', 'endDate'));
+            return view('payments.index', compact('payments', 'dailyPayments', 'totalDebit', 'totalCredit', 'startDate', 'endDate'));
         }
         
 

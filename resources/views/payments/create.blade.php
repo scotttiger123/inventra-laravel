@@ -132,8 +132,8 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Account *</label>
-                        <select name="account_id" class="form-control myInput" required>
+                        <label>Account</label>
+                        <select name="account_id" class="form-control myInput" >
                             <option value="">Select Account</option>
                             @foreach($accounts as $account)
                                 <option value="{{ $account->id }}" {{ old('account_id') == $account->id ? 'selected' : '' }}>

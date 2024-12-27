@@ -692,10 +692,26 @@ public function index(Request $request)
             });
         }
 
+
+        $topSellingProducts = \DB::table('order_items')
+        ->selectRaw('product_id, SUM(quantity) as total_sold')
+        ->groupBy('product_id')
+        ->orderByDesc('total_sold')
+        ->limit(5)
+        ->get()
+        ->map(function ($item) {
+            $product = Product::find($item->product_id);
+            return [
+                'product_name' => $product->product_name,
+                'total_sold' => $item->total_sold
+            ];
+        });
+
         $accounts = \DB::table('accounts')
             ->whereNull('deleted_at')
             ->pluck('name', 'id');
-            $paymentMethods = PaymentMethod::all(); // Fetch all payment methods
+            $paymentMethods = PaymentMethod::all(); 
+            
         return view('orders.index', compact(
             'orders',
             'totalGrossAmount',
@@ -707,7 +723,8 @@ public function index(Request $request)
             'currencySymbol',
             'totalNetProfit', 
             'accounts',
-           'paymentMethods'
+            'paymentMethods',
+            'topSellingProducts'
         ));
     } catch (Exception $e) {
         \Log::error('Failed to fetch orders: ' . $e->getMessage());

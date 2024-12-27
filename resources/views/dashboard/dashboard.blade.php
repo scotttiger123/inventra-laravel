@@ -14,7 +14,7 @@
                     <div class="icon" style="color:#333;">
                         <i class="ion ion-cash"></i>
                     </div>
-                    <a href="#" class="small-box-footer" style="color:#555;">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    
                 </div>
             </div>
 
@@ -28,7 +28,7 @@
                     <div class="icon" style="color:#333;">
                         <i class="ion ion-pricetag"></i>
                     </div>
-                    <a href="#" class="small-box-footer" style="color:#555;">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    
                 </div>
             </div>
 
@@ -42,7 +42,7 @@
                     <div class="icon" style="color:#333;">
                         <i class="ion ion-checkmark"></i>
                     </div>
-                    <a href="#" class="small-box-footer" style="color:#555;">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    
                 </div>
             </div>
 
@@ -56,14 +56,8 @@
                     <div class="icon" style="color:#333;">
                         <i class="ion ion-clock"></i>
                     </div>
-                    <a href="#" class="small-box-footer" style="color:#555;">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div id="chartdiv" style="width:100%; height:600px; margin-top:20px;"></div>
- 
             </div>
         </div>
         <div class="row">
@@ -71,12 +65,19 @@
                 <div id="chart-container" style="width:100%; height:600px; margin-top:20px;"></div>
  
             </div>
+            <div class="col-lg-6">
+              <h3 id="chart-heading">Lowest Stock Product</h3>
+                <div id="chartdiv" style="width:100%; height:600px; margin-top:20px;"></div>
+            </div>
+            <div class="col-lg-6">
+              <h3 id="chart-heading">Top Selling Product</h3>
+                <div id="chartTopSelling" style="width:100%; height:600px; margin-top:20px;"></div>
+            </div>
         </div>
+        
     </div>
 </div>
 
-
-<!-- Highcharts and amCharts Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
@@ -85,240 +86,274 @@
 <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+
+
+
+
+
+
+
+
+
+
   
-  am5.ready(function() {
-  
-  // Create root element
-  var root = am5.Root.new("chartdiv");
 
-  // Set themes
-  root.setThemes([am5themes_Animated.new(root)]);
-  root.container.set("layout", root.verticalLayout);
 
-  // Create container to hold charts
-  var chartContainer = root.container.children.push(am5.Container.new(root, {
-    layout: root.horizontalLayout,
-    width: am5.p100,
-    height: am5.p100
-  }));
+  am5.ready(function () {
+    var topSellingProducts = @json($topSellingProducts);
 
-  // Create the 1st chart (Top Sales)
-  var chart = chartContainer.children.push(
-    am5percent.PieChart.new(root, {
-      endAngle: 270,
-      innerRadius: am5.percent(60)
-    })
-  );
+    const topProducts = topSellingProducts.sort((a, b) => b.total_sold - a.total_sold).slice(0, 5);
 
-  var series = chart.series.push(
-    am5percent.PieSeries.new(root, {
-      valueField: "value",
-      categoryField: "category",
-      endAngle: 270,
-      alignLabels: false
-    })
-  );
+    const chartData = topProducts.map(product => ({
+        category: product.product_name,
+        value: product.total_sold
+    }));
 
-  // Add a label to display the total sum of values without percentage symbol
-  series.children.push(am5.Label.new(root, {
-    centerX: am5.percent(50),
-    centerY: am5.percent(50),
-    text: "Top Sales: {valueSum}",
-    populateText: true,
-    fontSize: "1.5em"
-  }));
+    var root = am5.Root.new("chartTopSelling");
 
-  series.slices.template.setAll({
-    cornerRadius: 8
-  });
+    root.setThemes([am5themes_Animated.new(root)]);
+    root.container.set("layout", root.verticalLayout);
 
-  series.states.create("hidden", {
-    endAngle: -90
-  });
+    var chartContainer = root.container.children.push(
+        am5.Container.new(root, {
+            layout: root.horizontalLayout,
+            width: am5.p100,
+            height: am5.p100
+        })
+    );
 
-  // Disable percentage for labels inside the pie chart
-  series.labels.template.setAll({
-    textType: "circular",
-    text: "{category}: {value}" // Use raw value, without percentage symbol
-  });
+    var chart = chartContainer.children.push(
+        am5percent.PieChart.new(root, {
+            endAngle: 270,
+            innerRadius: am5.percent(60)
+        })
+    );
 
-  // Create the 2nd chart (Low Stock)
-  var chart2 = chartContainer.children.push(
-    am5percent.PieChart.new(root, {
-      endAngle: 270,
-      innerRadius: am5.percent(60)
-    })
-  );
+    var series = chart.series.push(
+        am5percent.PieSeries.new(root, {
+            valueField: "value",
+            categoryField: "category",
+            endAngle: 270,
+            alignLabels: false
+        })
+    );
 
-  var series2 = chart2.series.push(
-    am5percent.PieSeries.new(root, {
-      valueField: "value",
-      categoryField: "category",
-      endAngle: 270,
-      alignLabels: false,
-      tooltip: am5.Tooltip.new(root, {
-        labelText: "{category}: {value} units" // Showing value without percentage in tooltip
-      })
-    })
-  );
+    series.children.push(
+        am5.Label.new(root, {
+            centerX: am5.percent(50),
+            centerY: am5.percent(50),
+            text: "{valueSum}",
+            populateText: true,
+            fontSize: "1.5em"
+        })
+    );
 
-  // Add a label to display the total sum of values without percentage symbol
-  series2.children.push(am5.Label.new(root, {
-    centerX: am5.percent(50),
-    centerY: am5.percent(50),
-    text: "Low Stock: {valueSum}",
-    populateText: true,
-    fontSize: "1.5em"
-  }));
-
-  series2.slices.template.setAll({
-    cornerRadius: 8
-  });
-
-  series2.states.create("hidden", {
-    endAngle: -90
-  });
-
-  // Disable percentage for labels inside the pie chart
-  series2.labels.template.setAll({
-    textType: "circular",
-    text: "{category}: {value}" // Use raw value, without percentage symbol
-  });
-
-  series2.labels.template.setAll({
-    textType: "circular"
-  });
-
-  // Set data for Top Sales
-  series.data.setAll([
-    { category: "UltraClean Vacuum", value: 850 },
-    { category: "SmartWatch Pro X", value: 720 },
-    { category: "EcoBlend Juicer", value: 630 },
-    { category: "Headphones", value: 600 },
-    { category: "MaxPower Drill", value: 550 }
-  ]);
-
-  // Set data for Low Stock
-  series2.data.setAll([
-    { category: "EcoBlend Juicer", value: 30 },
-    { category: "SmartWatch Pro X", value: 25 },
-    { category: "TurboCharge Powerbank", value: 20 },
-    { category: "MaxPower Drill", value: 15 },
-    { category: "FlexiFit Yoga Mat", value: 2 }
-  ]);
-
-  // Remove percentage symbol by formatting value directly
-  series.slices.template.adapters.add("tooltipText", function(tooltipText, target) {
-    return target.dataItem.get("category") + ": " + target.dataItem.get("value") + " units"; // Display value without percentage
-  });
-
-  series2.slices.template.adapters.add("tooltipText", function(tooltipText, target) {
-    return target.dataItem.get("category") + ": " + target.dataItem.get("value") + " units"; // Display value without percentage
-  });
-
-  function getSlice(dataItem, series) {
-    var otherSlice;
-    am5.array.each(series.dataItems, function(di) {
-      if (di.get("category") === dataItem.get("category")) {
-        otherSlice = di.get("slice");
-      }
+    series.slices.template.setAll({
+        cornerRadius: 8
     });
 
-    return otherSlice;
-  }
+    series.states.create("hidden", {
+        endAngle: -90
+    });
 
-  // Create legend
-  var legend = root.container.children.push(am5.Legend.new(root, {
-    x: am5.percent(50),
-    centerX: am5.percent(50)
-  }));
+    series.labels.template.setAll({
+        textType: "circular",
+        text: "{category}: {value}"
+    });
 
-  legend.itemContainers.template.events.on("pointerover", function(ev) {
-    var dataItem = ev.target.dataItem.dataContext;
-    var slice = getSlice(dataItem, series2);
-    slice.hover();
-  });
+    series.data.setAll(chartData);
 
-  legend.itemContainers.template.events.on("pointerout", function(ev) {
-    var dataItem = ev.target.dataItem.dataContext;
-    var slice = getSlice(dataItem, series2);
-    slice.unhover();
-  });
+    series.slices.template.adapters.add("tooltipText", function (tooltipText, target) {
+        return target.dataItem.get("category") + ": " + target.dataItem.get("value") + " units sold";
+    });
 
-  legend.itemContainers.template.on("disabled", function(disabled, target) {
-    var dataItem = target.dataItem.dataContext;
-    var slice = getSlice(dataItem, series2);
-    if (disabled) {
-      series2.hideDataItem(slice.dataItem);
-    } else {
-      series2.showDataItem(slice.dataItem);
+    var colors = ["#3357FF", "#F39C12", "#8E44AD", "#27AE60", "#E74C3C"];
+    series.slices.template.adapters.add("fill", function (fill, target) {
+        var index = target.dataItem.index;
+        return am5.color(colors[index % colors.length]);
+    });
+
+    var legend = root.container.children.push(
+        am5.Legend.new(root, {
+            x: am5.percent(50),
+            centerX: am5.percent(50),
+            y: am5.percent(0)
+        })
+    );
+
+    legend.data.setAll(series.dataItems);
+
+    series.appear(1000, 100);
+});
+
+
+
+
+
+
+
+
+
+
+  
+    am5.ready(function () {
+        var productStock = @json($productStock);
+
+        const productsWithStock = productStock.filter(product => product.current_stock > 0);
+
+        const lowestStockProducts = productsWithStock.sort((a, b) => a.current_stock - b.current_stock).slice(0, 5);
+
+        const chartData = lowestStockProducts.map(product => ({
+            category: product.product_name,
+            value: product.current_stock
+        }));
+
+        var root = am5.Root.new("chartdiv");
+
+        root.setThemes([am5themes_Animated.new(root)]);
+        root.container.set("layout", root.verticalLayout);
+
+        var chartContainer = root.container.children.push(
+            am5.Container.new(root, {
+                layout: root.horizontalLayout,
+                width: am5.p100,
+                height: am5.p100
+            })
+        );
+
+        var chart = chartContainer.children.push(
+            am5percent.PieChart.new(root, {
+                endAngle: 270,
+                innerRadius: am5.percent(60)
+            })
+        );
+
+        var series = chart.series.push(
+            am5percent.PieSeries.new(root, {
+                valueField: "value",
+                categoryField: "category",
+                endAngle: 270,
+                alignLabels: false
+            })
+        );
+
+        series.children.push(
+            am5.Label.new(root, {
+                centerX: am5.percent(50),
+                centerY: am5.percent(50),
+                text: "{valueSum}",
+                populateText: true,
+                fontSize: "1.5em"
+            })
+        );
+
+        series.slices.template.setAll({
+            cornerRadius: 8
+        });
+
+        series.states.create("hidden", {
+            endAngle: -90
+        });
+
+        series.labels.template.setAll({
+            textType: "circular",
+            text: "{category}: {value}"
+        });
+
+        series.data.setAll(chartData);
+
+        series.slices.template.adapters.add("tooltipText", function (tooltipText, target) {
+            return target.dataItem.get("category") + ": " + target.dataItem.get("value") + " units";
+        });
+
+        // Set custom colors for each slice
+        var colors = ["#fffff", "#fffffqq", "#3357FF", "#F39C12", "#8E44AD"];
+        series.slices.template.adapters.add("fill", function (fill, target) {
+            var index = target.dataItem.index;
+            return am5.color(colors[index % colors.length]); // Loop over colors if more than 5 slices
+        });
+
+        var legend = root.container.children.push(
+            am5.Legend.new(root, {
+                x: am5.percent(50),
+                centerX: am5.percent(50),
+                y: am5.percent(0) // Position the legend at the top
+            })
+        );
+
+        legend.data.setAll(series.dataItems);
+
+        series.appear(1000, 100);
+    });
+});
+
+
+
+
+am4core.ready(function() {
+    am4core.useTheme(am4themes_animated);
+
+    var dynamicData = @json($formattedDailyPayments);
+    var lastTenDaysData = dynamicData.slice(-30);
+    var chart = am4core.create("chart-container", am4charts.XYChart3D);
+    chart.data = lastTenDaysData;
+
+    var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+    categoryAxis.dataFields.category = "date";
+    categoryAxis.renderer.minGridDistance = 20;
+
+    var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    valueAxis.title.text = "Amount";
+
+    function createSeries(field, name, color) {
+        var series = chart.series.push(new am4charts.ColumnSeries3D());
+        series.dataFields.categoryX = "date";
+        series.dataFields.valueY = field;
+        series.name = name;
+        series.columns.template.fill = am4core.color(color);
+        series.columns.template.stroke = am4core.color(color);
+        series.columns.template.tooltipText = "{name}: [bold]{valueY}[/]";
+        return series;
     }
-  });
 
-  legend.data.setAll(series.dataItems);
+    
+    createSeries("totalCredit", "Credit", "#00a65a"); // Dark Green
+    createSeries("totalDebit", "Debit", "#d5e8d4");   // Light Yellow
 
-  series.appear(1000, 100);
 
-}); // end am5.ready()
+    chart.cursor = new am4charts.XYCursor();
 
-    // Fetch dynamic data (this can be from an API or backend data)
-    const dynamicData = [
-        { month: "January", sales: 15000, revenue: 25000, orders: 120 },
-        { month: "February", sales: 18000, revenue: 27000, orders: 140 },
-        { month: "March", sales: 20000, revenue: 30000, orders: 160 },
-        { month: "April", sales: 22000, revenue: 32000, orders: 180 },
-        { month: "May", sales: 24000, revenue: 35000, orders: 200 },
-        { month: "June", sales: 26000, revenue: 40000, orders: 220 }
-    ];
+    chart.legend = new am4charts.Legend();
+    chart.legend.position = "top";
 
-    // Create the 3D Bar Chart
-    am4core.ready(function() {
-        am4core.useTheme(am4themes_animated);
+    var title = chart.titles.create();
+    title.text = "Months Credit & Debit";
+    title.fontSize = 20;
+    title.marginBottom = 20;
 
-        var chart = am4core.create("chart-container", am4charts.XYChart3D);
-        chart.data = dynamicData;
+    chart.padding(40, 40, 40, 40);
+});
 
-        // X-Axis (Months)
-        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-        categoryAxis.dataFields.category = "month";
-        categoryAxis.renderer.minGridDistance = 20;
-
-        // Y-Axis (Values)
-        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-        valueAxis.title.text = "Values";
-
-        // Create a function to generate series dynamically based on data fields
-        function createSeries(field, name, color) {
-            var series = chart.series.push(new am4charts.ColumnSeries3D());
-            series.dataFields.categoryX = "month";
-            series.dataFields.valueY = field;
-            series.name = name;
-            series.columns.template.fill = am4core.color(color);
-            series.columns.template.stroke = am4core.color(color);
-            series.columns.template.tooltipText = "{name}: [bold]{valueY}[/]";
-            return series;
-        }
-
-        // Adding series for sales, revenue, and orders
-        createSeries("sales", "Sales", "#00000");
-        createSeries("revenue", "Revenue", "#00a65a");
-        createSeries("orders", "Orders", "#FFC107");
-
-        // Add a cursor
-        chart.cursor = new am4charts.XYCursor();
-
-        // Add a legend
-        chart.legend = new am4charts.Legend();
-        chart.legend.position = "top";
-
-        // Add a title to the chart
-        var title = chart.titles.create();
-        title.text = "Monthly Sales, Revenue, and Orders";
-        title.fontSize = 20;
-        title.marginBottom = 20;
-
-        // Add padding to the chart
-        chart.padding(40, 40, 40, 40);
-    });
 </script>
 @endsection

@@ -47,8 +47,11 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <button type="submit" class="btn btn-primary" style="margin-top: 32px;">Filter</button>
-                </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 25px;">
+                            <i class="fa fa-filter"></i> Filter
+                        </button>
+                    </div>
+
             </div>
         </form>
 
@@ -60,7 +63,7 @@
                     <th>Category</th>
                     <th>Current Stock</th>
                     <th>Unit of Measure (UOM)</th>
-                    <th>Action</th>
+                    <th>History</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,22 +81,13 @@
                         @else
                             N/A
                         @endif
-                    </td> <!-- Displaying UOM -->
+                    </td> 
                     <td>
-                        <div class="custom-dropdown text-center">
-                            <button class="custom-dropdown-toggle" type="button">
-                                Actions <i class="fa fa-caret-down"></i>
-                            </button>
-                            <div class="custom-dropdown-menu">
-
-                                    <a href="{{ route('products.stockHistory', $product->id) }}" class="custom-dropdown-item">
-
-                                        <i class="fa fa-history"></i> Stock History
-                                    </a>
-
-                            </div>
-                        </div>
+                        <a href="{{ route('products.stockHistory', $product->id) }}" class="btn btn-success">
+                            <i class="fa fa-history"></i> Stock History
+                        </a>
                     </td>
+
                 </tr>
                 @endforeach
             </tbody>
