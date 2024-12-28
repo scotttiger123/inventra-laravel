@@ -697,13 +697,14 @@ public function index(Request $request)
         ->selectRaw('product_id, SUM(quantity) as total_sold')
         ->groupBy('product_id')
         ->orderByDesc('total_sold')
-        ->limit(5)
+        ->limit(10)
         ->get()
         ->map(function ($item) {
             $product = Product::find($item->product_id);
             return [
                 'product_name' => $product->product_name,
-                'total_sold' => $item->total_sold
+                'total_sold' => $item->total_sold,
+                'image_path' => $product->image_path
             ];
         });
 
