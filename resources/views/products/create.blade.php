@@ -26,7 +26,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Product Code *</label>
-                        <input type="text" name="product_code" class="form-control myInput" value="{{ old('product_code') }}" required>
+                        <input type="text" name="product_code" class="form-control myInput" value="{{ old('product_code') }}" >
                         @error('product_code')
                             <span class="validation-msg text-danger">{{ $message }}</span>
                         @enderror
@@ -36,7 +36,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Product Name *</label>
-                        <input type="text" name="product_name" class="form-control myInput" value="{{ old('product_name') }}" required>
+                        <input type="text" name="product_name" class="form-control myInput" value="{{ old('product_name') }}" >
                         @error('product_name')
                             <span class="validation-msg text-danger">{{ $message }}</span>
                         @enderror
@@ -80,7 +80,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Product Cost *</label>
-                        <input type="number" name="cost" class="form-control myInput" step="any" value="{{ old('cost') }}" required>
+                        <input type="number" name="cost" class="form-control myInput" step="any" value="{{ old('cost') }}" >
                         @error('cost')
                             <span class="validation-msg text-danger">{{ $message }}</span>
                         @enderror
@@ -90,7 +90,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Sale Price *</label>
-                        <input type="number" name="price" class="form-control myInput" step="any" value="{{ old('price') }}" required>
+                        <input type="number" name="price" class="form-control myInput" step="any" value="{{ old('price') }}" >
                         @error('price')
                             <span class="validation-msg text-danger">{{ $message }}</span>
                         @enderror
@@ -164,7 +164,21 @@
                         @enderror
                     </div>
                 </div>
+                <div class="col-md-3">
+                        <label class="mr-2">Import Bulk Product</label>
+                        <input type="file" name="import_csv" class="form-control myInput" accept=".csv">
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                       <label class="mr-2">Sample CSV</label>
+                        <button type="button" class="btn btn-info ml-2 custom-grey" data-toggle="modal" data-target="#importCsvModal">
+                            <i class="fa fa-info-circle"></i>
+                        </button>
+                    </div>     
+                </div>    
+
             </div>
+           
 
             <div class="form-group mt-3">
                 <button type="submit" class="btn btn-primary">Add Product</button>
@@ -174,4 +188,54 @@
         </form>
     </div>
 </div>
+
+<div class="modal fade" id="importCsvModal" tabindex="-1" role="dialog" aria-labelledby="importCsvModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importCsvModalLabel">Import CSV File Guidelines</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="form-text text-muted">
+                    Please ensure your CSV file meets the following requirements for successful import:
+                </p>
+                <ul style="padding-left: 20px; margin-bottom: 15px;">
+                    <li>Fields marked with <strong>*</strong> are mandatory.</li>
+                    <li>The correct column order is:
+                        <ul style="padding-left: 20px;">
+                            <li><strong>Image</strong> - Optional. It must be stored in the <code>products</code> directory with the same name as mentioned here.</li>
+                            <li><strong>name*</strong></li>
+                            <li><strong>code*</strong></li>
+                            <li><strong>Uom*</strong> (e.g., piece or kg)</li>
+                            <li><strong>cost*</strong></li>
+                            <li><strong>price*</strong></li>
+                            <li><strong>brand</strong></li>
+                            <li><strong>category</strong></li>
+                            <li><strong>alert qty</strong></li>
+                            <li><strong>product tax</strong></li>
+                            <li><strong>initial stock</strong></li>
+                            <li><strong>product details</strong></li>
+                            
+                        </ul>
+                    </li>
+                    <li>Ensure all required fields are correctly filled before upload.</li>
+                </ul>
+                <a href="{{ route('download-sample-product-csv') }}" class="btn btn-success mt-3">
+                    <i class="fa fa-download"></i> Download Sample CSV File
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-grey {
+    background-color: #d3d3d3; 
+    color: #000; 
+    border: 1px solid #ccc; 
+}
+</style>
 @endsection

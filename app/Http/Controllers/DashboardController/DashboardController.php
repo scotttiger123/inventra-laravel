@@ -42,7 +42,7 @@ class DashboardController extends Controller
             $totalPayment = $paymentController->index($request);
             $productStock = $productController->calculateStockForProducts();
             
-    
+                
             // Prepare data for the dashboard
             $saleTotalNetAmount = $totals['totalNetAmount'];
             $topSellingProducts = $totals['topSellingProducts'];

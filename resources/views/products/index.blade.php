@@ -52,7 +52,13 @@
                 @foreach($products as $product)
                 <tr id="productRow-{{ $product->id }}">
                     <td>
-                        <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : asset('dist/img/no-product-img.png') }}" alt="{{ $product->name }}" style="width: 50px; height: 50px; object-fit: cover;">
+                        <img 
+                            src="{{ $product->image_path ? asset('storage/' . $product->image_path) : asset('dist/img/no-product-img.png') }}" 
+                            alt="{{ $product->name }}" 
+                            style="width: 50px; height: 50px; object-fit: cover;"
+                            onerror="this.src='{{ asset('dist/img/no-product-img.png') }}';"
+                        >
+                        
                     </td>
                     <td>{{ $product->product_code }}</td>
                     <td>{{ strtoupper($product->product_name) }}</td>
@@ -87,15 +93,14 @@
                                         data-toggle="modal" 
                                         data-target="#viewProductModal"
                                         data-id="{{ $product->id }}"
-                                        data-code="{{ $product->product_code }}"
-                                        data-name="{{ $product->product_name }}"
-                                        data-cost="{{ $product->cost }}"
-                                        data-price="{{ $product->price }}"
-                                        data-uom="{{ json_decode($product->uom)->name }}"  
+                                        data-code="{{ $product->product_code ?? '' }}"
+                                        data-name="{{ $product->product_name ?? '' }}"
+                                        data-cost="{{ $product->cost ?? '' }}"
+                                        data-price="{{ $product->price ?? '' }}"
+                                        data-uom="{{ json_decode($product->uom)->name ?? '' }}"  
                                         data-details="{{ $product->product_details ?: 'No details available' }}"      
-                                        data-initial-stock="{{ $product->initial_stock }}"
-                                        data-alert-quantity="{{ $product->alert_quantity }}"
-                                        
+                                        data-initial-stock="{{ $product->initial_stock ?? '' }}"
+                                        data-alert-quantity="{{ $product->alert_quantity ?? '' }}"
                                         data-image="{{ $product->image_path ? asset('storage/' . $product->image_path) : asset('dist/img/product-default.jpg') }}"
                                     >
                                         <i class="fa fa-eye"></i> View

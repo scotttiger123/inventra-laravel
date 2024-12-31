@@ -30,9 +30,54 @@ class ProductController extends Controller
     }
     
 
+    
     public function store(Request $request)
 {
-    // Validate the incoming request data
+    
+
+    if ($request->hasFile('import_csv')) {
+        $file = $request->file('import_csv');
+        $path = $file->getRealPath();
+        
+        $csvData = array_map('str_getcsv', file($path));
+        $header = $csvData[0];
+        $rows = array_slice($csvData, 1);
+        
+        foreach ($rows as $row) {
+            $productData = array_combine($header, $row);
+            
+            $categoryId = Category::where('name', $productData['category'])->first()->id ?? null;
+            $brandId = Brand::where('name', $productData['brand'])->first()->id ?? null;
+            
+            $uomId = Uom::where('name', $productData['uom'])->first()->id ?? null;
+            
+            $taxId = Tax::where('name', $productData['product tax'])->first()->id ?? null;
+    
+            Product::create([
+                'product_code' => $productData['code'] ?? null,
+                'product_name' => $productData['name'] ?? null,
+                'brand_id' => $brandId,
+                'category_id' => $categoryId,
+                'cost' => $productData['cost'] ?? null,
+                'price' => $productData['price'] ?? null,
+                'alert_quantity' => $productData['alert qty'] ?? null,
+                'tax_id' => $taxId,
+                'initial_stock' => $productData['initial stock'] ?? null,
+                'uom_id' => $uomId,
+                'product_details' => $productData['product details'] ?? null,
+                'image_path' => isset($productData['image']) 
+                    ? 'products/' . $productData['image'] 
+                    : null,
+                'created_by' => auth()->id(),
+            ]);
+        }
+    
+        return redirect()->route('products.create')->with('success', 'Products imported successfully!');
+    }
+    
+    
+
+    
     $request->validate([
         'product_code' => 'required|string|max:255|unique:products,product_code,NULL,id,parent_user_id,' . auth()->user()->parent_id . ',created_by,' . auth()->id(),
         'product_name' => 'required|string|max:255',
@@ -46,8 +91,6 @@ class ProductController extends Controller
         'tax_id' => 'nullable|integer',
         'product_image' => 'nullable|image'
     ]);
-
-   
     // Create a new product instance
     $product = new Product();
     $product->product_code = $request->input('product_code');
@@ -88,6 +131,39 @@ class ProductController extends Controller
     }
 }
 
+public function downloadSampleProductCsv()
+{
+    
+    $data = [
+        ['image', 'name', 'code', 'uom', 'cost', 'price', 'brand', 'category', 'alert qty', 'product tax', 'initial stock', 'product details'],
+        ['pod.png', 'Sample Product 1', 'PROD001', 'kg', '10.00', '15.00', 'Brand A', 'Category X', '10', 'Tax 1', '100', 'Sample product details'],
+        ['ipad.png', 'Sample Product 2', 'PROD002', 'piece', '20.00', '25.00', 'Brand B', 'Category Y', '5', 'Tax 2', '50', 'Sample product details'],
+    ];
+
+    
+    $fileName = 'sample_product_data.csv';
+
+    
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+    ];
+
+    
+    $callback = function () use ($data) {
+        $file = fopen('php://output', 'w');
+
+        // Add the data rows
+        foreach ($data as $row) {
+            fputcsv($file, $row);
+        }
+
+        fclose($file);
+    };
+
+    
+    return response()->stream($callback, 200, $headers);
+}
     
 
     public function index()

@@ -59,38 +59,42 @@
                     
                 </div>
             </div>
+            
         </div>
         <div class="row">
             <div class="col-lg-7">
                 <div id="chart-container" style="width:100%; height:600px; margin-top:20px;"></div>
- 
             </div>
-            <div class="col-lg-5">
+            <div class="whity" style="margin-top:-2rem;padding:10px 3rem; width:10%;background-color:white; position:absolute;"> </div>
+       <div class="col-lg-5">
               <h3 id="chart-heading">Lowest Stock Product</h3>
-                <div id="chartdiv" style="width:100%; height:600px; margin-top:30px;"></div>
+                <div id="lowStockProduct" style="width:100%; height:600px; margin-top:30px;"></div>
+                <div class="whity" style="margin-top:-48rem;padding:10px 3rem; width:10%;background-color:white; position:absolute;"> </div>
             </div>
         </div>   
-        <div class="row">    
-            
+        <div class="row" style="padding-left:7rem">    
             <div class="col-lg-7">
+                <div class="whity" style="margin-top:-10rem;padding:10px 3rem; width:20%; height: 65px; background-color:white; position:absolute; margin-left:-7rem;"> </div>
                 <h3 id="chart-heading">Top Selling Product</h3>
                 <div id="chartdivStock2" style="width:100%; height:600px; margin-top:30px;"></div>
  
             </div>
+             <div class="whity" style="margin-top:-3rem; margin-left:60rem; padding:10px 3rem; width:20%;background-color:white; position:absolute;"> </div>
             <div class="col-lg-5">
-                
+                 <div class="whity" style="margin-top:-4rem;padding:10px 3rem; width:20%;background-color:white; position:absolute;"> </div>
                 <h3 id="chart-heading">chartdivGaug</h3>
                 <div id="chartdivGaug" style="width:100%; height:600px; margin-top:30px;"></div>
             </div>
         </div>
-        <div class="row">
+         <div class="whity" style="margin-top:-3rem; padding:10px 3rem; width:80%;height:30px; position:absolute; background-color:white;"></div> 
+        <div class="row" style="padding-left:7rem;">
             <div class="col-lg-12">
                 <h3 id="chart-heading">Product Inventory</h3>
                 <div id="chartDivStock" style="width:100%; height:600px; margin-top:30px;"></div>
  
             </div>
         </div>
-        
+        <div class="whity" style="margin-top:-2rem; margin-left:2px; padding:10px 2rem; width:150px; background-color:white; position:absolute;"> </div>
     </div>
 </div>
 
@@ -110,6 +114,324 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
+
+
+
+
+
+
+    am5.ready(function() {
+
+var root = am5.Root.new("chartdivStock2");
+
+root.setThemes([am5themes_Animated.new(root)]);
+
+var topSellingProducts = @json($topSellingProducts);
+
+var data = topSellingProducts.map(function (product, index) {
+    if (product && product.product_name && product.total_sold !== undefined) {
+        return {
+            name: product.product_name,  // Safely access product_name
+            steps: parseInt(product.total_sold, 10),
+            pictureSettings: {
+                src: product.image_path ? `{{ asset('storage/') }}/${product.image_path}` : "{{ asset('dist/img/no-product-img.png') }}"
+            }
+        };
+    } else {
+        console.error("Invalid product data at index:", index, product);  // Log invalid product data
+        return null;  
+    }
+}).filter(Boolean);  
+
+
+
+
+var chart = root.container.children.push(
+am5xy.XYChart.new(root, {
+panX: false,
+panY: false,
+wheelX: "none",
+wheelY: "none",
+paddingBottom: 50,
+paddingTop: 40,
+paddingLeft: 0,
+paddingRight: 0
+})
+);
+
+var xRenderer = am5xy.AxisRendererX.new(root, {
+minorGridEnabled: true,
+minGridDistance: 60
+});
+xRenderer.grid.template.set("visible", false);
+
+var xAxis = chart.xAxes.push(
+am5xy.CategoryAxis.new(root, {
+paddingTop: 40,
+categoryField: "name",
+renderer: xRenderer
+})
+);
+
+var yRenderer = am5xy.AxisRendererY.new(root, {});
+yRenderer.grid.template.set("strokeDasharray", [3]);
+
+var yAxis = chart.yAxes.push(
+am5xy.ValueAxis.new(root, {
+min: 0,
+renderer: yRenderer
+})
+);
+
+var series = chart.series.push(
+am5xy.ColumnSeries.new(root, {
+name: "Steps",
+xAxis: xAxis,
+yAxis: yAxis,
+valueYField: "steps",
+categoryXField: "name",
+sequencedInterpolation: true,
+calculateAggregates: true,
+maskBullets: false,
+tooltip: am5.Tooltip.new(root, {
+dy: -30,
+pointerOrientation: "vertical",
+labelText: "{valueY}"
+})
+})
+);
+
+series.columns.template.setAll({
+strokeOpacity: 0,
+cornerRadiusBR: 10,
+cornerRadiusTR: 10,
+cornerRadiusBL: 10,
+cornerRadiusTL: 10,
+maxWidth: 50,
+fillOpacity: 0.8
+});
+
+var currentlyHovered;
+series.columns.template.events.on("pointerover", function(e) {
+handleHover(e.target.dataItem);
+});
+
+series.columns.template.events.on("pointerout", function(e) {
+handleOut();
+});
+
+function handleHover(dataItem) {
+if (dataItem && currentlyHovered != dataItem) {
+handleOut();
+currentlyHovered = dataItem;
+var bullet = dataItem.bullets[0];
+bullet.animate({
+key: "locationY",
+to: 1,
+duration: 600,
+easing: am5.ease.out(am5.ease.cubic)
+});
+}
+}
+
+function handleOut() {
+if (currentlyHovered) {
+var bullet = currentlyHovered.bullets[0];
+bullet.animate({
+key: "locationY",
+to: 0,
+duration: 600,
+easing: am5.ease.out(am5.ease.cubic)
+});
+}
+}
+
+var circleTemplate = am5.Template.new({});
+
+series.bullets.push(function(root, series, dataItem) {
+var bulletContainer = am5.Container.new(root, {});
+var circle = bulletContainer.children.push(
+am5.Circle.new(
+root,
+{
+  radius: 34
+},
+circleTemplate
+)
+);
+
+var maskCircle = bulletContainer.children.push(
+am5.Circle.new(root, { radius: 27 })
+);
+
+var imageContainer = bulletContainer.children.push(
+am5.Container.new(root, {
+mask: maskCircle
+})
+);
+
+var image = imageContainer.children.push(
+am5.Picture.new(root, {
+templateField: "pictureSettings",
+centerX: am5.p50,
+centerY: am5.p50,
+width: 60,
+height: 60
+})
+);
+
+return am5.Bullet.new(root, {
+locationY: 0,
+sprite: bulletContainer
+});
+});
+
+series.set("heatRules", [
+{
+dataField: "valueY",
+min: am5.color(0x00a65a),   // Strong green for the lowest value
+max: am5.color(0x006400),   // Dark green for the highest value (stronger color)
+target: series.columns.template,
+key: "fill"
+},
+{
+dataField: "valueY",
+min: am5.color(0x00a65a),   // Strong green for the lowest value
+max: am5.color(0x006400),   // Dark green for the highest value (stronger color)
+target: circleTemplate,
+key: "fill"
+}
+]);
+
+series.data.setAll(data);
+xAxis.data.setAll(data);
+
+var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+cursor.lineX.set("visible", false);
+cursor.lineY.set("visible", false);
+
+cursor.events.on("cursormoved", function() {
+var dataItem = series.get("tooltip").dataItem;
+if (dataItem) {
+handleHover(dataItem);
+} else {
+handleOut();
+}
+});
+
+series.appear();
+chart.appear(1000, 100);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    am5.ready(function () { 
+       
+        var productStock = @json($productStock);
+        console.log("lowStockProduct",productStock);
+        const productsWithStock = productStock.filter(product => product.current_stock > 0);
+
+        const lowestStockProducts = productsWithStock.sort((a, b) => a.current_stock - b.current_stock).slice(0, 5);
+
+        const chartData = lowestStockProducts.map(product => ({
+            category: product.product_name,
+            value: product.current_stock
+        }));
+
+        var root = am5.Root.new("lowStockProduct");
+
+        root.setThemes([am5themes_Animated.new(root)]);
+        root.container.set("layout", root.verticalLayout);
+
+        var chartContainer = root.container.children.push(
+            am5.Container.new(root, {
+                layout: root.horizontalLayout,
+                width: am5.p100,
+                height: am5.p100
+            })
+        );
+
+        var chart = chartContainer.children.push(
+            am5percent.PieChart.new(root, {
+                endAngle: 270,
+                innerRadius: am5.percent(60)
+            })
+        );
+
+        var series = chart.series.push(
+            am5percent.PieSeries.new(root, {
+                valueField: "value",
+                categoryField: "category",
+                endAngle: 270,
+                alignLabels: false
+            })
+        );
+
+        series.children.push(
+            am5.Label.new(root, {
+                centerX: am5.percent(50),
+                centerY: am5.percent(50),
+                text: "{valueSum}",
+                populateText: true,
+                fontSize: "1.5em"
+            })
+        );
+
+        series.slices.template.setAll({
+            cornerRadius: 8
+        });
+
+        series.states.create("hidden", {
+            endAngle: -90
+        });
+
+        series.labels.template.setAll({
+            textType: "circular",
+            text: "{category}: {value}"
+        });
+
+        series.data.setAll(chartData);
+
+        series.slices.template.adapters.add("tooltipText", function (tooltipText, target) {
+            return target.dataItem.get("category") + ": " + target.dataItem.get("value") + " units";
+        });
+
+        // Set custom colors for each slice
+        var colors = ["#fffff", "#fffffqq", "#3357FF", "#F39C12", "#8E44AD"];
+        series.slices.template.adapters.add("fill", function (fill, target) {
+            var index = target.dataItem.index;
+            return am5.color(colors[index % colors.length]); // Loop over colors if more than 5 slices
+        });
+
+        var legend = root.container.children.push(
+            am5.Legend.new(root, {
+                x: am5.percent(50),
+                centerX: am5.percent(50),
+                y: am5.percent(0) // Position the legend at the top
+            })
+        );
+
+        legend.data.setAll(series.dataItems);
+
+        series.appear(1000, 100);
+    });
+});
 
 
     am5.ready(function() {
@@ -136,7 +458,7 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     var colorSet = am5.ColorSet.new(root, {
-        colors: [am5.color(0xd5e8d4)],
+        colors: [am5.color(0x00a65a)],
         step: 2,
         passOptions: {
             lightness: 0.2,
@@ -201,221 +523,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-    am5.ready(function() {
-        var root = am5.Root.new("chartdivStock2");
-
-        root.setThemes([am5themes_Animated.new(root)]);
-        
-        var topSellingProducts = @json($topSellingProducts);
-        var productStock = @json($productStock);
-
-        console.log("product stock ", productStock);
-        var data = topSellingProducts.map(function (product, index) {
-            
-            return {
-            name: product.product_name,
-            steps: parseInt(product.total_sold, 10),
-            pictureSettings: {
-                
-                src: product.image_path ? `{{ asset('storage/') }}/${product.image_path}` : "{{ asset('dist/img/no-product-img.png') }}"
-            }
-            };
-        });
-
-  
-
-  var chart = root.container.children.push(
-    am5xy.XYChart.new(root, {
-      panX: false,
-      panY: false,
-      wheelX: "none",
-      wheelY: "none",
-      paddingBottom: 50,
-      paddingTop: 40,
-      paddingLeft: 0,
-      paddingRight: 0
-    })
-  );
-
-  var xRenderer = am5xy.AxisRendererX.new(root, {
-    minorGridEnabled: true,
-    minGridDistance: 60
-  });
-  xRenderer.grid.template.set("visible", false);
-
-  var xAxis = chart.xAxes.push(
-    am5xy.CategoryAxis.new(root, {
-      paddingTop: 40,
-      categoryField: "name",
-      renderer: xRenderer
-    })
-  );
-
-  var yRenderer = am5xy.AxisRendererY.new(root, {});
-  yRenderer.grid.template.set("strokeDasharray", [3]);
-
-  var yAxis = chart.yAxes.push(
-    am5xy.ValueAxis.new(root, {
-      min: 0,
-      renderer: yRenderer
-    })
-  );
-
-  var series = chart.series.push(
-    am5xy.ColumnSeries.new(root, {
-      name: "Steps",
-      xAxis: xAxis,
-      yAxis: yAxis,
-      valueYField: "steps",
-      categoryXField: "name",
-      sequencedInterpolation: true,
-      calculateAggregates: true,
-      maskBullets: false,
-      tooltip: am5.Tooltip.new(root, {
-        dy: -30,
-        pointerOrientation: "vertical",
-        labelText: "{valueY}"
-      })
-    })
-  );
-
-  series.columns.template.setAll({
-    strokeOpacity: 0,
-    cornerRadiusBR: 10,
-    cornerRadiusTR: 10,
-    cornerRadiusBL: 10,
-    cornerRadiusTL: 10,
-    maxWidth: 50,
-    fillOpacity: 0.8
-  });
-
-  var currentlyHovered;
-  series.columns.template.events.on("pointerover", function(e) {
-    handleHover(e.target.dataItem);
-  });
-
-  series.columns.template.events.on("pointerout", function(e) {
-    handleOut();
-  });
-
-  function handleHover(dataItem) {
-    if (dataItem && currentlyHovered != dataItem) {
-      handleOut();
-      currentlyHovered = dataItem;
-      var bullet = dataItem.bullets[0];
-      bullet.animate({
-        key: "locationY",
-        to: 1,
-        duration: 600,
-        easing: am5.ease.out(am5.ease.cubic)
-      });
-    }
-  }
-
-  function handleOut() {
-    if (currentlyHovered) {
-      var bullet = currentlyHovered.bullets[0];
-      bullet.animate({
-        key: "locationY",
-        to: 0,
-        duration: 600,
-        easing: am5.ease.out(am5.ease.cubic)
-      });
-    }
-  }
-
-  var circleTemplate = am5.Template.new({});
-
-  series.bullets.push(function(root, series, dataItem) {
-    var bulletContainer = am5.Container.new(root, {});
-    var circle = bulletContainer.children.push(
-      am5.Circle.new(
-        root,
-        {
-          radius: 34
-        },
-        circleTemplate
-      )
-    );
-
-    var maskCircle = bulletContainer.children.push(
-      am5.Circle.new(root, { radius: 27 })
-    );
-
-    var imageContainer = bulletContainer.children.push(
-      am5.Container.new(root, {
-        mask: maskCircle
-      })
-    );
-
-    var image = imageContainer.children.push(
-      am5.Picture.new(root, {
-        templateField: "pictureSettings",
-        centerX: am5.p50,
-        centerY: am5.p50,
-        width: 60,
-        height: 60
-      })
-    );
-
-    return am5.Bullet.new(root, {
-      locationY: 0,
-      sprite: bulletContainer
-    });
-  });
-
-  series.set("heatRules", [
-    {
-      dataField: "valueY",
-      min: am5.color(0x00a65a),   // Strong green for the lowest value
-      max: am5.color(0x006400),   // Dark green for the highest value (stronger color)
-      target: series.columns.template,
-      key: "fill"
-    },
-    {
-      dataField: "valueY",
-      min: am5.color(0x00a65a),   // Strong green for the lowest value
-      max: am5.color(0x006400),   // Dark green for the highest value (stronger color)
-      target: circleTemplate,
-      key: "fill"
-    }
-  ]);
-
-  series.data.setAll(data);
-  xAxis.data.setAll(data);
-
-  var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
-  cursor.lineX.set("visible", false);
-  cursor.lineY.set("visible", false);
-
-  cursor.events.on("cursormoved", function() {
-    var dataItem = series.get("tooltip").dataItem;
-    if (dataItem) {
-      handleHover(dataItem);
-    } else {
-      handleOut();
-    }
-  });
-
-  series.appear();
-  chart.appear(1000, 100);
-});
-
-
-
-
+    
 
 
 
@@ -530,97 +638,6 @@ am5.ready(function() {
 
 
   
-    am5.ready(function () {
-        var productStock = @json($productStock);
-
-        const productsWithStock = productStock.filter(product => product.current_stock > 0);
-
-        const lowestStockProducts = productsWithStock.sort((a, b) => a.current_stock - b.current_stock).slice(0, 5);
-
-        const chartData = lowestStockProducts.map(product => ({
-            category: product.product_name,
-            value: product.current_stock
-        }));
-
-        var root = am5.Root.new("chartdiv");
-
-        root.setThemes([am5themes_Animated.new(root)]);
-        root.container.set("layout", root.verticalLayout);
-
-        var chartContainer = root.container.children.push(
-            am5.Container.new(root, {
-                layout: root.horizontalLayout,
-                width: am5.p100,
-                height: am5.p100
-            })
-        );
-
-        var chart = chartContainer.children.push(
-            am5percent.PieChart.new(root, {
-                endAngle: 270,
-                innerRadius: am5.percent(60)
-            })
-        );
-
-        var series = chart.series.push(
-            am5percent.PieSeries.new(root, {
-                valueField: "value",
-                categoryField: "category",
-                endAngle: 270,
-                alignLabels: false
-            })
-        );
-
-        series.children.push(
-            am5.Label.new(root, {
-                centerX: am5.percent(50),
-                centerY: am5.percent(50),
-                text: "{valueSum}",
-                populateText: true,
-                fontSize: "1.5em"
-            })
-        );
-
-        series.slices.template.setAll({
-            cornerRadius: 8
-        });
-
-        series.states.create("hidden", {
-            endAngle: -90
-        });
-
-        series.labels.template.setAll({
-            textType: "circular",
-            text: "{category}: {value}"
-        });
-
-        series.data.setAll(chartData);
-
-        series.slices.template.adapters.add("tooltipText", function (tooltipText, target) {
-            return target.dataItem.get("category") + ": " + target.dataItem.get("value") + " units";
-        });
-
-        // Set custom colors for each slice
-        var colors = ["#fffff", "#fffffqq", "#3357FF", "#F39C12", "#8E44AD"];
-        series.slices.template.adapters.add("fill", function (fill, target) {
-            var index = target.dataItem.index;
-            return am5.color(colors[index % colors.length]); // Loop over colors if more than 5 slices
-        });
-
-        var legend = root.container.children.push(
-            am5.Legend.new(root, {
-                x: am5.percent(50),
-                centerX: am5.percent(50),
-                y: am5.percent(0) // Position the legend at the top
-            })
-        );
-
-        legend.data.setAll(series.dataItems);
-
-        series.appear(1000, 100);
-    });
-});
-
 
 
 

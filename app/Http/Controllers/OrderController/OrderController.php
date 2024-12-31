@@ -701,12 +701,19 @@ public function index(Request $request)
         ->get()
         ->map(function ($item) {
             $product = Product::find($item->product_id);
-            return [
-                'product_name' => $product->product_name,
-                'total_sold' => $item->total_sold,
-                'image_path' => $product->image_path
-            ];
+    
+            
+            if ($product) {
+                return [
+                    'product_name' => $product->product_name,
+                    'total_sold' => $item->total_sold,
+                    'image_path' => $product->image_path,
+                ];
+            }
+    
+            
         });
+    
 
         $accounts = \DB::table('accounts')
             ->whereNull('deleted_at')

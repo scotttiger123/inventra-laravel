@@ -47,7 +47,7 @@ function confirmDelete(productId) {
         .then(data => {
             if (data.success) {
                 alert('Product deleted successfully!');
-                document.getElementById(`customerRow-${productId}`).remove();
+                document.getElementById(`productRow-${productId}`).remove();
             } else {
                 alert('Failed to delete product.');
             }
