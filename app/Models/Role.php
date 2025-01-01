@@ -26,7 +26,7 @@ class Role extends Model
     
     public function permissions()
     {
-        return $this->belongsToMany(Permission::class, 'role_permission');  // Use your custom pivot table name
+        return $this->belongsToMany(Permission::class, 'role_permission', 'role_id', 'permission_id');
     }
 
  

@@ -21,7 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', 'parent_id','status'
+        'role_id', 'parent_id','status'
     ];
 
     /**
@@ -36,10 +36,22 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'Role'); // 'Role' is the column name in the users table
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
-    // A user can have many child users
+     /**
+     * Check if user has a specific permission.
+     *
+     * @param string $permissionName
+     * @return bool
+     */
+    
+    public function hasPermission($permissionName)
+    {
+        return $this->role && $this->role->permissions()->where('name', $permissionName)->exists();
+    }
+
+    
     public function children()
     {
         return $this->hasMany(User::class, 'parent_id');

@@ -75,18 +75,24 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
 
 
 
+    Route::middleware(['permission:view_products'])->group(function () {
+        
+        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+        Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+        Route::get('/products/{product}/stock-history', [ProductController::class, 'stockHistory'])->name('products.stockHistory');
 
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    });   
+    
     Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
     Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
-    Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+    
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::get('/get-product-details/{code}', [ProductController::class, 'getProductDetails']);
     Route::get('/load-products', [ProductController::class, 'loadProducts'])->name('products.load');
     Route::get('/stock-report-view', [ProductController::class, 'stockReport'])->name('stock-report-view');
-    Route::get('/products/{product}/stock-history', [ProductController::class, 'stockHistory'])->name('products.stockHistory');
+    
     Route::get('/reports/product-sold-report', [ProductController::class, 'productSoldReport'])->name('reports.product-sold-report');
     Route::get('product-sold-report-pdf', [ProductController::class, 'productSoldReportPDF'])->name('product-sold-report-pdf');
     Route::get('/reports/product-purchased-report', [ProductController::class, 'productPurchasedReport'])->name('reports.product-purchased-report');
