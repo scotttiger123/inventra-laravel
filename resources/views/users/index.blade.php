@@ -18,7 +18,7 @@
                 <i class="fa fa-plus"></i> Add User
             </a>
         </div>
-
+        
         <!-- User Listings Table -->
         <table class="table table-bordered table-striped">
             <thead>
@@ -41,7 +41,9 @@
                         </div>
                     </td>
 
-                    <td>{{ ucfirst($user->role) }}</td>
+                    <td>{{ ucwords(str_replace('_', ' ', $user->role->name)) }}</td>
+
+
                     <td>
                         <div class="custom-dropdown text-center">
                             <button class="custom-dropdown-toggle" type="button">
@@ -68,19 +70,23 @@
                                     <i class="fa fa-eye"></i> View
                                 </button>
                               
-                                <!-- Edit User Option -->
-                                <a href="{{ route('users.edit', $user->id) }}" class="custom-dropdown-item">
-                                    <i class="fa fa-edit"></i> Edit
-                                </a>
+                                
+                                    @can('edit_users')
+                                        <a href="{{ route('users.edit', $user->id) }}" class="custom-dropdown-item">
+                                            <i class="fa fa-edit"></i> Edit
+                                        </a>
+                                    @endcan
 
-                                <!-- Delete User Option -->
-                                <form id="deleteForm-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST" class="custom-dropdown-item delete-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmDeleteUser({{ $user->id }})" class="delete-btn btn btn-danger">
-                                        <i class="fa fa-trash"></i> Delete
-                                    </button>
-                                </form>
+                                    
+                                    @can('delete_users')
+                                        <form id="deleteForm-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST" class="custom-dropdown-item delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" onclick="confirmDeleteUser({{ $user->id }})" class="delete-btn btn btn-danger">
+                                                <i class="fa fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    @endcan
                             </div>
                         </div>
                     </td>

@@ -75,24 +75,31 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
 
 
 
-    Route::middleware(['permission:view_products'])->group(function () {
-        
-        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-        Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
-        Route::get('/products/{product}/stock-history', [ProductController::class, 'stockHistory'])->name('products.stockHistory');
 
-    });   
+
+    Route::middleware(['permission:view_products'])->group(function () {
+        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+        
+    });
     
-    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-    Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
+    Route::middleware(['permission:create_products'])->group(function () {
+        Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    });
     
-    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
-    Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-    Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::middleware(['permission:edit_products'])->group(function () {
+        Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+    });
+    
+    Route::middleware(['permission:delete_products'])->group(function () {
+        Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    });
+
+   
     Route::get('/get-product-details/{code}', [ProductController::class, 'getProductDetails']);
     Route::get('/load-products', [ProductController::class, 'loadProducts'])->name('products.load');
     Route::get('/stock-report-view', [ProductController::class, 'stockReport'])->name('stock-report-view');
-    
     Route::get('/reports/product-sold-report', [ProductController::class, 'productSoldReport'])->name('reports.product-sold-report');
     Route::get('product-sold-report-pdf', [ProductController::class, 'productSoldReportPDF'])->name('product-sold-report-pdf');
     Route::get('/reports/product-purchased-report', [ProductController::class, 'productPurchasedReport'])->name('reports.product-purchased-report');
@@ -129,14 +136,26 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
     Route::get('/supplier-ledger', [SupplierController::class, 'ledger'])->name('supplier-ledger.index');
     Route::get('/supplier-ledger-pdf', [SupplierController::class, 'ledgerPDF'])->name('supplier-ledger-pdf');
 
-    // User routes
-    Route::get('/users', [UserController::class, 'index'])->name('users.index'); 
-    Route::get('/users/create', [UserController::class, 'create'])->name('users.create'); 
-    Route::post('/users/store', [UserController::class, 'store'])->name('users.store'); 
-    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show'); 
-    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit'); 
-    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update'); 
-    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy'); 
+    
+    Route::middleware(['permission:view_users'])->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index'); 
+        
+    });
+    
+    Route::middleware(['permission:create_users'])->group(function () {
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create'); 
+        Route::post('/users/store', [UserController::class, 'store'])->name('users.store'); 
+    });
+    
+    Route::middleware(['permission:edit_users'])->group(function () {
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update'); 
+    });
+    
+    Route::middleware(['permission:delete_users'])->group(function () {
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy'); 
+    });
+    
 
     
 
@@ -156,11 +175,11 @@ Route::get('get-invoice/{orderId}', [OrderController::class, 'getInvoice']);
 
 
     // Role routes
-    Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');  // Display a listing of roles
-    Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');  // Show form to create a new role
-    Route::post('/roles/store', [RoleController::class, 'store'])->name('roles.store');  // Store a newly created role
-    Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show');  // Display a specific role
-    Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');  // Show form to edit a role
+    Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');  
+    Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');  
+    Route::post('/roles/store', [RoleController::class, 'store'])->name('roles.store');  
+    Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show');  
+    Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit'); 
     Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');  // Update a specific role
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');  // Delete a specific role
     Route::get('roles/{role}/permissions', [RoleController::class, 'showPermissions'])->name('roles.permissions');

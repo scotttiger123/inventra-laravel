@@ -106,13 +106,13 @@
                                         <i class="fa fa-eye"></i> View
                                     </button>
                                   
-                                    <!-- Edit Option -->
+                                    @can('edit_products')
                                     <a href="{{ route('products.edit', $product->id) }}" class="custom-dropdown-item">
                                         <i class="fa fa-edit"></i> Edit
                                     </a>
+                                    @endcan                    
 
-
-                                    <!-- Delete Option -->
+                                    @can('delete_products')
                                     <form id="deleteForm-{{ $product->id }}" action="{{ route('products.destroy', $product->id) }}" method="POST" class="custom-dropdown-item delete-form">
                                         @csrf
                                         @method('DELETE')
@@ -120,6 +120,7 @@
                                             <i class="fa fa-trash"></i> Delete
                                         </button>
                                     </form>
+                                    @endcan
 
                                 </div>
                             </div>

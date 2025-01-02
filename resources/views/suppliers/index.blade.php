@@ -62,19 +62,24 @@
                                     <i class="fa fa-eye"></i> View
                                 </button>
                               
-                                <!-- Edit Option -->
-                                <a href="{{ route('suppliers.edit', $supplier->id) }}" class="custom-dropdown-item">
-                                    <i class="fa fa-edit"></i> Edit
-                                </a>
+                                
+                                    @can('edit_suppliers')
+                                        <a href="{{ route('suppliers.edit', $supplier->id) }}" class="custom-dropdown-item">
+                                            <i class="fa fa-edit"></i> Edit
+                                        </a>
+                                    @endcan
 
-                                <!-- Delete Option -->
-                                <form id="deleteForm-{{ $supplier->id }}" action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="custom-dropdown-item delete-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmDeleteSupplier({{ $supplier->id }})" class="delete-btn btn btn-danger">
-                                        <i class="fa fa-trash"></i> Delete
-                                    </button>
-                                </form>
+                                    <!-- Delete Supplier Option -->
+                                    @can('delete_suppliers')
+                                        <form id="deleteForm-{{ $supplier->id }}" action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="custom-dropdown-item delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" onclick="confirmDeleteSupplier({{ $supplier->id }})" class="delete-btn btn btn-danger">
+                                                <i class="fa fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    @endcan
+
                             </div>
                         </div>
                     </td>    

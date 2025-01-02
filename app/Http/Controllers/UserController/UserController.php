@@ -8,23 +8,32 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+
 
 class UserController extends Controller
 {
+    
+    
     public function create()
     {
-        $parents = User::whereNotNull('parent_id')->get(); // Fetch users with a parent_id
-        $roles = Role::all(); // Fetch all roles
-        return view('users.create', compact('parents', 'roles')); // Pass both variables to the view
+        $parents = User::whereNotNull('parent_id')->get(); 
+        $roles = Role::all(); 
+        return view('users.create', compact('parents', 'roles')); 
     }
     
 
-    public function index()
-    {
-        $users = User::all();
-        return view('users.index', compact('users'));
-    }
+     public function index()
+     {  
+       
+         $users = User::with('role')->get();
+         
+         
+         
+         return view('users.index', compact('users'));
+     }
+
 
     public function store(Request $request)
     {

@@ -6,11 +6,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\Traits\HasPermissions;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable,HasRoles,HasPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -34,9 +36,15 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'parent_id');
     }
 
+   
     public function role()
     {
-        return $this->belongsTo(Role::class, 'role_id');
+        return $this->belongsTo(Role::class);
+    }
+
+    public function permissions()
+    {
+        return $this->role->permissions(); 
     }
 
      /**
@@ -50,6 +58,8 @@ class User extends Authenticatable
     {
         return $this->role && $this->role->permissions()->where('name', $permissionName)->exists();
     }
+    
+    
 
     
     public function children()

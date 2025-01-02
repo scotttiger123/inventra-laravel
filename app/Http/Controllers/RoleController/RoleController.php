@@ -89,8 +89,8 @@ class RoleController extends Controller
 
         public function showPermissions($roleId)
         {
-            $role = Role::findOrFail($roleId);  // Fetch the role or fail if not found
-            $permissions = Permission::all();  // Fetch all permissions
+            $role = Role::findOrFail($roleId);  
+            $permissions = Permission::all();  
         
             // Fetch the permissions related to the role
             $rolePermissions = $role->permissions->pluck('name')->toArray();  // Get an array of permission names
@@ -103,16 +103,17 @@ class RoleController extends Controller
         {
             $role = Role::findOrFail($roleId);
         
-            // Validate that the permissions are an array (if any permissions are sent)
+            
             $request->validate([
                 'permissions' => 'array|nullable',
-                'permissions.*' => 'exists:permissions,name', // Validate that each permission name exists in the permissions table
+                'permissions.*' => 'exists:permissions,name', 
             ]);
         
-            // Get the permission IDs based on the permission names selected
+                    // Log the permissions being posted
+            \Log::info('Permissions Posted:', $request->permissions);
             $permissionIds = Permission::whereIn('name', $request->permissions)->pluck('id')->toArray();
         
-            // Sync the permissions with the role (this will attach or detach as necessary)
+            
             $role->permissions()->sync($permissionIds);
         
             return redirect()->route('roles.permissions', $role->id)

@@ -2,8 +2,9 @@
 @section('content')
 <div class="content-wrapper">
    <div class="form-border">
+
        <div class="dashboard-container">
-           <!-- Top Row -->
+           
            <div class="dashboard-row">
                <div class="dashboard-box">
                    <div class="box-header">

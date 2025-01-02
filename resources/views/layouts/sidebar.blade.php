@@ -57,9 +57,9 @@
             <li style="padding-left: 20px;">
                 <a href="{{ route('stock-report-view') }}"> <i class="fa fa-dot-circle-o"></i> Stock Report </a>
             </li>
-            <li style="padding-left: 20px;"><a href="{{ route('orders.index') }}"><i class="fa fa-dot-circle-o"></i> Sales Report</a></li>
+            <li style="padding-left: 20px;"> <a href="{{ route('orders.index') }}"><i class="fa fa-dot-circle-o"></i> Sales Report</a></li>
             <li style="padding-left: 20px;"> <a href="{{ route('reports.product-sold-report') }}"> <i class="fa fa-dot-circle-o"></i> Product sold report </a></li>
-            <li style="padding-left: 20px;"><a href="{{ route('purchases.index') }}"><i class="fa fa-dot-circle-o"></i> Purchase Report </a></li>
+            <li style="padding-left: 20px;"> <a href="{{ route('purchases.index') }}"><i class="fa fa-dot-circle-o"></i> Purchase Report </a></li>
             <li style="padding-left: 20px;"> <a href="{{ route('reports.product-purchased-report') }}"> <i class="fa fa-dot-circle-o"></i> Product Purchased</a></li>
             <li style="padding-left: 20px;"> <a href="{{ route('reports.warehouse-report') }}"> <i class="fa fa-dot-circle-o"></i> Warehouse Report</a></li>
             <li style="padding-left: 20px;"> <a href="{{ route('income.index') }}"> <i class="fa fa-dot-circle-o"></i> Income Report</a></li>
@@ -81,8 +81,16 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/products/create"><i class="fa fa-dot-circle-o"></i> Create New Product</a></li>
-          <li style="padding-left: 20px;"><a href="/products"><i class="fa fa-dot-circle-o"></i> List Products</a></li>
+          @can('create_products')
+              <li style="padding-left: 20px;">
+                  <a href="{{ route('products.create') }}" class="{{ request()->routeIs('products.create') ? 'active' : '' }}">
+                      <i class="fa fa-dot-circle-o"></i> Create New Product
+                  </a>
+              </li>
+          @endcan
+          @can('view_products')
+            <li style="padding-left: 20px;"><a href="/products"><i class="fa fa-dot-circle-o"></i> List Products</a></li>
+          @endcan  
           <li style="padding-left: 20px;"><a href="/brand"><i class="fa fa-dot-circle-o"></i> Brands</a></li>
           <li style="padding-left: 20px;"><a href="/category"><i class="fa fa-dot-circle-o"></i> Category</a></li>
         </ul>
@@ -97,12 +105,24 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/users/create"><i class="fa fa-dot-circle-o"></i> Create User</a></li>
+          @can('create_users')
+            <li style="padding-left: 20px;"><a href="/users/create"><i class="fa fa-dot-circle-o"></i> Create User</a></li>
+          @endcan  
+          @can('view_users')
           <li style="padding-left: 20px;"><a href="/users"><i class="fa fa-dot-circle-o"></i> User List</a></li>
-          <li style="padding-left: 20px;"><a href="/customers/create"><i class="fa fa-dot-circle-o"></i> Create Customer</a></li>
-          <li style="padding-left: 20px;"><a href="/customers"><i class="fa fa-dot-circle-o"></i> Customer List</a></li>
-          <li style="padding-left: 20px;"><a href="/suppliers/create"><i class="fa fa-dot-circle-o"></i> Create Vendor</a></li>
-          <li style="padding-left: 20px;"><a href="/suppliers"><i class="fa fa-dot-circle-o"></i> Vendor List</a></li>
+          @endcan  
+          @can('create_customers')
+            <li style="padding-left: 20px;"><a href="/customers/create"><i class="fa fa-dot-circle-o"></i> Create Customer</a></li>
+          @endcan    
+          @can('view_customers')
+            <li style="padding-left: 20px;"><a href="/customers"><i class="fa fa-dot-circle-o"></i> Customer List</a></li>
+          @endcan
+          @can('create_vendor')
+            <li style="padding-left: 20px;"><a href="/suppliers/create"><i class="fa fa-dot-circle-o"></i> Create Vendor</a></li>
+          @endcan  
+          @can('view_vendor')
+            <li style="padding-left: 20px;"><a href="/suppliers"><i class="fa fa-dot-circle-o"></i> Vendor List</a></li>
+          @endcan
         </ul>
       </li>
 
@@ -115,8 +135,21 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/payments/create"><i class="fa fa-dot-circle-o"></i> Add Payment</a></li>
-          <li style="padding-left: 20px;"><a href="/payments"><i class="fa fa-dot-circle-o"></i> Payment Listings</a></li>
+            @can('create_payments')
+                <li style="padding-left: 20px;">
+                    <a href="/payments/create">
+                        <i class="fa fa-dot-circle-o"></i> Add Payment
+                    </a>
+                </li>
+            @endcan
+
+            @can('view_payments')
+                <li style="padding-left: 20px;">
+                    <a href="/payments">
+                        <i class="fa fa-dot-circle-o"></i> Payment Listings
+                    </a>
+                </li>
+            @endcan
         </ul>
       </li>
       <li class="treeview">
@@ -128,8 +161,21 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/income/create"><i class="fa fa-dot-circle-o"></i> Add Income</a></li>
-          <li style="padding-left: 20px;"><a href="/income-head"><i class="fa fa-dot-circle-o"></i> Income Categories</a></li>
+            @can('create_income')
+                <li style="padding-left: 20px;">
+                    <a href="/income/create">
+                        <i class="fa fa-dot-circle-o"></i> Add Income
+                    </a>
+                </li>
+            @endcan
+
+            @can('view_income_head')
+                <li style="padding-left: 20px;">
+                    <a href="/income-head">
+                        <i class="fa fa-dot-circle-o"></i> Income Categories
+                    </a>
+                </li>
+            @endcan
         </ul>
       </li>
       <li class="treeview">
@@ -141,9 +187,23 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/expenses/create"><i class="fa fa-dot-circle-o"></i> Add Expense</a></li>
-          <li style="padding-left: 20px;"><a href="/expenses-head"><i class="fa fa-dot-circle-o"></i> Expense Categories</a></li>
+            @can('create_expense')
+                <li style="padding-left: 20px;">
+                    <a href="/expenses/create">
+                        <i class="fa fa-dot-circle-o"></i> Add Expense
+                    </a>
+                </li>
+            @endcan
+
+            @can('view_expenses_head')
+                <li style="padding-left: 20px;">
+                    <a href="/expenses-head">
+                        <i class="fa fa-dot-circle-o"></i> Expense Categories
+                    </a>
+                </li>
+            @endcan
         </ul>
+
       </li>
       <li class="treeview">
               <a href="#">
@@ -154,33 +214,39 @@
                   </span>
               </a>
               <ul class="treeview-menu">
-                  <!-- Account List -->
-                  <li style="padding-left: 20px;">
-                      <a href="/accounts">
-                          <i class="fa fa-dot-circle-o"></i> Account Lists
-                      </a>
-                  </li>
-                  
-                  <!-- Add New Account -->
-                  <li style="padding-left: 20px;">
-                      <a href="/accounts/create">
-                          <i class="fa fa-dot-circle-o"></i> Add Account
-                      </a>
-                  </li>
-                  
-                  <!-- Account Summary -->
-                  <li style="padding-left: 20px;">
-                      <a href="{{ route('balanceSheet.index') }}">
-                          <i class="fa fa-dot-circle-o"></i> Balance Sheet
-                      </a>
-                  </li>
-                  <li style="padding-left: 20px;">
-                      <a href="{{ route('accountStatement.index') }}">
-                          <i class="fa fa-dot-circle-o"></i> Account Statement
-                      </a>
-                  </li>
+                  @can('view_accounts')
+                      <li style="padding-left: 20px;">
+                          <a href="/accounts">
+                              <i class="fa fa-dot-circle-o"></i> Account Lists
+                          </a>
+                      </li>
+                  @endcan
 
+                  @can('create_account')
+                      <li style="padding-left: 20px;">
+                          <a href="/accounts/create">
+                              <i class="fa fa-dot-circle-o"></i> Add Account
+                          </a>
+                      </li>
+                  @endcan
+
+                  @can('view_accounts')
+                      <li style="padding-left: 20px;">
+                          <a href="{{ route('balanceSheet.index') }}">
+                              <i class="fa fa-dot-circle-o"></i> Balance Sheet
+                          </a>
+                      </li>
+                  @endcan
+
+                  @can('view_accounts')
+                      <li style="padding-left: 20px;">
+                          <a href="{{ route('accountStatement.index') }}">
+                              <i class="fa fa-dot-circle-o"></i> Account Statement
+                          </a>
+                      </li>
+                  @endcan
               </ul>
+
           </li>
 
       <li class="treeview">
@@ -192,10 +258,31 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li style="padding-left: 20px;"><a href="/transfers"><i class="fa fa-dot-circle-o"></i> Transfer Lists </a></li>
-          <li style="padding-left: 20px;"><a href="/transfers/create"><i class="fa fa-dot-circle-o"></i> Add Transfer</a></li>
-          <li style="padding-left: 20px;"><a href="/warehouses"><i class="fa fa-dot-circle-o"></i> Warehouse</a></li>
+            @can('view_transfers')
+                <li style="padding-left: 20px;">
+                    <a href="/transfers">
+                        <i class="fa fa-dot-circle-o"></i> Transfer Lists
+                    </a>
+                </li>
+            @endcan
+
+            @can('create_transfer')
+                <li style="padding-left: 20px;">
+                    <a href="/transfers/create">
+                        <i class="fa fa-dot-circle-o"></i> Add Transfer
+                    </a>
+                </li>
+            @endcan
+
+            @can('view_warehouses')
+                <li style="padding-left: 20px;">
+                    <a href="/warehouses">
+                        <i class="fa fa-dot-circle-o"></i> Warehouse
+                    </a>
+                </li>
+            @endcan
         </ul>
+
       </li>
 
       <li class="treeview">

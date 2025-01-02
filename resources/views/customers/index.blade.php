@@ -61,20 +61,24 @@
                                 >
                                     <i class="fa fa-eye"></i> View
                                 </button>
-                              
-                                <!-- Edit Option -->
-                                <a href="{{ route('customers.edit', $customer->id) }}" class="custom-dropdown-item">
-                                    <i class="fa fa-edit"></i> Edit
-                                </a>
+                                                                                                                                            
+                                @can('edit_customers')
+                                    <a href="{{ route('customers.edit', $customer->id) }}" class="custom-dropdown-item">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </a>
+                                @endcan
 
-                                <!-- Delete Option -->
-                                <form id="deleteForm-{{ $customer->id }}" action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="custom-dropdown-item delete-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmDeleteCustomer({{ $customer->id }})" class="delete-btn btn btn-danger">
-                                        <i class="fa fa-trash"></i> Delete
-                                    </button>
-                                </form>
+                                
+                                @can('delete_customers')
+                                    <form id="deleteForm-{{ $customer->id }}" action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="custom-dropdown-item delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="confirmDeleteCustomer({{ $customer->id }})" class="delete-btn btn btn-danger">
+                                            <i class="fa fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                @endcan
+
                             </div>
                         </div>
                     </td>    
