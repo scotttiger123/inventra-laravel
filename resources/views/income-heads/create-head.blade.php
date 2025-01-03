@@ -5,7 +5,7 @@
     <div class="form-border">
         <!-- Page Title -->
         <div class="box-header with-border">
-            <h3 class="box-title custom-title">Create Income Head</h3>
+            <h3 class="box-title custom-title">Create Income Categories</h3>
         </div>
 
         <!-- Form for Creating Income Head -->
@@ -14,7 +14,7 @@
 
             <!-- Income Head Name -->
             <div class="form-group">
-                <label for="name">Income Head Name <span class="text-danger">*</span></label>
+                <label for="name">Income Categories Name <span class="text-danger">*</span></label>
                 <input 
                     type="text" 
                     id="name" 

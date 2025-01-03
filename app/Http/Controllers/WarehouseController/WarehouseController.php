@@ -30,10 +30,10 @@ class WarehouseController extends Controller
         return view('warehouses.index', compact('warehouses'));
     }
 
-    // Show the form for creating a new warehouse
+    
     public function create()
     {
-        // Return the view for creating a new warehouse
+        
         return view('warehouses.create');
     }
 

@@ -26,7 +26,7 @@
 
         <!-- Expense Head Table Section -->
         <div class="box-header with-border">
-            <h3 class="box-title custom-title">Expense Head List</h3>
+            <h3 class="box-title custom-title">Expense Categories List</h3>
             @if(session('success'))
                 <div class="alert alert-success">
                     {{ session('success') }}

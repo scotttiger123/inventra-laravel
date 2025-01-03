@@ -5,7 +5,7 @@
     <div class="form-border">
         <!-- Page Title -->
         <div class="box-header with-border">
-            <h3 class="box-title custom-title">Create Expense Head</h3>
+            <h3 class="box-title custom-title">Create Expense Categories</h3>
         </div>
 
         <!-- Form for Creating Expense Head -->

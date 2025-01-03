@@ -50,7 +50,7 @@
                         @foreach($groupedPermissions as $moduleName => $modulePermissions)
                             <tr>                                        
                                     <td rowspan="{{ ceil(count($modulePermissions) / 4) }}" 
-                                        style="background-color:rgb(0, 0, 0); color: white; text-align: center; font-weight: bold; font-size: 16px; padding: 12px; border: 1px solidrgb(212, 219, 224); border-radius: 5px;">
+                                        style="background-color:#F8FAFC; color: #000; text-align: left; font-weight: bold; font-size: 16px; padding: 12px; border: 1px solidrgb(212, 219, 224); border-radius: 5px;">
                                         <strong>{{ ucfirst(str_replace('_', ' ', $moduleName)) }}</strong>
                                     </td>                                
                                 @foreach($modulePermissions as $index => $permission)

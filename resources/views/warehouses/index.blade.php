@@ -12,14 +12,14 @@
             @endif
         </div>
 
-        <!-- Button to Add a New Warehouse -->
+        
         <div class="text-left">
-            <a href="{{ route('warehouses.create') }}" class="btn btn-success">
+            <a href="{{ route('warehouse.create') }}" class="btn btn-success">
                 <i class="fa fa-plus"></i> Add Warehouse
             </a>
         </div>
 
-        <!-- Warehouse Listings Table -->
+        
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>

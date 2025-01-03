@@ -26,7 +26,7 @@
 
         <!-- Income Head Table Section -->
         <div class="box-header with-border">
-            <h3 class="box-title custom-title">Income Head List</h3>
+            <h3 class="box-title custom-title">Income Categories List</h3>
             @if(session('success'))
                 <div class="alert alert-success">
                     {{ session('success') }}
@@ -37,7 +37,7 @@
         <!-- Button to Add a New Income Head -->
         <div class="text-right">
             <a href="{{ route('income-heads.create-head') }}" class="btn btn-success">
-                <i class="fa fa-plus"></i> Add Income Head
+                <i class="fa fa-plus"></i> Add Income Categories
             </a>
         </div>
 

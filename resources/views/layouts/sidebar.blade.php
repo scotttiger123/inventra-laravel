@@ -47,27 +47,48 @@
             </span>
         </a>
         <ul class="treeview-menu">
+            @can('view_customer_ledger')
             <li style="padding-left: 20px;">
                 <a href="{{ route('customer-ledger.index') }}"><i class="fa fa-dot-circle-o"></i> Customer Ledger</a>
             </li>
-        
+            @endcan
+            @can('view_supplier_ledger')
             <li style="padding-left: 20px;">
                 <a href="{{ route('supplier-ledger.index') }}"><i class="fa fa-dot-circle-o"></i> Supplier Ledger</a>
             </li>
+            @endcan
+            @can('view_stock_report')
             <li style="padding-left: 20px;">
                 <a href="{{ route('stock-report-view') }}"> <i class="fa fa-dot-circle-o"></i> Stock Report </a>
             </li>
+            @endcan
+            @can('view_sales_report')
             <li style="padding-left: 20px;"> <a href="{{ route('orders.index') }}"><i class="fa fa-dot-circle-o"></i> Sales Report</a></li>
+            @endcan
+            @can('view_product_sold_report')
             <li style="padding-left: 20px;"> <a href="{{ route('reports.product-sold-report') }}"> <i class="fa fa-dot-circle-o"></i> Product sold report </a></li>
+            @endcan
+            @can('view_purchase_report')
             <li style="padding-left: 20px;"> <a href="{{ route('purchases.index') }}"><i class="fa fa-dot-circle-o"></i> Purchase Report </a></li>
+            @endcan
+            @can('view_product_purchased_report')
             <li style="padding-left: 20px;"> <a href="{{ route('reports.product-purchased-report') }}"> <i class="fa fa-dot-circle-o"></i> Product Purchased</a></li>
+            @endcan
+            @can('view_warehouse_report')
             <li style="padding-left: 20px;"> <a href="{{ route('reports.warehouse-report') }}"> <i class="fa fa-dot-circle-o"></i> Warehouse Report</a></li>
+            @endcan
+            @can('view_income_report')
             <li style="padding-left: 20px;"> <a href="{{ route('income.index') }}"> <i class="fa fa-dot-circle-o"></i> Income Report</a></li>
+            @endcan
+            @can('view_expense_report')
             <li style="padding-left: 20px;"> <a href="{{ route('expenses.index') }}"> <i class="fa fa-dot-circle-o"></i> Expense Report</a></li>
+            @endcan
+            @can('view_profit_loss_report')
             <li style="padding-left: 20px;"> <a href="{{ route('profit.loss') }}"> <i class="fa fa-dot-circle-o"></i> Profit-Loss Report</a></li>
+            @endcan
+            @can('view_product_quantity_alerts')
             <li style="padding-left: 20px;"> <a href="{{ route('product.quantity.alerts.index') }}"> <i class="fa fa-dot-circle-o"></i> Product Quantity Alerts</a></li>
-            
-            
+            @endcan
         </ul>
     </li>
 
@@ -161,7 +182,7 @@
           </span>
         </a>
         <ul class="treeview-menu">
-            @can('create_income')
+            @can('create_incomes')
                 <li style="padding-left: 20px;">
                     <a href="/income/create">
                         <i class="fa fa-dot-circle-o"></i> Add Income
@@ -169,7 +190,7 @@
                 </li>
             @endcan
 
-            @can('view_income_head')
+            @can('view_income_category')
                 <li style="padding-left: 20px;">
                     <a href="/income-head">
                         <i class="fa fa-dot-circle-o"></i> Income Categories
@@ -187,7 +208,7 @@
           </span>
         </a>
         <ul class="treeview-menu">
-            @can('create_expense')
+            @can('create_expenses')
                 <li style="padding-left: 20px;">
                     <a href="/expenses/create">
                         <i class="fa fa-dot-circle-o"></i> Add Expense
@@ -195,7 +216,7 @@
                 </li>
             @endcan
 
-            @can('view_expenses_head')
+            @can('view_expense_category')
                 <li style="padding-left: 20px;">
                     <a href="/expenses-head">
                         <i class="fa fa-dot-circle-o"></i> Expense Categories
@@ -252,7 +273,7 @@
       <li class="treeview">
         <a href="#">
           <i class="fa fa-exchange"></i>
-          <span>Transfer Warehouse</span>
+          <span>Warehouse</span>
           <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
           </span>
@@ -266,7 +287,7 @@
                 </li>
             @endcan
 
-            @can('create_transfer')
+            @can('create_transfers')
                 <li style="padding-left: 20px;">
                     <a href="/transfers/create">
                         <i class="fa fa-dot-circle-o"></i> Add Transfer
@@ -274,7 +295,7 @@
                 </li>
             @endcan
 
-            @can('view_warehouses')
+            @can('create_transfers')
                 <li style="padding-left: 20px;">
                     <a href="/warehouses">
                         <i class="fa fa-dot-circle-o"></i> Warehouse
