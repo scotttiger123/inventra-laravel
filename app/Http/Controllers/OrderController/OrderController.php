@@ -16,7 +16,8 @@ use App\Models\Warehouse;
 use App\Models\User; 
 use App\Models\Payment; 
 use App\Models\PaymentMethod;
-use App\Models\Account; 
+use App\Models\Account;
+use App\Models\Salesman; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -41,11 +42,6 @@ class OrderController extends Controller
             ->orWhere('parent_user_id', $user->parent_id)
             ->get();
     
-            $salePersonRoleId = Role::where('name', 'Sale Person')->value('id');
-
-            $salespersons = User::where('Role', $salePersonRoleId)->get();
-
-    
         
         $products = Product::where('created_by', $user->id) 
             ->orWhere('parent_user_id', $user->id)
@@ -56,6 +52,7 @@ class OrderController extends Controller
             $taxes = Tax::all(); 
             $statuses = Status::all();
             $warehouses = Warehouse::all();
+            $salespersons = Salesman::all();
     
         return view('orders.create', compact('customers', 'salespersons', 'products', 'statuses','uoms','taxes','warehouses'));
 
@@ -73,15 +70,15 @@ class OrderController extends Controller
             ->orWhere('parent_user_id', $user->parent_id)
             ->get();
     
-        $salePersonRoleId = Role::where('name', 'Sale Person')->value('id');
-        $salespersons = User::where('Role', $salePersonRoleId)->get();
-    
+        
         $products = Product::all();
         $uoms = Uom::all();  
         $taxes = Tax::all(); 
         $statuses = Status::all();
         $categories = Category::all();
         $warehouses = Warehouse::all();
+        $salespersons = Salesman::all();
+        
     
         return view('orders.create-pos', compact(
             'customers', 

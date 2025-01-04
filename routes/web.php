@@ -34,11 +34,11 @@ use App\Http\Controllers\AccountController\AccountController;
 
 // Route for auth
 Route::get('/', [LoginController::class,'index'])->name('login');
-Route::get('/login', [LoginController::class, 'index']);
+//Route::get('/login', [LoginController::class, 'index']);
 Route::get('forgot', [LoginController::class,'forgot'])->name('forgot');
 //Route::get('/reset-password-mail-token/{token}/{email}', [ForgotPasswordController::class, 'showResetPasswordForm']);
 //Route::get('/candidate-reset-password-mail-token/{token}/{email}', [ForgotPasswordController::class, 'showResetPasswordFormCandidate']);
-//Route::post('login', [LoginController::class,'login'])->name('login');
+Route::post('login', [LoginController::class,'login'])->name('login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
@@ -49,13 +49,13 @@ Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard'
 Route::get('/profit-loss', [DashboardController::class, 'profitLossView'])->name('profit.loss');
 
 
-        Route::middleware(['permission:view_sales'])->group(function () {
+        Route::middleware(['permission:view_sale_orders'])->group(function () {
             Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
             
             
         });
 
-        Route::middleware(['permission:create_sales'])->group(function () {
+        Route::middleware(['permission:create_sale_orders'])->group(function () {
             Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
             Route::get('/orders/create-pos', [OrderController::class, 'createPOS'])->name('orders.create-pos');
             Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
@@ -63,12 +63,12 @@ Route::get('/profit-loss', [DashboardController::class, 'profitLossView'])->name
             Route::post('/customer/store', [OrderController::class, 'customerStore'])->name('customer.store');
         });
 
-        Route::middleware(['permission:edit_sales'])->group(function () {
+        Route::middleware(['permission:edit_sales_orders'])->group(function () {
             Route::get('/order/{order}/edit', [OrderController::class, 'edit'])->name('order.edit');
             Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
         });
 
-        Route::middleware(['permission:delete_sales'])->group(function () {
+        Route::middleware(['permission:delete_sale_orders'])->group(function () {
             Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
         });
 

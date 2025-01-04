@@ -56,14 +56,10 @@ class Order extends Model
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-    /**
-     * Define relationship with the sale manager.
-     */
-    public function saleManager()
+    public function salesman()
     {
-        return $this->belongsTo(User::class, 'sale_manager_id');
+        return $this->belongsTo(Salesman::class);
     }
-
     /**
      * Define relationship with the User model (editor).
      */

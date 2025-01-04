@@ -45,21 +45,26 @@ class SettingController extends Controller
     
 
 
-    public function edit(Setting $setting)
+    public function edit($id)
     {
-        return view('settings.edit', compact('setting'));
+        $setting = Setting::findOrFail($id);
+        $currencies = Currency::all(); 
+        return view('settings.edit', compact('setting', 'currencies'));
     }
+    
 
-    public function update(Request $request, Setting $setting)
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'key' => 'required|string|unique:settings,key,' . $setting->id,
-            'value' => 'required|string',
+            'value' => 'required|string|max:255',
         ]);
-
-        $setting->update($request->all());
-
-        return redirect()->route('settings.index')->with('success', 'Setting updated successfully.');
+    
+        $setting = Setting::findOrFail($id);
+        $setting->update([
+            'value' => $request->value,
+        ]);
+    
+        return redirect()->route('settings.index')->with('success', 'Currency setting updated successfully.');
     }
 
     public function destroy(Setting $setting)

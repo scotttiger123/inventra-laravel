@@ -5,7 +5,7 @@
     <div class="form-border">
 
         <div class="box-header with-border">
-            <h3 class="box-title custom-title">Settings</h3>
+            <h3 class="box-title custom-title">General Settings</h3>
             @if(session('success'))
                 <div class="alert alert-success">
                     {{ session('success') }}
@@ -13,16 +13,12 @@
             @endif
         </div>
 
-        <div class="text-right">
-            <a href="{{ route('settings.create') }}" class="btn btn-dark">
-                <i class="fa fa-plus"></i> Add New Setting
-            </a>
-        </div>
+        
 
         <table id="settings-listings" class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Key</th>
+                    <th>Name</th>
                     <th>Value</th>
                     <th>Actions</th>
                 </tr>
@@ -30,7 +26,7 @@
             <tbody>
                 @foreach($settings as $setting)
                     <tr>
-                        <td>{{ $setting->key }}</td>
+                        <td>{{ str_replace(['-', '_'], ' ', $setting->name) }}</td>
                         <td>{{ $setting->value }}</td>
                         <td>
                             <a href="{{ route('settings.edit', $setting->id) }}" class="btn btn-primary">

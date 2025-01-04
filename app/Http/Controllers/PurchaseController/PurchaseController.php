@@ -29,8 +29,7 @@ class PurchaseController extends Controller
     {
         $user = auth()->user();
         $vendors = Supplier::where('created_by', $user->id)->get();
-        $salePersonRoleId = Role::where('name', 'Purchase Person')->value('id');
-        $purchasepersons = User::where('Role', $salePersonRoleId)->get();
+        
         $products = Product::where('created_by', $user->id)
             ->orWhere('parent_user_id', $user->id)
             ->orWhere('parent_user_id', $user->parent_id)
@@ -40,7 +39,7 @@ class PurchaseController extends Controller
         $warehouses = Warehouse::where('created_by', $user->id)->get();
         $taxes = Tax::all();
         
-        return view('purchases.create', compact('vendors', 'purchasepersons', 'products', 'uoms', 'warehouses','statuses','taxes'));
+        return view('purchases.create', compact('vendors', 'products', 'uoms', 'warehouses','statuses','taxes'));
     }
 
     
