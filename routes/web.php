@@ -34,7 +34,7 @@ use App\Http\Controllers\AccountController\AccountController;
 
 // Route for auth
 Route::get('/', [LoginController::class,'index'])->name('login');
-//Route::get('/login', [LoginController::class, 'index']);
+Route::get('/login', [LoginController::class, 'index']);
 Route::get('forgot', [LoginController::class,'forgot'])->name('forgot');
 //Route::get('/reset-password-mail-token/{token}/{email}', [ForgotPasswordController::class, 'showResetPasswordForm']);
 //Route::get('/candidate-reset-password-mail-token/{token}/{email}', [ForgotPasswordController::class, 'showResetPasswordFormCandidate']);
@@ -387,7 +387,7 @@ Route::get('/profit-loss', [DashboardController::class, 'profitLossView'])->name
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::get('/settings/create', [SettingController::class, 'create'])->name('settings.create');
         Route::post('/settings/store', [SettingController::class, 'store'])->name('settings.store');
-        Route::get('/settings/{setting}/edit', [SettingController::class, 'edit'])->name('settings.edit');
+        Route::get('/settings/edit', [SettingController::class, 'edit'])->name('settings.edit');
         Route::put('/settings/{setting}', [SettingController::class, 'update'])->name('settings.update');
         Route::delete('/settings/{setting}', [SettingController::class, 'destroy'])->name('settings.destroy');
     }); 

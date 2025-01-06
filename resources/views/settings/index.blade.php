@@ -3,47 +3,67 @@
 @section('content')
 <div class="content-wrapper">
     <div class="form-border">
-
+        <!-- Form Header -->
         <div class="box-header with-border">
-            <h3 class="box-title custom-title">General Settings</h3>
-            @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
+            <h3 class="box-title custom-title">System Settings</h3>
         </div>
 
-        
+        <!-- Display Success Message -->
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
-        <table id="settings-listings" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Value</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($settings as $setting)
-                    <tr>
-                        <td>{{ str_replace(['-', '_'], ' ', $setting->name) }}</td>
-                        <td>{{ $setting->value }}</td>
-                        <td>
-                            <a href="{{ route('settings.edit', $setting->id) }}" class="btn btn-primary">
-                                <i class="fa fa-edit"></i> Edit
-                            </a>
-                            <form action="{{ route('settings.destroy', $setting->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="fa fa-trash"></i> Delete
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <!-- Display Errors -->
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <!-- Settings Form -->
+        <form action="{{ route('settings.edit') }}" method="POST">
+    @csrf
+    @method('PUT')
+
+            @foreach ($settings as $setting)
+                <div class="form-group">
+                    <label for="{{ $setting->name }}">{{ ucfirst(str_replace('-', ' ', $setting->name)) }}</label>
+
+                    @if ($setting->name === 'currency-symbol')
+                        <!-- Currency Dropdown -->
+                        <select name="{{ $setting->name }}" id="{{ $setting->name }}" class="form-control" required>
+                            <option value="">Select Currency</option>
+                            @foreach ($currencies as $currency)
+                                <option value="{{ $currency->symbol }}" 
+                                    @if($setting->value == $currency->symbol) selected @endif>
+                                    {{ $currency->name }} ({{ $currency->symbol }})
+                                </option>
+                            @endforeach
+                        </select>
+                    @else
+                        <!-- Default Input for Other Settings -->
+                        <input type="text" name="{{ $setting->name }}" id="{{ $setting->name }}" 
+                               class="form-control" value="{{ $setting->value }}">
+                    @endif
+                </div>
+            @endforeach
+
+            <!-- Submit Button -->
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-save"></i> Save
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="location.href='{{ route('settings.index') }}'">
+                    <i class="fa fa-arrow-left"></i> Back
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

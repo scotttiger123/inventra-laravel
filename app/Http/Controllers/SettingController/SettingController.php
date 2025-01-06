@@ -12,13 +12,15 @@ use Illuminate\Http\Request;
 
 class SettingController extends Controller
 {
+    
     public function index()
     {
         $settings = Setting::all();
-        return view('settings.index', compact('settings'));
+        $currencies = Currency::all();
+        return view('settings.index', compact('settings', 'currencies'));
     }
-   
 
+    
 
     public function create()
     {
@@ -27,6 +29,7 @@ class SettingController extends Controller
         
         return view('settings.create', compact('currencies', 'currency'));
     }
+    
     
     
 
@@ -53,19 +56,29 @@ class SettingController extends Controller
     }
     
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $request->validate([
-            'value' => 'required|string|max:255',
-        ]);
+        foreach ($request->all() as $key => $value) {
+            if ($key === '_token' || $key === '_method') {
+                continue;
+            }
     
-        $setting = Setting::findOrFail($id);
-        $setting->update([
-            'value' => $request->value,
-        ]);
+            $request->validate([
+                $key => 'required|string|max:255',
+            ]);
     
-        return redirect()->route('settings.index')->with('success', 'Currency setting updated successfully.');
+            $setting = Setting::where('name', $key)->first();
+    
+            if ($setting) {
+                $setting->update([
+                    'value' => $value,
+                ]);
+            }
+        }
+    
+        return redirect()->route('settings.index')->with('success', 'Settings updated successfully.');
     }
+    
 
     public function destroy(Setting $setting)
     {
