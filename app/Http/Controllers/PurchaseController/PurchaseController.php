@@ -12,6 +12,7 @@ use App\Models\Uom;
 use App\Models\Status;
 use App\Models\Warehouse;
 use App\Models\Tax;
+use App\Models\Setting;
 use Carbon\Carbon;
 use App\Models\User; 
 use Illuminate\Support\Facades\Validator;
@@ -65,7 +66,21 @@ class PurchaseController extends Controller
         $purchaseManager = User::find($purchaseOrder->purchase_manager_id);
         $purchaseOrder->purchase_manager_name = $purchaseManager ? $purchaseManager->name : '';
     
-        $currencySymbol = \DB::table('settings')->where('name', 'currency-symbol')->value('value');
+        $settings = Setting::whereIn('name', [
+            'currency-symbol',
+            'company-name',
+            'address',
+            'phone',
+            'email',
+            'invoice-footer'
+        ])->pluck('value', 'name');
+
+        $currencySymbol = $settings['currency-symbol'] ?? '$';
+        $companyName = $settings['company-name'] ?? 'Your Company';
+        $companyAddress = $settings['address'] ?? 'Your Address';
+        $companyPhone = $settings['phone'] ?? 'Your Phone';
+        $companyEmail = $settings['email'] ?? 'Your Email';
+        $invoiceFooter = $settings['invoice-footer'] ?? 'Your Email';
         
         
             $purchaseItems = PurchaseItem::where('custom_purchase_id', $customOrderId)
@@ -154,6 +169,10 @@ class PurchaseController extends Controller
             'paidAmount' => $paidAmount,
             'remainingAmount' => $remainingAmount,
             'currencySymbol' => $currencySymbol,
+            'companyName' => $companyName,
+            'companyAddress' => $companyAddress,
+            'companyPhone' => $companyPhone,
+            'companyEmail' => $companyEmail,
             
         ]);
     }

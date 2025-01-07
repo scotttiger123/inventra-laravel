@@ -216,10 +216,10 @@
                     <li style="padding-left: 20px;"><a href="/suppliers"><i class="fa fa-dot-circle-o"></i> Vendor List</a></li>
                   @endcan
                   @can('create_sales_man')
-                    <li style="padding-left: 20px;"><a href="/suppliers/create"><i class="fa fa-dot-circle-o"></i> Create Sales Man</a></li>
+                    <li style="padding-left: 20px;"><a href="/suppliers/create"><i class="fa fa-dot-circle-o"></i> Create Sale Persons</a></li>
                   @endcan  
                   @can('view_sales_man')
-                    <li style="padding-left: 20px;"><a href="/suppliers"><i class="fa fa-dot-circle-o"></i> View Sales</a></li>
+                    <li style="padding-left: 20px;"><a href="/suppliers"><i class="fa fa-dot-circle-o"></i> View Sales Persons</a></li>
                   @endcan
                 </ul>
               </li>
@@ -495,7 +495,7 @@
                   @can('general_settings')
                     <li style="padding-left: 20px;">
                       <a href="/settings">
-                        <i class="fa fa-dot-circle-o"></i> General Settings
+                        <i class="fa fa-dot-circle-o"></i>System Settings
                       </a>
                     </li>
                   @endcan

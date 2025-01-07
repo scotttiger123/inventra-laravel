@@ -63,14 +63,14 @@
                                 </button>
                               
                                 
-                                    @can('edit_suppliers')
+                                    @can('edit_vendors')
                                         <a href="{{ route('suppliers.edit', $supplier->id) }}" class="custom-dropdown-item">
                                             <i class="fa fa-edit"></i> Edit
                                         </a>
                                     @endcan
 
                                     <!-- Delete Supplier Option -->
-                                    @can('delete_suppliers')
+                                    @can('delete_vendors')
                                         <form id="deleteForm-{{ $supplier->id }}" action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="custom-dropdown-item delete-form">
                                             @csrf
                                             @method('DELETE')

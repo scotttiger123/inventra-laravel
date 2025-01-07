@@ -21,7 +21,11 @@ function getPurchaseInvoiceDetails(customPurchaseId = null) {
                     $('#loader').hide(); 
                     alert(data.error);
                 } else {
-                    const currencySymbol = data.currencySymbol || ''; // Get the currency symbol from the API
+                    const currencySymbol = data.currencySymbol || ''; 
+                    const companyName = data.companyName || '';
+                    const companyAddress = data.companyAddress || '';
+                    const companyPhone = data.companyPhone || '';
+                    const companyEmail = data.companyEmail || '';  
 
                     const grossAmount = data.grossAmount ? `${currencySymbol} ${parseFloat(data.grossAmount).toFixed(2)}` : `${currencySymbol}0.00`;
                     const otherCharges = data.otherCharges ? `${currencySymbol} ${parseFloat(data.otherCharges).toFixed(2)}` : `${currencySymbol}0.00`;
@@ -42,6 +46,12 @@ function getPurchaseInvoiceDetails(customPurchaseId = null) {
                     // Populate details
                     setTextContentById('invoiceDate', purchaseDate);
                     setTextContentById('supplierName', supplierName);
+                    
+                    setTextContentById('companyName', companyName);
+                    setTextContentById('companyAddress', companyAddress);
+                    setTextContentById('companyPhone', companyPhone);
+                    setTextContentById('companyEmail', companyEmail);
+
                     setTextContentById('purchaseNote', purchaseNote);
                     setTextContentById('purchaseOrderId', purchaseOrderId);
                     setTextContentById('discountAmount', discountAmount);
@@ -216,6 +226,12 @@ async function getPurchaseDataForSharing(customPurchaseId = null, action = 'prin
                     setTextContentById('supplierAddress-watsapp', supplierAddress);
                     setTextContentById('supplierPhone-watsapp', supplierPhone);
                     setTextContentById('supplierEmail-watsapp', supplierEmail);
+
+                    setTextContentById('companyName-watsapp', companyName);
+                    setTextContentById('companyAddress-watsapp', companyAddress);
+                    setTextContentById('companyPhone-watsapp', companyPhone);
+                    setTextContentById('companyEmail-watsapp', companyEmail);
+
                     setTextContentById('purchaseNote-watsapp', purchaseNote);
                     setTextContentById('purchaseOrderId-watsapp', purchaseOrderId);
                     setTextContentById('discountAmount-watsapp', `${parseFloat(discountAmount).toFixed(2)}`);

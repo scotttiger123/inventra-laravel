@@ -172,22 +172,22 @@ Route::get('/profit-loss', [DashboardController::class, 'profitLossView'])->name
     });
 
     // Supplier routes
-    Route::middleware(['permission:create_suppliers'])->group(function () {
+    Route::middleware(['permission:create_vendors'])->group(function () {
         Route::get('/suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create');
         Route::post('/suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
     });
     
-    Route::middleware(['permission:view_suppliers'])->group(function () {
+    Route::middleware(['permission:view_vendors'])->group(function () {
         Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
         Route::get('/suppliers/{supplier}', [SupplierController::class, 'show'])->name('suppliers.show');
     });
     
-    Route::middleware(['permission:edit_suppliers'])->group(function () {
+    Route::middleware(['permission:edit_vendors'])->group(function () {
         Route::get('/suppliers/{supplier}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
         Route::put('/suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
     });
     
-    Route::middleware(['permission:delete_suppliers'])->group(function () {
+    Route::middleware(['permission:delete_vendors'])->group(function () {
         Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
     });
     

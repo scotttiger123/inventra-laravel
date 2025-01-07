@@ -15,9 +15,19 @@ class SettingController extends Controller
     
     public function index()
     {
-        $settings = Setting::all();
         $currencies = Currency::all();
-        return view('settings.index', compact('settings', 'currencies'));
+        $settings = Setting::pluck('value', 'name')->toArray(); 
+    
+        return view('settings.index', [
+            'currencies' => $currencies,
+            'currencySymbol' => $settings['currency-symbol'] ?? '',
+            'companyName' => $settings['company-name'] ?? '',
+            'phone' => $settings['phone'] ?? '',
+            'email' => $settings['email'] ?? '',
+            'address' => $settings['address'] ?? '',
+            'invoiceFooter' => $settings['invoice-footer'] ?? '',
+            'enableInvoiceFooter' => $settings['enable-invoice-footer'] ?? '',
+        ]);
     }
 
     
@@ -58,14 +68,21 @@ class SettingController extends Controller
 
     public function update(Request $request)
     {
+        $excludedFields = ['_token', '_method'];
+        $currencyField = 'currency-symbol';
+    
         foreach ($request->all() as $key => $value) {
-            if ($key === '_token' || $key === '_method') {
+            if (in_array($key, $excludedFields)) {
                 continue;
             }
     
-            $request->validate([
-                $key => 'required|string|max:255',
-            ]);
+            if ($key === 'enable-invoice-footer') {
+                $value = $request->has('enable-invoice-footer') ? '1' : '0';
+            } elseif ($key !== $currencyField) {
+                $request->validate([
+                    $key => 'required|string|max:255',
+                ]);
+            }
     
             $setting = Setting::where('name', $key)->first();
     
@@ -78,6 +95,8 @@ class SettingController extends Controller
     
         return redirect()->route('settings.index')->with('success', 'Settings updated successfully.');
     }
+    
+
     
 
     public function destroy(Setting $setting)

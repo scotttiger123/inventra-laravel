@@ -18,11 +18,14 @@ use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\Account;
 use App\Models\Salesman; 
+use App\Models\Setting;
+
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
+
 
 use Exception;
 
@@ -122,10 +125,22 @@ class OrderController extends Controller
             return response()->json(['error' => 'Customer not found.'], 404);
         }
 
-        $currencySymbol = \App\Models\Setting::where('name', 'currency-symbol')->value('value');
-        if (!$currencySymbol) {
-            $currencySymbol = '$';  // Default to $ if not found
-        }
+        $settings = Setting::whereIn('name', [
+            'currency-symbol',
+            'company-name',
+            'address',
+            'phone',
+            'email',
+            'invoice-footer'
+        ])->pluck('value', 'name');
+
+        $currencySymbol = $settings['currency-symbol'] ?? '$';
+        $companyName = $settings['company-name'] ?? 'Your Company';
+        $companyAddress = $settings['address'] ?? 'Your Address';
+        $companyPhone = $settings['phone'] ?? 'Your Phone';
+        $companyEmail = $settings['email'] ?? 'Your Email';
+        $invoiceFooter = $settings['invoice-footer'] ?? 'Your Email';
+        
     
 
                                     
@@ -212,6 +227,7 @@ class OrderController extends Controller
 
 
         return response()->json([
+
             'order' => $order,
             'currencySymbol' => $currencySymbol,
             'orderItems' => $orderItemsData,
@@ -225,6 +241,11 @@ class OrderController extends Controller
             'taxAmount' => $taxAmount,
             'paidAmount' => $paidAmount,
             'remainingAmount' => $remainingAmount,
+            'companyName' => $companyName,
+            'companyAddress' => $companyAddress,
+            'companyPhone' => $companyPhone,
+            'companyEmail' => $companyEmail,
+            
         ]);
     }
     

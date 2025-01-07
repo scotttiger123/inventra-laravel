@@ -36,7 +36,7 @@
                     <div class="icon" style="color:#222D32">
                         <i class="ion ion-cash"></i> <!-- Updated Icon -->
                     </div>
-                    <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    
                 </div>
             </div>
             <div class="col-lg-3 col-xs-6">
@@ -48,7 +48,7 @@
                     <div class="icon" style="color:#222D32">
                         <i class="ion ion-pricetag"></i> <!-- Updated Icon -->
                     </div>
-                    <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    
                 </div>
             </div>
             <div class="col-lg-3 col-xs-6">
@@ -60,7 +60,7 @@
                     <div class="icon" style="color:#222D32">
                         <i class="ion ion-checkmark"></i> <!-- Updated Icon -->
                     </div>
-                    <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    
                 </div>
             </div>
             <div class="col-lg-3 col-xs-6">
@@ -72,7 +72,7 @@
                     <div class="icon" style="color:#222D32">
                         <i class="ion ion-clock"></i> <!-- Updated Icon -->
                     </div>
-                    <a href="#" class="small-box-footer" style="color:black"><i class="ion ion-clock"></i></a>
+                    
                 </div>
             </div>
         </div>
@@ -231,6 +231,15 @@
                                 Email: <span id="supplierEmail">N/A</span>
                             </address>
                         </div>
+                        <div class="col-sm-4 invoice-col">
+                            <strong>From</strong>
+                            <address>
+                                <strong id="companyName">Company Name</strong><br>
+                                <span id="companyAddress">123 Main Street, City, Country</span><br>
+                                Phone: <span id="companyPhone">+123456789</span><br>
+                                Email: <span id="companyEmail">info@company.com</span>
+                            </address>
+                        </div>
 
                         <div class="col-sm-4 offset-sm-8 invoice-col">
                             <br>
@@ -323,12 +332,21 @@
 
                     <div class="row invoice-info">
                         <div class="col-sm-4 invoice-col">
-                            To
+                            <strong>To</strong>
                             <address>
                                 <strong id="supplierName-watsapp">N/A</strong><br>
                                 <span id="supplierAddress-watsapp">N/A</span><br>
                                 Phone: <span id="supplierPhone-watsapp">N/A</span><br>
                                 Email: <span id="supplierEmail-watsapp">N/A</span>
+                            </address>
+                        </div>
+                        <div class="col-sm-4 invoice-col">
+                            <strong>Company Info</strong>
+                            <address>
+                                <strong id="companyName-watsapp">Company Name</strong><br>
+                                <span id="companyAddress-watsapp">123 Main Street, City, Country</span><br>
+                                Phone: <span id="companyPhone-watsapp">+123456789</span><br>
+                                Email: <span id="companyEmail-watsapp">info@company.com</span>
                             </address>
                         </div>
 

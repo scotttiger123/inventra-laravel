@@ -205,7 +205,11 @@ function getInvoiceDetails(customOrderId = null) {
                 } else {
                     $('#loader').hide(); 
                     // Extract values and set defaults
-                    const currencySymbol = data.currencySymbol || '$';  // Default to '$' if currency symbol is not found
+                    const currencySymbol = data.currencySymbol || '$';
+                    const companyName = data.companyName || '';
+                    const companyAddress = data.companyAddress || '';
+                    const companyPhone = data.companyPhone || '';
+                    const companyEmail = data.companyEmail || '';  
                     const grossAmount = (data.grossAmount && !isNaN(data.grossAmount)) ? data.grossAmount.toFixed(2) : '0.00';
                     const otherCharges = (data.otherCharges && !isNaN(data.otherCharges)) ? data.otherCharges.toFixed(2) : '0.00';
                     const netTotal = (data.netTotal && !isNaN(data.netTotal)) ? data.netTotal.toFixed(2) : '0.00';
@@ -230,6 +234,12 @@ function getInvoiceDetails(customOrderId = null) {
                     setTextContentById('invoiceToAddress', customerAddress);
                     setTextContentById('invoiceToPhone', customerPhone);
                     setTextContentById('invoiceToEmail', customerEmail);
+
+                    setTextContentById('companyName', companyName);
+                    setTextContentById('companyAddress', companyAddress);
+                    setTextContentById('companyPhone', companyPhone);
+                    setTextContentById('companyEmail', companyEmail);
+                    
                     setTextContentById('saleNote', saleNote);
                     setTextContentById('invoiceNumber', orderId);
                     setTextContentById('orderId', orderId);
@@ -392,8 +402,12 @@ async function getSaleDataForSharing(customSaleId = null, action = 'print') {
                 } else {
                     console.log(data);
 
-                    const currencySymbol = data.currencySymbol ? `${data.currencySymbol} ` : '';  // Adding a space after the symbol
-                    
+                    const currencySymbol = data.currencySymbol ? `${data.currencySymbol} ` : ''; 
+                    const companyName = data.companyName || '';
+                    const companyAddress = data.companyAddress || '';
+                    const companyPhone = data.companyPhone || '';
+                    const companyEmail = data.companyEmail || '';  
+
                     const grossAmount = data.grossAmount ? `${currencySymbol}${parseFloat(data.grossAmount).toFixed(2)}` : `${currencySymbol}0.00`;
                     const otherCharges = data.otherCharges ? `${currencySymbol}${parseFloat(data.otherCharges).toFixed(2)}` : `${currencySymbol}0.00`;
                     const netTotal = data.netTotal ? `${currencySymbol}${parseFloat(data.netTotal).toFixed(2)}` : `${currencySymbol}0.00`;
@@ -417,6 +431,12 @@ async function getSaleDataForSharing(customSaleId = null, action = 'print') {
                     setTextContentById('customerAddress-watsapp', customerAddress);
                     setTextContentById('customerPhone-watsapp', customerPhone);
                     setTextContentById('customerEmail-watsapp', customerEmail);
+
+                    setTextContentById('companyName-watsapp', companyName);
+                    setTextContentById('companyAddress-watsapp', companyAddress);
+                    setTextContentById('companyPhone-watsapp', companyPhone);
+                    setTextContentById('companyEmail-watsapp', companyEmail);
+                    
                     setTextContentById('saleNote-watsapp', saleNote);
                     setTextContentById('saleOrderId-watsapp', saleOrderId);
                     setTextContentById('discountAmount-watsapp', discountAmount);

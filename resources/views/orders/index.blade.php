@@ -14,7 +14,7 @@
                         <div class="icon" style="color:#222D32">
                             <i class="ion ion-cash"></i> <!-- Icon for Gross Amount -->
                         </div>
-                        <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                        
                     </div>
                 </div>
 
@@ -28,7 +28,7 @@
                         <div class="icon" style="color:#222D32">
                             <i class="ion ion-pricetags"></i> <!-- Icon for Discount -->
                         </div>
-                        <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                        
                     </div>
                 </div>
 
@@ -42,7 +42,7 @@
                         <div class="icon" style="color:#222D32">
                             <i class="ion ion-calculator"></i> <!-- Icon for Paid Amount -->
                         </div>
-                        <a href="#" class="small-box-footer" style="color:black">More info <i class="fa fa-arrow-circle-right"></i></a>
+                        
                     </div>
                 </div>
 
@@ -56,7 +56,7 @@
                         <div class="icon" style="color:#222D32">
                             <i class="ion ion-card"></i> <!-- Icon for Amount Due -->
                         </div>
-                        <a href="/orders" class="small-box-footer" style="color:black"> <i class="fa fa-arrow-circle-right"></i></a>
+                        
                     </div>
                 </div>
             </div>
@@ -271,12 +271,21 @@
                     <!-- info row -->
                     <div class="row invoice-info">
                         <div class="col-sm-4 invoice-col">
-                            To
+                            <strong> To </strong>
                             <address>
                                 <strong id="invoiceToName">N/A</strong><br>
                                 <span id="invoiceToAddress">N/A</span><br>
                                 Phone: <span id="invoiceToPhone">N/A</span><br>
                                 Email: <span id="invoiceToEmail">N/A</span>
+                            </address>
+                        </div>
+                        <div class="col-sm-4 invoice-col">
+                            <strong>From</strong>
+                            <address>
+                                <strong id="companyName">Company Name</strong><br>
+                                <span id="companyAddress">123 Main Street, City, Country</span><br>
+                                Phone: <span id="companyPhone">+123456789</span><br>
+                                Email: <span id="companyEmail">info@company.com</span>
                             </address>
                         </div>
 
@@ -374,12 +383,21 @@
 
         <div class="row invoice-info">
             <div class="col-sm-4 invoice-col">
-                To
+            <strong> To </strong>
                 <address>
                     <strong id="customerName-watsapp">N/A</strong><br>
                     <span id="customerAddress-watsapp">N/A</span><br>
                     Phone: <span id="customerPhone-watsapp">N/A</span><br>
                     Email: <span id="customerEmail-watsapp">N/A</span>
+                </address>
+            </div>
+            <div class="col-sm-4 invoice-col">
+                <strong>Company Infor</strong>
+                <address>
+                    <strong id="companyName-watsapp">Company Name</strong><br>
+                    <span id="companyAddress-watsapp">123 Main Street, City, Country</span><br>
+                    Phone: <span id="companyPhone-watsapp">+123456789</span><br>
+                    Email: <span id="companyEmail-watsapp">info@company.com</span>
                 </address>
             </div>
 
@@ -442,6 +460,7 @@
         </div>
     </section>
 </div>
+
 
 
 <!-- Payment Modal -->
