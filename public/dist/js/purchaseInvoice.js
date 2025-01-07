@@ -41,11 +41,17 @@ function getPurchaseInvoiceDetails(customPurchaseId = null) {
                     const purchaseDate = purchaseOrder.purchase_date || 'N/A';
                     const purchaseOrderId = purchaseOrder.custom_purchase_id || 'N/A';
                     const supplierName = supplier.name || 'N/A';
+                    const supplierEmail = supplier.email || 'N/A';
+                    const supplierPhone = supplier.phone || 'N/A';
+                    const supplierAddress = supplier.address || 'N/A';
                     const purchaseNote = purchaseOrder.purchase_note || 'N/A';
 
                     // Populate details
                     setTextContentById('invoiceDate', purchaseDate);
                     setTextContentById('supplierName', supplierName);
+                    setTextContentById('supplierPhone', supplierPhone);
+                    setTextContentById('supplierAddress', supplierAddress);
+                    setTextContentById('supplierEmail', supplierEmail);
                     
                     setTextContentById('companyName', companyName);
                     setTextContentById('companyAddress', companyAddress);
