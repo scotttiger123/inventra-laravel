@@ -157,24 +157,47 @@
             <td>{{ $order->other_charges }}</td>
             <td>{{ $order->netTotal }}</td>
             <td>{{ $order->ordersPaidAmount }}</td>
+            
+
             <td class="text-center">
-        <span class="badge 
-            @if($order->remainingAmount > 0) 
-                badge-badge-danger
-            @elseif($order->remainingAmount <= 1) 
-                badge-badge-success 
-            @else 
-                badge-badge-danger 
-            @endif">
-            @if($order->remainingAmount > 0) 
-                Due ({{ $order->remainingAmount }})
-            @elseif($order->remainingAmount == 0)
-                Paid
-            @else
-                Overpaid ({{ $order->remainingAmount }})
-            @endif
-        </span>
-    </td>
+                @if($order->status_name === 'Return')
+                    <span class="badge 
+                        @if($order->remainingAmount > 0) 
+                            badge-badge-danger
+                        @elseif($order->remainingAmount == 0) 
+                            badge-badge-success 
+                        @else 
+                            badge-badge-danger 
+                        @endif">
+                        @if($order->remainingAmount > 0)
+                            Refund Due ({{ $currencySymbol . number_format($order->remainingAmount, 2) }})
+                        @elseif($order->remainingAmount == 0)
+                            Refund Settled
+                        @else
+                            Over-refunded ({{ $currencySymbol . number_format(abs($order->remainingAmount), 2) }})
+                        @endif
+                    </span>
+                @else
+                    <span class="badge 
+                        @if($order->remainingAmount > 0) 
+                            badge-badge-danger
+                        @elseif($order->remainingAmount == 0) 
+                            badge-badge-success 
+                        @else 
+                            badge-badge-danger 
+                        @endif">
+                        @if($order->remainingAmount > 0) 
+                            Due ({{ $currencySymbol . number_format($order->remainingAmount, 2) }})
+                        @elseif($order->remainingAmount == 0)
+                            Paid
+                        @else
+                            Overpaid ({{ $currencySymbol . number_format(abs($order->remainingAmount), 2) }})
+                        @endif
+                    </span>
+                @endif
+            </td>
+
+
          <td>
         <div class="custom-dropdown text-center">
                                 <button class="custom-dropdown-toggle" type="button">
@@ -337,6 +360,10 @@
                                     <tr>
                                         <th>Discount</th>
                                         <td id="discountAmount">0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width:50%">Order Tax</th>
+                                        <td id="taxRate">0.00</td>
                                     </tr>
                                     <tr>
                                         <th>Other Charges:</th>

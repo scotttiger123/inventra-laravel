@@ -640,6 +640,9 @@ function updateOrder() {
             showMessage('success', data.message);
             form.reset();
             clearOrderItemsTable();
+                    document.getElementById('submitOrder').style.display = 'inline-block'; 
+                    document.getElementById('updateOrder').style.display = 'none';
+                    document.getElementById('cancelOrder').style.display = 'none';
 
         } else {
             showMessage('error', data.message);

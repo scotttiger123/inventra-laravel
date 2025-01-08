@@ -341,7 +341,7 @@ public function index(Request $request)
             $startDate = $request->get('start_date');
             $endDate = $request->get('end_date');
             $query = Purchase::whereIn('created_by', [$userId, $parentUserId])
-            ->with('supplier')
+            ->with(['supplier', 'status']) 
             ->orderBy('created_at', 'desc'); 
     
             
@@ -418,9 +418,9 @@ public function index(Request $request)
 
             
         }
-
+        $statuses = \DB::table('statuses')->get();
         // Return the purchase listings view
-        return view('purchases.index', compact('purchases', 'totalNetTotalWithTax', 'totalNetReturnAmount'));
+        return view('purchases.index', compact('purchases', 'totalNetTotalWithTax', 'totalNetReturnAmount','statuses'));
     } catch (Exception $e) {
         \Log::error('Failed to fetch purchases: ' . $e->getMessage());
         return redirect()->back()->withErrors('Failed to fetch purchases. Please try again later.');

@@ -129,11 +129,14 @@ function populateOrderDetails(data) {
                 
 
                 data.orderItems.forEach(item => {
+                    
                     var newRow = table.insertRow();   
                     // Set custom attributes on the new row
                     newRow.setAttribute('data-product-code', item.product_code);
                     newRow.setAttribute('data-product-id', item.product_id);
                     newRow.setAttribute('data-uom-id', item.uom_id);
+                    newRow.setAttribute('data-exit-warehouse-id', item.exit_warehouse);
+                   
                 
                     const cell1 = newRow.insertCell(0);
                     const cell2 = newRow.insertCell(1);
@@ -164,7 +167,7 @@ function populateOrderDetails(data) {
                     const amount = (item.quantity * item.net_rate).toFixed(2);
                     cell7.innerHTML = amount;
                 
-                    cell8.innerHTML = item.exit_warehouse ? 'Yes' : 'No';
+                    cell8.innerHTML = item.exit_warehouse ;
                 
                     const deleteButton = document.createElement("button");
                     deleteButton.type = "button";
@@ -204,17 +207,23 @@ function getInvoiceDetails(customOrderId = null) {
                     alert(data.error);
                 } else {
                     $('#loader').hide(); 
+                    console.log(data);
                     // Extract values and set defaults
                     const currencySymbol = data.currencySymbol || '$';
                     const companyName = data.companyName || '';
                     const companyAddress = data.companyAddress || '';
                     const companyPhone = data.companyPhone || '';
-                    const companyEmail = data.companyEmail || '';  
+                    const companyEmail = data.companyEmail || '';
+                     
                     const grossAmount = (data.grossAmount && !isNaN(data.grossAmount)) ? data.grossAmount.toFixed(2) : '0.00';
                     const otherCharges = (data.otherCharges && !isNaN(data.otherCharges)) ? data.otherCharges.toFixed(2) : '0.00';
                     const netTotal = (data.netTotal && !isNaN(data.netTotal)) ? data.netTotal.toFixed(2) : '0.00';
                     const paidAmount = (data.paidAmount && !isNaN(data.paidAmount)) ? data.paidAmount.toFixed(2) : '0.00';
                     const AmountDue = (data.remainingAmount && !isNaN(data.remainingAmount)) ? data.remainingAmount.toFixed(2) : '0.00';
+                    
+                    const taxAmount = data.taxAmount || ''; 
+                    const taxRate = (data.taxRate && !isNaN(data.taxRate)) ? data.taxRate : '0.00';
+                    
 
                     
                     const status = data.order.status || 'N/A';
@@ -243,15 +252,11 @@ function getInvoiceDetails(customOrderId = null) {
                     setTextContentById('saleNote', saleNote);
                     setTextContentById('invoiceNumber', orderId);
                     setTextContentById('orderId', orderId);
-					setTextContentById('discountAmount', discount_amount);
+					
+                    
                     setTextContentById('AmountDue', `${currencySymbol} ${AmountDue}`);  
                     setTextContentById('AmountDueTop', `${currencySymbol} ${AmountDue}`); 
-
                     
-					
-					
-                    
-
                     // Update items (ensure the orderItems array exists and contains data)
                     const invoiceItems = data.orderItems.map(item => `
                         <tr>
@@ -259,9 +264,10 @@ function getInvoiceDetails(customOrderId = null) {
                             <td>${item.quantity} ${item.uom_name}</td>
                             
                             <td>${currencySymbol} ${item.unit_price}</td> 
-                            <td>
-                                ${item.discount_amount}
+                            <td> 
+                                ${item.discount_type === '%' ? `${item.discount_amount} %` : `${currencySymbol} ${item.discount_amount}`}
                             </td>
+
                             <td>${currencySymbol} ${item.net_rate}</td> 
                             <td>${currencySymbol} ${item.amount.toFixed(2)}</td> 
                    
@@ -274,7 +280,15 @@ function getInvoiceDetails(customOrderId = null) {
                     setTextContentById('otherCharges', `${currencySymbol} ${otherCharges}`);
                     setTextContentById('totalAmount', `${currencySymbol} ${netTotal}`);
                     setTextContentById('paidAmount', `${currencySymbol} ${paidAmount}`);
-                    setTextContentById('taxRate', `${data.taxRate}%`);
+                    if (discount_amount > 0) {
+                        setTextContentById('discountAmount', `${currencySymbol} ${discount_amount}`);
+                    } 
+                    
+                    if (taxAmount > 0) {
+                        setTextContentById('taxRate', `${currencySymbol} ${taxAmount} (${taxRate}%)`);
+                    } 
+                    
+
 
                     
 

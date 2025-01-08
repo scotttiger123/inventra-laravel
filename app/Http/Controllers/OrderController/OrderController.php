@@ -182,6 +182,7 @@ class OrderController extends Controller
                 'unit_price' => $item->unit_price,
                 'exit_warehouse' => $item->exit_warehouse,
                 'discount_amount' => $item->discount_amount,
+                'discount_type' => $item->discount_type,
                 'net_rate' => $item->net_rate,
                 'amount' => $item->total_after_discount,
             ];
@@ -213,7 +214,7 @@ class OrderController extends Controller
             $taxAmount = ($netTotal * $taxRate) / 100;
         }
     
-        $netTotalWithTax = $netTotal + $taxAmount;
+        $netTotalWithTax = $netTotal + $taxAmount; // net total with order tax
     
 
         $payments = Payment::where('invoice_id', $customOrderId) 
@@ -331,7 +332,7 @@ class OrderController extends Controller
                             'unit_price' => $item['rate'],
                             'discount_type' => (strpos($item['discountType'], '%') !== false) ? '%' : '-',
                             'discount_amount' => $item['discountValue'],
-                            'exit_warehouse' => $item['exit_warehouse_id'] === null ?? 0 ,
+                            'exit_warehouse' => $item['exit_warehouse_id'] ?? 0,
                             'custom_order_id' => $orderNumber,
                             'cost_price' => $costPrice, 
                        
@@ -350,6 +351,7 @@ class OrderController extends Controller
 
 
             if ($request->paid_amount > 0) {
+
                 DB::table('payments')->insert([
                     'payable_type' => 'customer', 
                     'payment_head' => 1, 
@@ -697,6 +699,7 @@ public function index(Request $request)
             $order->remainingAmount = $remainingAmount;
             $order->ordersPaidAmount = $payments;
             $order->netProfit = $netProfit; // Store net profit for this order
+            $order->statusDisplay = $order->status_name;
         }
 
         // Apply remaining amount filter
@@ -792,7 +795,7 @@ public function update(Request $request)
         if (!$existingOrder) {
             return response()->json(['success' => false, 'message' => 'Order not found.']);
         }
-
+        $orderNumber = $request->custom_order_id;
         // Update the order details
         $existingOrder->customer_id = $request->customer_id;
         $existingOrder->sale_manager_id = $request->salesperson_id;
@@ -800,6 +803,7 @@ public function update(Request $request)
         $existingOrder->status = $request->status_id;
         $existingOrder->other_charges = $request->other_charges ?? 0;
         $existingOrder->discount_amount = $request->discount_amount ?? 0;
+        $existingOrder->tax_rate = $request->tax_rate ?? 0;
         $existingOrder->payment_method = $request->payment_method;
         $existingOrder->order_date = $request->order_date;
         $existingOrder->sale_note = $request->sale_note;
@@ -819,7 +823,7 @@ public function update(Request $request)
         $existingOrder->save();
 
         
-        DB::table('order_items')->where('order_id', $existingOrder->id)->delete();
+        DB::table('order_items')->where('custom_order_id', $existingOrder->custom_order_id)->delete();
 
         // Check if orderData is provided
         if ($request->has('orderData')) {
@@ -846,7 +850,7 @@ public function update(Request $request)
                         'unit_price' => $item['rate'],
                         'discount_type' => (strpos($item['discountType'], '%') !== false) ? '%' : '-',
                         'discount_amount' => $item['discountValue'],
-                        'exit_warehouse' => $item['exit_warehouse'],
+                        'exit_warehouse'  => $item['exit-warehouse-id'] ?? 0,
                         'custom_order_id' => $request->custom_order_id,
                         'cost_price' => $costPrice,
                         'created_at' => now(),
@@ -860,7 +864,30 @@ public function update(Request $request)
             \Log::error('Missing orderData');
         }
 
-        // Commit transaction
+        
+        if ($request->paid_amount > 0) {
+            // Delete existing payments related to the order
+            DB::table('payments')
+                ->where('invoice_id', $orderNumber) // Match the invoice ID
+                ->delete();
+        
+            // Insert the updated payment record
+            DB::table('payments')->insert([
+                'payable_type' => 'customer',
+                'payment_head' => 1, // Cash
+                'payable_id' => $request->customer_id,
+                'payment_date' => $request->order_date ?? now(),
+                'invoice_id' => $orderNumber,
+                'amount' => $request->paid_amount,
+                'payment_method' => $request->payment_method,
+                'account_id' => 1, // Default sale account
+                'payment_type' => "debit",
+                'note' => 'Payment updated during order update',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
         DB::commit();
 
         // Return a response indicating success

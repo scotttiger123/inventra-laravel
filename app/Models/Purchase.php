@@ -64,6 +64,10 @@ class Purchase extends Model
         return $this->belongsTo(User::class, 'purchase_manager_id');
     }
 
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'status');
+    }
     /**
      * Define relationship with the User model (editor).
      */

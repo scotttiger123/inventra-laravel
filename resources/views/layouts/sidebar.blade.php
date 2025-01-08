@@ -25,13 +25,13 @@
             </a>
             <ul class="treeview-menu">
               @can('create_sale_orders')
-                <li style="padding-left: 20px;"><a href="{{ route('orders.create') }}"><i class="fa fa-dot-circle-o"></i> Add Sale Order</a></li>
+                <li style="padding-left: 20px;"><a href="{{ route('orders.create') }}"><i class="fa fa-dot-circle-o"></i> Add Sale</a></li>
               @endcan  
               @can('create_pos_orders')
                 <li style="padding-left: 20px;"><a href="{{ route('orders.create-pos') }}"><i class="fa fa-dot-circle-o"></i> POS</a></li>
               @endcan  
               @can('view_sale_orders')
-                <li style="padding-left: 20px;"><a href="{{ route('orders.index') }}"><i class="fa fa-dot-circle-o"></i> Sales order</a></li>
+                <li style="padding-left: 20px;"><a href="{{ route('orders.index') }}"><i class="fa fa-dot-circle-o"></i> Sale Orders</a></li>
               @endcan  
             </ul>
           </li>

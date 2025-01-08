@@ -124,7 +124,8 @@
                     <td>{{ $purchase->other_charges }}</td>
                     <td>{{ $purchase->netTotal }}</td>
                     <td>{{ $purchase->paid }}</td>
-                    <td>{{ $purchase->status }}</td>
+                    <td>{{ $statuses->firstWhere('id', $purchase->status)?->status_name ?? 'Unknown' }}</td>
+       
                     <td class="text-center">
                         <span class="badge 
                             @if($purchase->remainingAmount > 0) 
