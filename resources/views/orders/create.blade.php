@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 <div class="content-wrapper">
     <div class="form-border">
@@ -18,6 +17,15 @@
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box compact-info-box">
+                        <span class="info-box-icon" style="border-radius: 5px;!important" ><i class="fa fa-percent"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Tax Amount</span>
+                            <span class="info-box-number" id = 'tax_amount_label'>0.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box compact-info-box" >
                         <span class="info-box-icon bg-grey"  style="border-radius: 5px;!important"><i class="fa fa-credit-card"></i></span>
                         <div class="info-box-content">
@@ -27,16 +35,7 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box compact-info-box">
-                        <span class="info-box-icon" style="border-radius: 5px;!important" ><i class="fa fa-usd"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Paid Amount</span>
-                            <span class="info-box-number" id = 'paid_amount_label'>0.00</span>
-                        </div>
-                    </div>
-                </div>
+               
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box compact-info-box" >
                         <span class="info-box-icon bg-grey"  style="border-radius: 5px;!important"><i class="fa fa-money"></i></span>
@@ -237,21 +236,18 @@
                                     <input type="hidden" name="warehouse_id" id="warehouse-id">
                                 </div>           
                                 
-                                    <!-- Add Product Button -->
                                 <button type="button" class="btn btn-info" onclick="addItemToOrder()">Add Product</button>
-                                <!-- <button id="submitOrder" class="btn btn-success" type="button">Submit Order</button> -->
+                                
                                 <button id="submitOrder" class="btn btn-success" type="button">
                                     Submit Order
                                     <i id="loader" style = 'display:none' class="fa fa-refresh fa-spin"></i>
                                 </button>
                                 <button id="updateOrder" style = 'display:none' class="btn btn-warning" type="button">
-                                        updateOrder
+                                        Update 
                                     <i id="loader" style = 'display:none' class="fa fa-refresh fa-spin"></i>
                                 </button>
                                 <button type="button" style = 'display:none' id="cancelOrder" class="btn btn-secondary">Cancel</button>
-
-                                
-                                <!-- Success and Error Message Containers -->
+    
                             </div>
                             
                             <meta name="csrf-token" content="{{ csrf_token() }}">

@@ -518,6 +518,8 @@ function recalculateTotalsSale() {
     netAmount += otherCharges;  // Add other charges
 
     // Update the total fields
+    
+    document.getElementById('tax_amount_label').textContent = taxAmount.toFixed(2); 
     document.getElementById('gross_amount_id').value = grossAmount.toFixed(2);
     document.getElementById('gross_amount_label').textContent = grossAmount.toFixed(2); 
     
@@ -620,7 +622,8 @@ function updateOrder() {
 
     // Add `_method` to simulate a PUT request
     formData.append('_method', 'PUT');
-    var orderData = getOrderData();  // Get the order data
+    var orderData = getOrderData();  
+    console.log("naraz",orderData);
     formData.append('orderData', JSON.stringify(orderData));  // Add the order data as JSON
 
     fetch(`/orders/${customOrderId}`, {
@@ -640,6 +643,7 @@ function updateOrder() {
             showMessage('success', data.message);
             form.reset();
             clearOrderItemsTable();
+            recalculateTotalsSale();
                     document.getElementById('submitOrder').style.display = 'inline-block'; 
                     document.getElementById('updateOrder').style.display = 'none';
                     document.getElementById('cancelOrder').style.display = 'none';

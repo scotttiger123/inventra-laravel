@@ -358,7 +358,7 @@
                                         <td id="subtotalAmount">$0.00</td>
                                     </tr>
                                     <tr>
-                                        <th>Discount</th>
+                                        <th>Bill Discount</th>
                                         <td id="discountAmount">0.00</td>
                                     </tr>
                                     <tr>

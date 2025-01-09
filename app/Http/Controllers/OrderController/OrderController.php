@@ -154,7 +154,13 @@ class OrderController extends Controller
         $orderItems = OrderItem::where('custom_order_id', $customOrderId)
             ->join('products', 'products.id', '=', 'order_items.product_id')
             ->leftJoin('uoms', 'uoms.id', '=', 'order_items.uom_id')
-            ->select('order_items.*', 'products.product_name', 'uoms.abbreviation as uom_name')
+            ->leftJoin('warehouses', 'warehouses.id', '=', 'order_items.exit_warehouse')
+            ->select(
+                'order_items.*',
+                'products.product_name',
+                'uoms.abbreviation as uom_name',
+                'warehouses.name as warehouse_name'
+            )
             ->get();
     
         $orderItemsData = $orderItems->map(function ($item) {
@@ -181,6 +187,7 @@ class OrderController extends Controller
                 'uom_name' => $uomName,
                 'unit_price' => $item->unit_price,
                 'exit_warehouse' => $item->exit_warehouse,
+                'warehouse_name' => $item->warehouse_name,
                 'discount_amount' => $item->discount_amount,
                 'discount_type' => $item->discount_type,
                 'net_rate' => $item->net_rate,
@@ -825,13 +832,13 @@ public function update(Request $request)
         
         DB::table('order_items')->where('custom_order_id', $existingOrder->custom_order_id)->delete();
 
-        // Check if orderData is provided
+        
         if ($request->has('orderData')) {
-            $orderData = json_decode($request->orderData, true); // Decode JSON string to array
+            $orderData = json_decode($request->orderData, true); 
             if (is_array($orderData)) {
                 \Log::info('Order Data:', $orderData);
 
-                // Insert updated order items
+                
                 foreach ($orderData as $item) {
 
                     $product = \DB::table('products')->where('id', $item['product_id'])->first();
@@ -850,7 +857,7 @@ public function update(Request $request)
                         'unit_price' => $item['rate'],
                         'discount_type' => (strpos($item['discountType'], '%') !== false) ? '%' : '-',
                         'discount_amount' => $item['discountValue'],
-                        'exit_warehouse'  => $item['exit-warehouse-id'] ?? 0,
+                        'exit_warehouse'  => $item['exit_warehouse_id'] ?? 0,
                         'custom_order_id' => $request->custom_order_id,
                         'cost_price' => $costPrice,
                         'created_at' => now(),
@@ -866,12 +873,12 @@ public function update(Request $request)
 
         
         if ($request->paid_amount > 0) {
-            // Delete existing payments related to the order
+            
             DB::table('payments')
-                ->where('invoice_id', $orderNumber) // Match the invoice ID
+                ->where('invoice_id', $orderNumber) 
                 ->delete();
         
-            // Insert the updated payment record
+            
             DB::table('payments')->insert([
                 'payable_type' => 'customer',
                 'payment_head' => 1, // Cash

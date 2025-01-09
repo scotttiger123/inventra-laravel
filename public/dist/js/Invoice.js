@@ -20,6 +20,7 @@ function getOrderForEdit() {
                 } else {
                     
                     populateOrderDetails(data);
+                    recalculateTotalsSale();
                     
                     document.getElementById('submitOrder').style.display = 'none'; 
                     document.getElementById('updateOrder').style.display = 'inline-block';
@@ -63,6 +64,7 @@ function populateOrderDetails(data) {
     const grossAmountInput = document.querySelector('input[name="gross_amount"]');  
     const netTotalInput = document.querySelector('input[name="net_amount"]'); 
     const balanceInput = document.querySelector('input[name="balance"]');
+    const taxRateSelect = document.querySelector('select[name="tax_rate"]');
     
     // Populate other charges field
     if (otherChargesInput) {
@@ -114,29 +116,46 @@ function populateOrderDetails(data) {
             orderDiscountInput.value = discountAmount;
 
                 if (discountType === '-') {
-                    orderDiscountInput.value = discountAmount;  // For flat, show as negative value
-                    discountTypeFlat.checked = true;  // Check the flat radio button
-                    discountTypePercentage.checked = false;  // Uncheck the percentage radio button
+                    orderDiscountInput.value = discountAmount;
+                    discountTypeFlat.checked = true;  
+                    discountTypePercentage.checked = false;  
                 } else if (discountType === '%') {
                     orderDiscountInput.value = discountAmount; 
                     
-                    discountTypePercentage.checked = true;  // Check the percentage radio button
-                    discountTypeFlat.checked = false;  // Uncheck the flat radio button
+                    discountTypePercentage.checked = true;  
+                    discountTypeFlat.checked = false;  
                 }
+
+                if (taxRateSelect) {
+                    const taxRate = parseFloat(data.order.tax_rate).toFixed(2); 
+                    let optionFound = false; 
+                    Array.from(taxRateSelect.options).forEach(option => {
+                        
+                        if (option.value === taxRate) {
+                            option.selected = true;
+                            optionFound = true; 
+                        }
+                    });
+                  
+                    if (!optionFound) {
+                        taxRateSelect.selectedIndex = 0; 
+                    }
+                } 
         
                 var table = document.getElementById('orderItemsTable').getElementsByTagName('tbody')[0];
                 
                 
 
                 data.orderItems.forEach(item => {
-                    
+                    console.log("list",item);
                     var newRow = table.insertRow();   
                     // Set custom attributes on the new row
                     newRow.setAttribute('data-product-code', item.product_code);
                     newRow.setAttribute('data-product-id', item.product_id);
                     newRow.setAttribute('data-uom-id', item.uom_id);
-                    newRow.setAttribute('data-exit-warehouse-id', item.exit_warehouse);
-                   
+                    newRow.setAttribute('data-warehouse-id', item.exit_warehouse);
+                    
+                    
                 
                     const cell1 = newRow.insertCell(0);
                     const cell2 = newRow.insertCell(1);
@@ -167,7 +186,7 @@ function populateOrderDetails(data) {
                     const amount = (item.quantity * item.net_rate).toFixed(2);
                     cell7.innerHTML = amount;
                 
-                    cell8.innerHTML = item.exit_warehouse ;
+                    cell8.innerHTML = item.warehouse_name ;
                 
                     const deleteButton = document.createElement("button");
                     deleteButton.type = "button";
@@ -176,8 +195,7 @@ function populateOrderDetails(data) {
                     deleteButton.onclick = function () { removeItem(deleteButton); };
                     cell9.appendChild(deleteButton);
                 });
-                
-
+      
 
     } else {
         console.error('Some required input elements are missing in the DOM.');
@@ -287,9 +305,6 @@ function getInvoiceDetails(customOrderId = null) {
                     if (taxAmount > 0) {
                         setTextContentById('taxRate', `${currencySymbol} ${taxAmount} (${taxRate}%)`);
                     } 
-                    
-
-
                     
 
                     // Show the modal

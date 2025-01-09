@@ -31,7 +31,7 @@
                 <li style="padding-left: 20px;"><a href="{{ route('orders.create-pos') }}"><i class="fa fa-dot-circle-o"></i> POS</a></li>
               @endcan  
               @can('view_sale_orders')
-                <li style="padding-left: 20px;"><a href="{{ route('orders.index') }}"><i class="fa fa-dot-circle-o"></i> Sale Orders</a></li>
+                <li style="padding-left: 20px;"><a href="{{ route('orders.index') }}"><i class="fa fa-dot-circle-o"></i>All Sales Order</a></li>
               @endcan  
             </ul>
           </li>
@@ -59,7 +59,7 @@
                 <li style="padding-left: 20px;"><a href="{{ route('purchases.create') }}"><i class="fa fa-dot-circle-o"></i> Add Purchase</a></li>
               @endcan
               @can('view_purchases')
-                <li style="padding-left: 20px;"><a href="{{ route('purchases.index') }}"><i class="fa fa-dot-circle-o"></i> Purchase Listings</a></li>
+                <li style="padding-left: 20px;"><a href="{{ route('purchases.index') }}"><i class="fa fa-dot-circle-o"></i> All Purchases </a></li>
               @endcan
             </ul>
           </li>
