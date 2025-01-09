@@ -68,4 +68,10 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 Delete the storage directory from public folder and then again run php artisan storage:link
 
+php artisan cache:clear
+php artisan route:clear
+php artisan config:clear
+php artisan view:clear
+php artisan clear-compiled
+
 

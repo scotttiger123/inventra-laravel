@@ -91,7 +91,7 @@ class PurchaseController extends Controller
                 'purchase_items.*', 
                 'products.product_name', 
                 'uoms.abbreviation as uom_name', 
-                'warehouses.name as warehouse_name' // Select warehouse name
+                'warehouses.name as warehouse_name' 
             )
             ->get();
     
@@ -165,6 +165,7 @@ class PurchaseController extends Controller
             'otherCharges' => $otherCharges,
             'netTotal' => $netTotal,
             'taxRate' => $purchaseOrder->tax_rate,
+            'taxAmount' => $taxAmount,
             'netTotalWithTax' => $netTotalWithTax,
             'paidAmount' => $paidAmount,
             'remainingAmount' => $remainingAmount,

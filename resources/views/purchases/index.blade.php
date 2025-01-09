@@ -412,5 +412,25 @@
                     </div>
                 </section>
             </div>
+   <script src="../../bower_components/jquery/dist/jquery.min.js"></script>            
+   <script>
+    $(function () {
+        $('#purchase-listings').DataTable({
+            'paging': true,
+            'lengthChange': true,
+            'searching': true,
+            'ordering': true,
+            'info': true,
+            'autoWidth': true,
+            'order': [[0, 'desc']] 
+        });
+    });
 
+function confirmDeletePurchase(id) {
+    if (confirm('Are you sure you want to delete this order ?')) {
+        document.getElementById('deleteForm-' + id).submit();
+    }
+}
+
+</script>
 @endsection

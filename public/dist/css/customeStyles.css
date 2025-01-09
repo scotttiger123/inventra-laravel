@@ -477,3 +477,12 @@
 .pdf-footer {
   margin-top: 20px;
 }
+.data-image {
+  background-image: url('/dist/img/empty.jpg');
+  margin-top: 23rem;
+  background-size: cover;
+  width: 250px;
+  height: 250px;
+  margin-left: auto;
+  margin-right: auto;
+}

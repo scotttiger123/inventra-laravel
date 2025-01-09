@@ -166,9 +166,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function clearOrderItemsTable() {
-    // Clear all rows from the order items table's body
+    
     const tableBody = document.getElementById('orderItemsTable').getElementsByTagName('tbody')[0];
     tableBody.innerHTML = '';
+    document.getElementById('gross_amount_label').textContent = '0.00';
+    document.getElementById('net_amount_label').textContent = '0.00';
+    document.getElementById('tax_amount_label').textContent = '0.00';
+    document.getElementById('balance_label').textContent = '0.00'; 
+    toggleEmptyImageDiv();
 }
 
 
@@ -250,7 +255,7 @@ document.getElementById('submitOrder').addEventListener('click', function () {
             if (data.success) {
                 document.getElementById('success-message').style.display = 'block';
                 showMessage('success',data.message);
-                form.reset(); // Optionally reset the form
+                form.reset(); 
                 clearOrderItemsTable();
                 document.getElementById('datetimepicker_dark1').focus();
             } else {
@@ -530,6 +535,7 @@ function recalculateTotalsSale() {
     
     document.getElementById('balance_id').value = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); 
     document.getElementById('balance_label').textContent = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); 
+    toggleEmptyImageDiv();
 }   
 
     // Add event listeners to trigger recalculation when discount or other charges are modified
@@ -782,3 +788,16 @@ document.addEventListener('DOMContentLoaded', function() {
           warehouseIdField.value = ''; 
       }
   });
+
+  function toggleEmptyImageDiv() {
+    const tableBody = document.getElementById('orderItemsTable').getElementsByTagName('tbody')[0];
+    const emptyImageDiv = document.getElementById('data-image');
+
+    if (emptyImageDiv) {
+        if (tableBody.rows.length === 0) {
+            emptyImageDiv.style.display = 'block'; 
+        } else {
+            emptyImageDiv.style.display = 'none'; 
+        }
+    }
+}

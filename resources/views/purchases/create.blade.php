@@ -20,6 +20,15 @@
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box compact-info-box">
+                        <span class="info-box-icon" style="border-radius: 5px;!important" ><i class="fa fa-percent"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Tax Amount</span>
+                            <span class="info-box-number" id ="tax_amount_label" >0.00</span> 
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box compact-info-box" >
                         <span class="info-box-icon bg-grey"  style="border-radius: 5px;!important"><i class="fa fa-credit-card"></i></span>
                         <div class="info-box-content">
@@ -30,15 +39,6 @@
                     </div>
                 </div>
                 
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box compact-info-box">
-                        <span class="info-box-icon" style="border-radius: 5px;!important" ><i class="fa fa-usd"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Paid Amount</span>
-                            <span class="info-box-number" id ="paid_amount_label" >0.00</span>
-                        </div>
-                    </div>
-                </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box compact-info-box">
                         <span class="info-box-icon" style="border-radius: 5px;!important" ><i class="fa fa-money"></i></span>
@@ -76,22 +76,7 @@
                             </div>
 
                             
-                                    <div class="col-md-2">
-                                        <div class="input-group" style="width: 100%;">
-                                            
-                                            <div class="input-group-addon" onclick="getPurchaseInvoiceDetails()" >
-                                                <i class="fa fa-search"></i>
-                                            </div>
-                                            <input type="text" list="purchaseOrderList" name="custom_purchase_order_id" class="form-control myInput" placeholder="Purchase Id." tabindex="3">
-
-                                            
-                                            <div onclick="getPurchaseForEdit()" class="input-group-addon" data-toggle="modal">
-                                                <i class="fa fa-edit"></i>
-                                            </div>
-                                        </div>
-
-                                        
-                                    </div>
+                                  
                                         <div class="col-md-2">       
                                             <input type="text" list="warehouse-names" style="width: 100%;" name="warehouse_name" class="form-control myInput" placeholder="Select Warehouse" tabindex="4" id="warehouse-name-input-purchase">
                                                 <datalist id="warehouse-names">
@@ -128,6 +113,19 @@
                                                     id="status-id" 
                                                     value="{{ $defaultStatus->id ?? $statuses->firstWhere('status_name', 'Complete')->id }}"> 
                                             </div>
+                                    <div class="col-md-2">
+                                        <div class="input-group" style="width: 100%;">
+                                            
+                                            <div class="input-group-addon" onclick="getPurchaseInvoiceDetails()" >
+                                                <i class="fa fa-search"></i>
+                                            </div>
+                                            <input type="text" list="purchaseOrderList" name="custom_purchase_order_id" class="form-control myInput" placeholder="Purchase Id." tabindex="3">
+        
+                                            <div onclick="getPurchaseForEdit()" class="input-group-addon" data-toggle="modal">
+                                                <i class="fa fa-edit"></i>
+                                            </div>
+                                        </div>
+                                    </div>
 
 
                         </div>
@@ -173,7 +171,7 @@
                             </div>
 
                             <!-- UOM (Unit of Measure) -->
-                            <div class="col-xs-1">
+                            <div class="col-xs-1" hidden>
                                 <input type="text" list="UOMList" class="form-control myInput" id="uom-name-input" name="unit" value="" tabindex="10" placeholder="UOM" onkeydown="Javascript: if (event.keyCode==13) addItemToPurchase();">
                                 <datalist id="UOMList">
                                     @foreach($uoms as $uom)
@@ -186,16 +184,16 @@
                                 <button type="button" class="btn btn-info" onclick="addItemToPurchase()">Add Product</button>
                             
                             </div>    
-                            <div class="col-sm-1" id = 'divSubmitPurchase'>
-                                <button id="submitPurchase" class="btn btn-success" type="button">Submit Purchase Order</button>
+                            <div class="col-sm-1" id = 'divSubmitPurchase' style = 'margin:0;padding:0'>
+                                <button id="submitPurchase" class="btn btn-success" type="button">Submit Purchase</button>
                             </div> 
-                            <div class="col-xs-1">
+                            <div class="col-xs-1" style = 'margin:0;padding:0'>
                                 <button id="updatePurchaseOrder" style = 'display:none' class="btn btn-warning" type="button">
                                         updateOrder
                                     <i id="loader" style = 'display:none' class="fa fa-refresh fa-spin"></i>
                                 </button>
                             </div> 
-                            <div class="col-sm-1">
+                            <div class="col-sm-1" style = 'margin:0;padding:0'>
                                 <button type="button" style = 'display:none' id="cancelPurchaseOrder" class="btn btn-secondary">Cancel</button>  
                             </div> 
                         </div>
@@ -241,7 +239,7 @@
                         </div>
                     </div>
 
-                        <!-- Financials Section (Gross Amount, Discount, etc.) -->
+                        <div class="data-image" id = 'data-image' ></div>
                         <div class="table-container" >
                             <div class="row">
                                 <div class="col-md-3 col-sm-6 col-12">
@@ -428,17 +426,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-$(function () {
-    $('#purchase-listings').DataTable({
-        'paging': true,
-        'lengthChange': true,
-        'searching': true,
-        'ordering': true,
-        'info': true,
-        'autoWidth': true,
-        'order': [[0, 'desc']] 
-    });
-});
+
+
+
 
 
 
@@ -721,13 +711,24 @@ function validateSupplierField() {
         document.getElementById('price_id').value = '';
         document.getElementById('discount_value').value = '';
         
-        // Recalculate totals after adding the item
+        
+        const emptyImageDiv = document.getElementById('data-image');
+        if (emptyImageDiv) {
+            emptyImageDiv.style.display = 'none';
+        }
         recalculateTotals();
         document.getElementById('product-input').focus();
     }
     
     
+ 
+    function removeItem(button) {
 
+        var row = button.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+        recalculateTotals();
+        
+    }
 
     
 function recalculateTotals() {
@@ -762,6 +763,8 @@ function recalculateTotals() {
     netAmount += otherCharges;  // Add other charges
 
     // Update the total fields
+    document.getElementById('tax_amount_label').value = taxAmount.toFixed(2);
+
     document.getElementById('gross_amount_id').value = grossAmount.toFixed(2);
     document.getElementById('gross_amount_label').textContent = grossAmount.toFixed(2); 
 
@@ -771,9 +774,22 @@ function recalculateTotals() {
     document.getElementById('balance_id').value = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); 
     document.getElementById('balance_label').textContent = (netAmount - parseFloat(document.getElementById('paid_amount_id').value || 0)).toFixed(2); 
     
-    document.getElementById('paid_amount_label').textContent = document.getElementById('paid_amount_id').value;
-
+    toggleEmptyImageDiv();
     
+}
+
+
+function toggleEmptyImageDiv() {
+    const tableBody = document.getElementById('purchaseItemsTable').getElementsByTagName('tbody')[0];
+    const emptyImageDiv = document.getElementById('data-image');
+
+    if (emptyImageDiv) {
+        if (tableBody.rows.length === 0) {
+            emptyImageDiv.style.display = 'block'; // Show the empty image div
+        } else {
+            emptyImageDiv.style.display = 'none'; // Hide the empty image div
+        }
+    }
 }
 
     
@@ -932,12 +948,6 @@ function showMessage(type, message) {
     }, 5000); 
 }
 
-function confirmDeletePurchase(id) {
-    if (confirm('Are you sure you want to delete this order ?')) {
-        document.getElementById('deleteForm-' + id).submit();
-    }
-}
-
 
 
 function getPurchaseForEdit() {
@@ -955,6 +965,7 @@ function getPurchaseForEdit() {
                     
                     
                     populatePurchaseOrderDetails(data);
+                    
                     console.log(data);
                     document.getElementById('divSubmitPurchase').style.display = 'none'; 
                     document.getElementById('updatePurchaseOrder').style.display = 'inline-block'; 
@@ -986,7 +997,7 @@ function populatePurchaseOrderDetails(data) {
     const customerIdInput = document.querySelector('input[name="vendor_id"]');
 
     const paidAmountInput = document.querySelector('input[name="paid_amount"]');
-    document.getElementById('paid_amount_label').textContent = data.paidAmount; 
+    
 
     
     const orderDiscountInput = document.querySelector('input[name="order_discount"]');
@@ -1002,6 +1013,8 @@ function populatePurchaseOrderDetails(data) {
 
     const remainingAmountInput = document.querySelector('input[name="remaining_amount"]');
     document.getElementById('balance_label').textContent = data.remainingAmount.toFixed(2); 
+    document.getElementById('tax_amount_label').textContent = data.taxAmount.toFixed(2); 
+    
 
     const taxRateDropdown = document.querySelector('#tax_rate');
 
@@ -1027,8 +1040,8 @@ function populatePurchaseOrderDetails(data) {
     
     if (netTotalInput) {
         netTotalInput.disabled = false;
-        netTotalInput.value = data.netTotal.toFixed(2); 
-        document.getElementById('net_amount_label').textContent = data.netTotal.toFixed(2); 
+        netTotalInput.value = data.netTotalWithTax.toFixed(2); 
+        document.getElementById('net_amount_label').textContent = data.netTotalWithTax.toFixed(2); 
         netTotalInput.disabled = true;
     }
 
@@ -1225,8 +1238,9 @@ function clearPurchaseOrderItemsTable() {
     tableBody.innerHTML = '';
     document.getElementById('gross_amount_label').textContent = '0.00';
     document.getElementById('net_amount_label').textContent = '0.00';
-    document.getElementById('paid_amount_label').textContent = '0.00';
+    document.getElementById('tax_amount_label').textContent = '0.00';
     document.getElementById('balance_label').textContent = '0.00'; 
+    toggleEmptyImageDiv();
 }
 
 document.getElementById('updatePurchaseOrder').addEventListener('click', updatePurchaseOrder);
@@ -1235,4 +1249,5 @@ document.getElementById('cancelOrder').addEventListener('click', cancelEditMode)
 
 
 </script>
+
 @endsection

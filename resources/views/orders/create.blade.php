@@ -96,7 +96,16 @@
                                             <input type="hidden" name="customer_id" id="customer-id">
                                         </div>
                             </div>
-                           
+                            <div class="col-md-2">       
+                                    <input type="text" list="warehouse-names" style="width: 100%;" name="warehouse_name" class="form-control myInput" placeholder="Select Warehouse" tabindex="5" id="warehouse-name-input-order">
+                                        <datalist id="warehouse-names">
+                                            @foreach($warehouses as $warehouse)
+                                                <option value="{{ $warehouse->name }}" data-id="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                            @endforeach
+                                        </datalist>
+                                    <input type="hidden" name="warehouse_id" id="warehouse-id">
+                            </div>           
+                                
                             <div class="col-md-2">
                                 <div class="input-group" style="width: 100%;"> 
                                     
@@ -105,7 +114,7 @@
                                         style="width: 100%;" 
                                         name="salesperson-name" 
                                         class="form-control myInput" 
-                                        placeholder="select sales person" 
+                                        placeholder="Select Sales Person" 
                                         tabindex="1" 
                                         id="salesperson-name-input">
 
@@ -118,20 +127,6 @@
                                     <input type="hidden" name="salesperson_id" id="salesperson-id">
                                 </div>
                             </div>
-                               <!-- Search Button to Get Invoice -->
-                                <div class="col-md-2">
-                                    <div class="input-group" style="width: 100%;">
-                                      
-                                        <div class="input-group-addon" onclick="getInvoiceDetails()" >
-                                            <i class="fa fa-search"></i>
-                                        </div>
-                                        <input type="text" list="orderList" name="custom_order_id" class="form-control myInput" placeholder="Sale Id.">
-                                       
-                                        <div onclick="getOrderForEdit()" class="input-group-addon" data-toggle="modal" >
-                                            <i class="fa fa-edit"></i>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="col-md-2">
                                                 <input 
                                                     type="text" 
@@ -159,6 +154,20 @@
                                                     value="{{ $defaultStatus->id ?? $statuses->firstWhere('status_name', 'Complete')->id }}"> 
                                             
                                  </div>
+                                 
+                                <div class="col-md-2">
+                                    <div class="input-group" style="width: 100%;">
+                                      
+                                        <div class="input-group-addon" onclick="getInvoiceDetails()" >
+                                            <i class="fa fa-search"></i>
+                                        </div>
+                                        <input type="text" list="orderList" name="custom_order_id" class="form-control myInput" placeholder="Sale Id.">
+                                       
+                                        <div onclick="getOrderForEdit()" class="input-group-addon" data-toggle="modal" >
+                                            <i class="fa fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </div>
                         </div>
                         <div class="row">
                                                     
@@ -226,16 +235,7 @@
                                         <input type="text" id="staff_note" name="sale_note" tabindex="8"  placeholder="Staff Note / Remarks"  class="form-control myInput">
                                     </div>
                                 </div>
-                                <div class="col-md-2">       
-                                    <input type="text" list="warehouse-names" style="width: 100%;" name="warehouse_name" class="form-control myInput" placeholder="Select Warehouse" tabindex="5" id="warehouse-name-input-order">
-                                        <datalist id="warehouse-names">
-                                            @foreach($warehouses as $warehouse)
-                                                <option value="{{ $warehouse->name }}" data-id="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
-                                            @endforeach
-                                        </datalist>
-                                    <input type="hidden" name="warehouse_id" id="warehouse-id">
-                                </div>           
-                                
+                                <div class="col-xs-4">
                                 <button type="button" class="btn btn-info" onclick="addItemToOrder()">Add Product</button>
                                 
                                 <button id="submitOrder" class="btn btn-success" type="button">
@@ -247,7 +247,7 @@
                                     <i id="loader" style = 'display:none' class="fa fa-refresh fa-spin"></i>
                                 </button>
                                 <button type="button" style = 'display:none' id="cancelOrder" class="btn btn-secondary">Cancel</button>
-    
+                                </div>
                             </div>
                             
                             <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -279,7 +279,7 @@
                             </div>
                         </div>
     
-                        <!-- Financials Section (Gross Amount, Discount, etc.) -->
+                        <div class="data-image" id = 'data-image'></div>
                         <div class="table-container" >
                             <div class="row">
                                 <div class="col-md-3 col-sm-6 col-xs-12">
@@ -507,4 +507,5 @@
         </div>
     </div>
 </div>
+
 @endsection

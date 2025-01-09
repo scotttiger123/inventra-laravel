@@ -80,11 +80,13 @@
                   <div class="input-group" style = "width:100%"> 
                       <input type="text" 
                           list="customer-names" 
+                          style="padding-left:3.5rem;"
                           name="customer-name" 
                           class="form-control myInput" 
                           placeholder="Select Customer" 
                           tabindex="1" 
                           id="customer-name-input-pos">
+                          <i class="bi bi-search s-customer"></i>
 
                       <datalist id="customer-names">
                           
@@ -101,7 +103,12 @@
                 </button>
           </div>
          
-          <div class="data"></div>
+          <div class="data">
+              <div class="center">
+              <div class="data-img">
+                   </div>
+              </div>
+          </div>
           <div class="center">
             <div class="su-container">
               <div class="t-container" style="top: 0">
@@ -122,20 +129,20 @@
               </div>
               <div
                 class="stotal-content"
-                style="overflow: hidden; height: auto; margin-top:-1rem; width:109%"
+                style="overflow: hidden; height: auto; margin-top:-1rem; width:119%"
               >
                 <div id="content" class="hidden"></div>
                 <div class="subtotal">
                   <div class="stotal">
-                    <div class="scon"><h4>SubTotal</h4></div>
+                    <div class="scon"><h4 style="color:black;">SubTotal</h4></div>
                     <div class="sprice"><p id="sub-total">0</p></div>
                   </div>
                   <div class="tax">
-                    <div class="tcon"><h4>Tax(%)</h4></div>
+                    <div class="tcon"><h4 style="color:black;">Tax(%)</h4></div>
                     <div class="tprice"><p id = 'bottom-tax-value-label' >0</p></div>
                   </div>
                   <div class="charge">
-                    <div class="tcon"><h4>Other Charges</h4></div>
+                    <div class="tcon"><h4 style="color:black;">Other Charges</h4></div>
                     <div class="tprice"><p id = 'bottom-other-charges-label'>0</p></div>
                   </div>
                  
@@ -145,10 +152,10 @@
           </div>
           <div class="grandtotal">
             <div class="gtotal">
-              <div class="gcon"><h4>Total</h4></div>
+              <div class="gcon"><h4 style="color:white;">Total</h4></div>
               <div class="total-quantity">
                 <div id="total-quantity">0</div>
-                <h4>Products</h4>
+                <h4 style="color:white;">Products</h4>
               </div>
               <div class="gprice" id="grand-total">0</div>
             </div>
@@ -172,7 +179,7 @@
                                       <div class="row">
                                           <div class="col-md-3 col-sm-6 col-xs-12">
                                               <div class="info-box custom">
-                                                  <span class="info-box-icon" style="border-radius: 5px; background-color: gold"><i class="fa fa-percent"></i></span>
+                                                  <span class="info-box-icon" style="border-radius: 5px; background-color:#00000033"><i class="fa fa-percent"></i></span>
                                                   <div class="info-box-content">
                                                       <select name="tax_rate" id="tax_rate" class="form-control" tabindex="1">
                                                           <option value="" selected>Order Tax</option>
@@ -187,7 +194,7 @@
 
                                           <div class="col-md-3 col-sm-6 col-xs-12">
                                               <div class="info-box custom">
-                                                  <span class="info-box-icon" style="border-radius: 5px; background-color: gold"><i class="fa fa-tag"></i></span>
+                                                  <span class="info-box-icon" style="border-radius: 5px; background-color:#00000033"><i class="fa fa-tag"></i></span>
                                                   <div class="info-box-content">
                                                       <input type="number" name="order_discount" id="order_discount_id" value="" class="form-control" tabindex="2" placeholder="Order Discount ">
                                                       <span class="info-box-number">
@@ -228,7 +235,7 @@
                                       <div class="row">
                                           <div class="col-md-3 col-sm-6 col-xs-12">
                                               <div class="info-box custom">
-                                                  <span class="info-box-icon" style="border-radius: 5px; background-color: gold"><i class="fa fa-money"></i></span>
+                                                  <span class="info-box-icon" style="border-radius: 5px; background-color:#00000033"><i class="fa fa-money"></i></span>
                                                   <div class="info-box-content">
                                                       <input type="number" name="other_charges" id="other_charges_id" class="form-control" tabindex="3">
                                                       <span class="info-box-number"> OTHER CHARGES</span>
@@ -238,7 +245,7 @@
 
                                           <div class="col-md-3 col-sm-6 col-xs-12">
                                               <div class="info-box custom">
-                                                  <span class="info-box-icon" style="border-radius: 5px; background-color: gold"><i class="fa fa-dollar"></i></span>
+                                                  <span class="info-box-icon" style="border-radius: 5px; background-color:#00000033"><i class="fa fa-dollar"></i></span>
                                                   <div class="info-box-content">
                                                       <input name="paid_amount" id="paid_amount_id" type="number" class="form-control" tabindex="4">
                                                       <span class="info-box-number"> PAID AMOUNT</span>
@@ -477,21 +484,86 @@
 </div>
 
 
-
 <style>
-      .custom-modal-width {
+ .custom-modal-width {
         max-width: 90%; 
         width: auto;
     }
     .icon-pos {
-        background-color: gold;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: 0.2s ease-in-out;
+         background-color: #66f4b9;
     }
 
     .icon-pos:hover {
-        background-color: black;
-        color: white; 
+        background-color: white;
+        border: 1px solid #66f4b9;
     }
+     .text-overlay {
+    background: #66f4b9;
+
+}
+.subtotal{
+    width:92%;
+    height: 14rem;
+}
+.p-btns button:nth-child(1) {
+    background-color: #66f4b9;
+}
+    
+    .btns button {
+     border: 1px solid #66f4b9;
+     background-color:white;
+     transition: 0.2s ease-in-out;
+}
+.btns button:hover{
+     background-color:#66f4b9;
+     color:black;
+}
+ .data-img{
+        background-image: url('{{ asset('dist/img/empty.jpg') }}');
+        background-size: cover;
+        width: 250px;
+        height: 250px;
+        margin-top:8rem;
+        margin-left:auto;
+        margin-right:auto;
+    }
+   .text-overlay {
+    background: #66f4b9 !important;
+}
+.h4, h4 {
+    font-size: 18px;
+    color: #00a65a;
+    font-weight: bold;
+}
+ .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 18px;
+    pointer-events: none;
+  }
+  .search-container input{
+      padding-left:3.5rem;
+  }
+  .s-customer{
+      color:grey;
+      position:absolute;
+      left:12px;
+      z-index:99999;
+      top:12px;
+      font-size:16px;
+  }
+  .products::-webkit-scrollbar-thumb {
+    background: #66f4b9; 
+    border-radius: 4px; 
+  }
+   .data::-webkit-scrollbar-thumb {
+    background: #66f4b9; 
+    border-radius: 4px; 
+  }
 </style>
 @endsection
